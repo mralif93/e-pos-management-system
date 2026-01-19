@@ -1,0 +1,222 @@
+{
+  "project_name": "Laravel POS + LHDN E-Invoice System (Malaysia)",
+  "version": "1.0",
+  "last_updated": "2026-01-19",
+  "target_market": "Malaysian SMEs, retail stores, F&B outlets, franchises",
+  "compliance": {
+    "lhdn_e_invoice": true,
+    "pdpa_compliant": true,
+    "sst_ready": true,
+    "myinvois_api_integration": true
+  },
+  "features": {
+    "core_pos_operations": {
+      "real_time_cart": true,
+      "barcode_scanning": true,
+      "quantity_adjustment": true,
+      "item_notes": true,
+      "discount_support": {
+        "item_level": true,
+        "total_level": true,
+        "types": ["percentage", "fixed_amount"]
+      },
+      "tax_calculation": {
+        "sst_6_percent": true,
+        "zero_rated": true,
+        "exempt": true,
+        "per_product_tax_code": true
+      },
+      "payment_methods": [
+        "cash",
+        "duitnow_qr",
+        "fpx",
+        "credit_card",
+        "split_payment"
+      ],
+      "auto_receipt_numbering": {
+        "format": "POS/{OUTLET_CODE}/{YYYY}/{NNN}",
+        "example": "POS/KL01/2026/001"
+      },
+      "walk_in_customer_mode": {
+        "enabled": true,
+        "default_buyer_tax_id": "000000000000"
+      }
+    },
+    "product_management": {
+      "crud_operations": true,
+      "categories": true,
+      "sku_support": true,
+      "stock_tracking": true,
+      "low_stock_alerts": true,
+      "variants": true,
+      "outlet_specific_pricing": true,
+      "outlet_specific_stock": true
+    },
+    "customer_management": {
+      "save_frequent_customers": true,
+      "buyer_tax_id_storage": true,
+      "loyalty_points": false,
+      "notes": "Optional; MVP can skip"
+    },
+    "lhdn_e_invoice": {
+      "uuid_generation": {
+        "standard": "RFC 4122",
+        "unique_per_invoice": true
+      },
+      "xml_generation": {
+        "schema": "MyInvois LHDN",
+        "includes": ["seller", "buyer", "line_items", "tax", "total", "timestamp_utc+8"]
+      },
+      "qr_code": {
+        "enabled": true,
+        "links_to": "https://myinvois.hasil.gov.my/verify/{uuid}"
+      },
+      "pdf_invoice": {
+        "human_readable": true,
+        "printable": true,
+        "includes_qr": true
+      },
+      "submission": {
+        "method": "MyInvois API",
+        "environments": ["sandbox", "production"],
+        "timeout_hours": 72,
+        "auto_retry": true,
+        "retry_strategy": "exponential_backoff",
+        "max_retries": 5
+      },
+      "storage": {
+        "xml_stored": true,
+        "retention_years": 7,
+        "audit_trail": true
+      },
+      "status_tracking": [
+        "pending",
+        "submitted",
+        "accepted",
+        "rejected",
+        "failed"
+      ],
+      "error_handling": {
+        "user_friendly_messages": true,
+        "lhdn_validation_errors": true
+      },
+      "delivery": {
+        "email": true,
+        "sms": true,
+        "whatsapp": true,
+        "public_verification_url": true
+      }
+    },
+    "multi_user_roles": {
+      "roles": {
+        "admin": {
+          "permissions": [
+            "manage_users",
+            "manage_outlets",
+            "manage_products",
+            "view_all_reports",
+            "void_any_sale",
+            "access_einvoice_settings"
+          ]
+        },
+        "manager": {
+          "permissions": [
+            "manage_products",
+            "view_outlet_reports",
+            "void_own_outlet_sales",
+            "manage_shifts"
+          ]
+        },
+        "cashier": {
+          "permissions": [
+            "pos_checkout",
+            "view_own_sales"
+          ]
+        }
+      },
+      "role_assignment": "per_user",
+      "middleware_enforced": true
+    },
+    "multi_outlet_support": {
+      "enabled": true,
+      "outlet_fields": [
+        "name",
+        "code",
+        "address",
+        "tax_id",
+        "phone"
+      ],
+      "user_outlet_assignment": true,
+      "sale_outlet_binding": true,
+      "product_availability_per_outlet": true,
+      "receipt_branding_per_outlet": true,
+      "reports_filterable_by_outlet": true
+    },
+    "offline_mode": {
+      "enabled": true,
+      "storage_method": "browser_localStorage + server_draft_table",
+      "offline_sales_draft_table": {
+        "fields": [
+          "draft_id (UUID)",
+          "cart_data (JSON)",
+          "user_id",
+          "outlet_id",
+          "created_at_local",
+          "synced (boolean)"
+        ]
+      },
+      "auto_sync": {
+        "trigger": "navigator.onLine change + periodic check",
+        "interval_seconds": 30
+      },
+      "conflict_handling": "server timestamp wins",
+      "fallback_queue": "Laravel queued jobs with 72h retry"
+    },
+    "reporting_analytics": {
+      "daily_sales_summary": true,
+      "top_selling_products": true,
+      "tax_collected_report": true,
+      "e_invoice_compliance_rate": true,
+      "low_stock_alerts": true,
+      "export_formats": ["excel", "pdf"],
+      "filter_by": ["date", "outlet", "cashier", "payment_method"]
+    },
+    "hardware_integration": {
+      "thermal_printer": {
+        "esc_pos": true,
+        "browser_print": true
+      },
+      "barcode_scanner": "USB/HID compatible",
+      "cash_drawer": "trigger via printer command"
+    },
+    "localization_malaysia": {
+      "languages": ["Bahasa Malaysia", "English"],
+      "default_language": "Bahasa Malaysia",
+      "currency": "MYR",
+      "timezone": "Asia/Kuala_Lumpur",
+      "date_format": "DD/MM/YYYY",
+      "address_format": "Malaysian standard"
+    },
+    "security_compliance": {
+      "https_enforced": true,
+      "role_based_access": true,
+      "audit_logs": true,
+      "data_encryption": true,
+      "api_keys_secured": true,
+      "pdpa_compliant": true
+    },
+    "mobile_accessibility": {
+      "responsive_design": true,
+      "pwa_enabled": true,
+      "touch_optimized": true,
+      "dark_mode": true
+    },
+    "future_add_ons": {
+      "duitnow_qr_auto_generation": true,
+      "ssm_company_lookup": true,
+      "accounting_software_sync": ["SQL Accounting", "AutoCount", "Xero"],
+      "sms_gateway_integration": true,
+      "mdec_grant_ready_package": true
+    }
+  }
+}
