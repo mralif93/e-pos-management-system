@@ -112,6 +112,36 @@ class SaleResource extends Resource
                         $record->status = 'voided';
                         $record->save();
                     }),
+                Tables\Actions\Action::make('generate_e_invoice')
+                    ->label('Generate E-Invoice')
+                    ->icon('heroicon-o-arrow-path-rounded-square')
+                    ->color('info')
+                    ->requiresConfirmation()
+                    ->action(function (Sale $record) {
+                        // Check if an e-invoice already exists for this sale
+                        if ($record->eInvoice) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('E-Invoice already generated')
+                                ->warning()
+                                ->send();
+                            return;
+                        }
+
+                        // Create a new e-invoice record
+                        $eInvoice = \App\Models\EInvoice::create([
+                            'sale_id' => $record->id,
+                            'status' => 'pending', // Initial status
+                        ]);
+
+                        // TODO: Implement actual LHDN API call here
+                        // For now, just a placeholder.
+
+                        \Filament\Notifications\Notification::make()
+                            ->title('E-Invoice generation initiated')
+                            ->success()
+                            ->send();
+                    })
+                    ->visible(fn (Sale $record): bool => $record->status !== 'voided'), // Only show for non-voided sales
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -119,7 +149,6 @@ class SaleResource extends Resource
                 ]),
             ])
             ->headerActions([
-                CreateAction::make(),
                 ExportAction::make(),
             ]);
     }

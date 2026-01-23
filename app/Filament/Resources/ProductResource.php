@@ -20,6 +20,7 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\Repeater;
 
 class ProductResource extends Resource
 {
@@ -52,23 +53,68 @@ class ProductResource extends Resource
                             ->dehydrated(),
                         Forms\Components\Textarea::make('description')
                             ->columnSpanFull(),
+                        Forms\Components\Toggle::make('has_variants')
+                            ->live(),
                         Forms\Components\TextInput::make('price')
                             ->required()
                             ->numeric()
                             ->default(0.00)
-                            ->prefix('$'),
+                            ->prefix('$')
+                            ->hidden(fn (Forms\Get $get) => $get('has_variants')),
                         Forms\Components\TextInput::make('cost')
                             ->required()
                             ->numeric()
                             ->default(0.00)
-                            ->prefix('$'),
+                            ->prefix('$')
+                            ->hidden(fn (Forms\Get $get) => $get('has_variants')),
                         Forms\Components\TextInput::make('stock_level')
                             ->required()
                             ->numeric()
-                            ->default(0),
+                            ->default(0)
+                            ->hidden(fn (Forms\Get $get) => $get('has_variants')),
+                        Repeater::make('variants')
+                            ->relationship()
+                            ->schema([
+                                Forms\Components\TextInput::make('name')
+                                    ->required(),
+                                Forms\Components\TextInput::make('price')
+                                    ->required()
+                                    ->numeric()
+                                    ->default(0.00)
+                                    ->prefix('$'),
+                                Forms\Components\TextInput::make('cost')
+                                    ->required()
+                                    ->numeric()
+                                    ->default(0.00)
+                                    ->prefix('$'),
+                                Forms\Components\TextInput::make('stock_level')
+                                    ->required()
+                                    ->numeric()
+                                    ->default(0),
+                            ])
+                            ->columns(2)
+                            ->visible(fn (Forms\Get $get) => $get('has_variants')),
                         Forms\Components\Toggle::make('is_active')
                             ->required(),
                     ])->columns(2),
+                Section::make('Outlet Pricing')
+                    ->description('Set specific prices for each outlet.')
+                    ->schema([
+                        Repeater::make('prices')
+                            ->relationship()
+                            ->schema([
+                                Forms\Components\Select::make('outlet_id')
+                                    ->relationship('outlet', 'name')
+                                    ->required(),
+                                Forms\Components\TextInput::make('price')
+                                    ->required()
+                                    ->numeric()
+                                    ->default(0.00)
+                                    ->prefix('$'),
+                            ])
+                            ->columns(2)
+                            ->itemLabel(fn (array $state): ?string => \App\Models\Outlet::find($state['outlet_id'])?->name),
+                    ]),
             ]);
     }
 

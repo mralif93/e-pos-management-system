@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\PaymentResource\Pages;
-use App\Filament\Resources\PaymentResource\RelationManagers;
-use App\Models\Payment;
+use App\Filament\Resources\EInvoiceResource\Pages;
+use App\Filament\Resources\EInvoiceResource\RelationManagers;
+use App\Models\EInvoice;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,13 +13,17 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class PaymentResource extends Resource
+class EInvoiceResource extends Resource
 {
-    protected static ?string $model = Payment::class;
+    protected static ?string $model = EInvoice::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-credit-card';
+    protected static ?string $navigationIcon = 'heroicon-o-document-check';
 
-    protected static ?string $navigationGroup = 'Sale Management';
+    protected static ?string $navigationGroup = 'LHDN e-Invoice';
+
+    protected static ?string $navigationLabel = 'e-Invoices';
+
+    protected static ?string $pluralModelLabel = 'e-Invoices';
 
     public static function form(Form $form): Form
     {
@@ -30,13 +34,21 @@ class PaymentResource extends Resource
                         Forms\Components\Select::make('sale_id')
                             ->relationship('sale', 'id')
                             ->required(),
-                        Forms\Components\TextInput::make('amount')
-                            ->required()
-                            ->numeric()
-                            ->prefix('$'),
-                        Forms\Components\TextInput::make('payment_method')
-                            ->required()
+                        Forms\Components\TextInput::make('lhdn_invoice_id')
                             ->maxLength(255),
+                        Forms\Components\Select::make('status')
+                            ->options([
+                                'pending' => 'Pending',
+                                'approved' => 'Approved',
+                                'rejected' => 'Rejected',
+                            ])
+                            ->required(),
+                        Forms\Components\TextInput::make('xml_path')
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('qr_code_path')
+                            ->maxLength(255),
+                        Forms\Components\Textarea::make('rejection_reason')
+                            ->columnSpanFull(),
                     ])->columns(2)
             ]);
     }
@@ -48,10 +60,13 @@ class PaymentResource extends Resource
                 Tables\Columns\TextColumn::make('sale.id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('amount')
-                    ->money('USD')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('payment_method')
+                Tables\Columns\TextColumn::make('lhdn_invoice_id')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('status')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('xml_path')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('qr_code_path')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -79,9 +94,9 @@ class PaymentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPayments::route('/'),
-            'create' => Pages\CreatePayment::route('/create'),
-            'edit' => Pages\EditPayment::route('/{record}/edit'),
+            'index' => Pages\ListEInvoices::route('/'),
+            'create' => Pages\CreateEInvoice::route('/create'),
+            'edit' => Pages\EditEInvoice::route('/{record}/edit'),
         ];
     }    
 }

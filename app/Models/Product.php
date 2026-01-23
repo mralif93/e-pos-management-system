@@ -18,10 +18,7 @@ class Product extends Model
         'cost',
         'stock_level',
         'is_active',
-    ];
-
-    protected $casts = [
-        'is_active' => 'boolean',
+        'has_variants',
     ];
 
     public function category()
@@ -31,8 +28,16 @@ class Product extends Model
 
     public function outlets()
     {
-        return $this->belongsToMany(Outlet::class, 'product_outlets')
-                    ->withPivot('price', 'stock_level')
-                    ->withTimestamps();
+        return $this->belongsToMany(Outlet::class, 'product_outlets');
+    }
+
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class);
+    }
+
+    public function prices()
+    {
+        return $this->hasMany(ProductOutletPrice::class);
     }
 }

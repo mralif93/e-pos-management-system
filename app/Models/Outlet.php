@@ -22,10 +22,8 @@ class Outlet extends Model
         return $this->hasMany(User::class);
     }
 
-    public function products()
+    public function prices()
     {
-        return $this->belongsToMany(Product::class, 'product_outlets')
-                    ->withPivot('price', 'stock_level')
-                    ->withTimestamps();
+        return $this->hasMany(ProductOutletPrice::class);
     }
 }
