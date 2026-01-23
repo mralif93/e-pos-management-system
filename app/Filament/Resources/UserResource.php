@@ -18,8 +18,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
@@ -27,19 +25,17 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\DeleteAction;
+use Illuminate\Support\Facades\Session;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $navigationIcon = 'heroicon-o-users'; // Changed
 
-    protected static ?string $navigationGroup = 'User Management';
-
-    public static function canView(Model $record): bool
-    {
-        return auth()->user()->role === 'Admin' || auth()->user()->role === 'Manager';
-    }
+    protected static ?string $navigationGroup = 'User Management'; // Added
 
     public static function form(Form $form): Form
     {
@@ -120,18 +116,14 @@ class UserResource extends Resource
                 TernaryFilter::make('is_active'),
             ])
             ->actions([
-                Action::make('edit')
+                EditAction::make()
                     ->icon('heroicon-o-pencil-square')
                     ->label(false)
-                    ->tooltip('Edit')
-                    ->url(fn($record) => route('filament.admin.resources.users.edit', $record)),
-
-                Action::make('delete')
+                    ->tooltip('Edit'),
+                DeleteAction::make()
                     ->icon('heroicon-o-trash')
                     ->label(false)
-                    ->tooltip('Delete')
-                    ->requiresConfirmation()
-                    ->action(fn($record) => $record->delete()),
+                    ->tooltip('Delete'),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
@@ -143,13 +135,23 @@ class UserResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();
+        $user = auth()->user();
 
-        if (auth()->user()->role === 'Admin') {
-            if (session()->has('selected_admin_outlet_id') && session('selected_admin_outlet_id') !== null) {
-                $query->where('outlet_id', session('selected_admin_outlet_id'));
+        if ($user->role === 'Super Admin') {
+            $selectedOutletId = Session::get('selected_super_admin_outlet_id');
+            if ($selectedOutletId) {
+                // Filter by selected outlet for Super Admin
+                $query->where('outlet_id', $selectedOutletId);
             }
-        } elseif (auth()->user()->outlet_id) {
-            $query->where('outlet_id', auth()->user()->outlet_id);
+            // If no outlet is selected for Super Admin, they see all users by default.
+        } else {
+            // For all other roles, filter by their assigned outlet.
+            if ($user->outlet_id) {
+                $query->where('outlet_id', $user->outlet_id);
+            } else {
+                // If a non-Super Admin user has no outlet_id, they shouldn't see any users
+                $query->whereRaw('0 = 1'); // Return an empty query
+            }
         }
 
         return $query;

@@ -12,9 +12,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Section;
 use Illuminate\Support\Str;
 
 class CategoryResource extends Resource
@@ -25,28 +22,22 @@ class CategoryResource extends Resource
 
     protected static ?string $navigationGroup = 'Product Management';
 
-    public static function canView(Model $record = null): bool
-    {
-        return in_array(auth()->user()->role, ['Admin', 'Manager']);
-    }
-
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Section::make('Category Details')
-                    ->description('Manage product categories.')
+                Forms\Components\Section::make()
                     ->schema([
-                        TextInput::make('name')
+                        Forms\Components\TextInput::make('name')
                             ->required()
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn (string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
-                        TextInput::make('slug')
+                        Forms\Components\TextInput::make('slug')
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->disabled()
                             ->dehydrated(),
-                    ])->columns(2),
+                    ])->columns(2)
             ]);
     }
 
@@ -72,7 +63,6 @@ class CategoryResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

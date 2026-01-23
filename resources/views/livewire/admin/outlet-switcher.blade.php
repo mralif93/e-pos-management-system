@@ -1,4 +1,4 @@
-<div class="fi-fo-select w-full">
+<div class="fi-fo-select">
     <div class="fi-input-wrapper flex rounded-lg shadow-sm ring-1 transition duration-75 bg-white focus-within:ring-2 dark:bg-white/5 ring-gray-950/10 dark:ring-white/20 focus-within:ring-primary-600 dark:focus-within:ring-primary-500">
         <select id="outlet-switcher-select"
                 wire:model.live="selectedOutlet"
@@ -10,4 +10,3 @@
         </select>
     </div>
 </div>
-

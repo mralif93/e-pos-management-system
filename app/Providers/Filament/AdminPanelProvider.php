@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -10,15 +11,15 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Support\Enums\MaxWidth;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Livewire\Livewire;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -55,11 +56,19 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])
-            ->maxContentWidth(MaxWidth::Full)
-            ->renderHook(
-                'panels::global-search.after',
-                fn () => Livewire::mount('admin.outlet-selector'),
-            );
+            ]);
+    }
+
+    public function boot()
+    {
+        Filament::registerRenderHook(
+            PanelsRenderHook::TOPBAR_END,
+            fn (): string => Blade::render('@livewire(\'admin.outlet-switcher\')'),
+        );
+
+        Filament::registerRenderHook(
+            PanelsRenderHook::STYLES_AFTER,
+            fn () => Blade::render('<style>.fi-main { max-width: 100% !important; }</style>'),
+        );
     }
 }

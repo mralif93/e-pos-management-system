@@ -5,31 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-use App\Scopes\OutletScope; // Import the scope
-
-class ProductOutlet extends Model
+class SaleItem extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'sale_id',
         'product_id',
-        'outlet_id',
+        'quantity',
         'price',
-        'stock_level',
     ];
 
-    protected static function booted(): void
+    public function sale()
     {
-        static::addGlobalScope(new OutletScope);
+        return $this->belongsTo(Sale::class);
     }
 
     public function product()
     {
         return $this->belongsTo(Product::class);
-    }
-
-    public function outlet()
-    {
-        return $this->belongsTo(Outlet::class);
     }
 }

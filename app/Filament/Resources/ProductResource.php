@@ -13,32 +13,21 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Session;
+use Filament\Forms\Components\Section;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Model;
 
 class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-bag'; // Changed
 
-    protected static ?string $navigationGroup = 'Product Management';
-
-    public static function canView(Model $record = null): bool
-    {
-        return in_array(auth()->user()->role, ['Admin', 'Manager']);
-    }
+    protected static ?string $navigationGroup = 'Product Management'; // Added
 
     public static function form(Form $form): Form
     {
@@ -47,37 +36,37 @@ class ProductResource extends Resource
                 Section::make('Product Details')
                     ->description('Manage product information.')
                     ->schema([
-                        Select::make('category_id')
+                        Forms\Components\Select::make('category_id')
                             ->label('Category')
                             ->options(Category::all()->pluck('name', 'id'))
                             ->searchable()
                             ->required(),
-                        TextInput::make('name')
+                        Forms\Components\TextInput::make('name')
                             ->required()
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn (string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
-                        TextInput::make('slug')
+                        Forms\Components\TextInput::make('slug')
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->disabled()
                             ->dehydrated(),
-                        Textarea::make('description')
+                        Forms\Components\Textarea::make('description')
                             ->columnSpanFull(),
-                        TextInput::make('price')
+                        Forms\Components\TextInput::make('price')
                             ->required()
                             ->numeric()
                             ->default(0.00)
                             ->prefix('$'),
-                        TextInput::make('cost')
+                        Forms\Components\TextInput::make('cost')
                             ->required()
                             ->numeric()
                             ->default(0.00)
                             ->prefix('$'),
-                        TextInput::make('stock_level')
+                        Forms\Components\TextInput::make('stock_level')
                             ->required()
                             ->numeric()
                             ->default(0),
-                        Toggle::make('is_active')
+                        Forms\Components\Toggle::make('is_active')
                             ->required(),
                     ])->columns(2),
             ]);
@@ -87,30 +76,30 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('category.name')
+                Tables\Columns\TextColumn::make('category.name')
                     ->label('Category')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('name')
+                Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                TextColumn::make('slug')
+                Tables\Columns\TextColumn::make('slug')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('price')
-                    ->money()
+                    ->money('USD')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('cost')
-                    ->money()
+                    ->money('USD')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('stock_level')
                     ->numeric()
                     ->sortable(),
-                IconColumn::make('is_active')
+                Tables\Columns\IconColumn::make('is_active')
                     ->boolean(),
-                TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
+                Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -122,8 +111,14 @@ class ProductResource extends Resource
                 Tables\Filters\TernaryFilter::make('is_active'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->icon('heroicon-o-pencil-square')
+                    ->label(false)
+                    ->tooltip('Edit'),
+                Tables\Actions\DeleteAction::make()
+                    ->icon('heroicon-o-trash')
+                    ->label(false)
+                    ->tooltip('Delete'),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
@@ -135,21 +130,30 @@ class ProductResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();
+        $user = auth()->user();
 
-        $selectedOutletId = null;
-
-        if (auth()->user()->role === 'Admin') {
-            if (Session::has('selected_admin_outlet_id') && Session::get('selected_admin_outlet_id') !== null) {
-                $selectedOutletId = Session::get('selected_admin_outlet_id');
+        if ($user->role === 'Super Admin') {
+            $selectedOutletId = Session::get('selected_super_admin_outlet_id');
+            if ($selectedOutletId) {
+                // Filter by selected outlet for Super Admin
+                $query->whereHas('outlets', function (Builder $query) use ($selectedOutletId) {
+                    $query->where('outlet_id', $selectedOutletId);
+                });
             }
-        } elseif (auth()->user()->outlet_id) {
-            $selectedOutletId = auth()->user()->outlet_id;
-        }
-
-        if ($selectedOutletId !== null) {
-            $query->whereHas('outlets', function (Builder $query) use ($selectedOutletId) {
-                $query->where('outlet_id', $selectedOutletId);
-            });
+            // If no outlet is selected for Super Admin, they see all products by default,
+            // or perhaps a default outlet's products. For now, seeing all is default.
+            // If we want to force Super Admin to select an outlet,
+            // we'd add logic here to filter by a default or simply return an empty query.
+        } else {
+            // For all other roles, filter by their assigned outlet.
+            if ($user->outlet_id) {
+                $query->whereHas('outlets', function (Builder $query) use ($user) {
+                    $query->where('outlet_id', $user->outlet_id);
+                });
+            } else {
+                // If a non-Super Admin user has no outlet_id, they shouldn't see any products
+                $query->whereRaw('0 = 1'); // Return an empty query
+            }
         }
 
         return $query;
@@ -158,7 +162,7 @@ class ProductResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\ProductOutletsRelationManager::class,
+            RelationManagers\OutletsRelationManager::class,
         ];
     }
 
