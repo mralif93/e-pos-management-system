@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Model;
 
 class OutletResource extends Resource
 {
@@ -23,7 +24,7 @@ class OutletResource extends Resource
 
     protected static ?string $navigationGroup = 'Outlet Management';
 
-    public static function canView(): bool
+    public static function canView(Model $record = null): bool
     {
         return in_array(auth()->user()->role, ['Admin', 'Manager']);
     }

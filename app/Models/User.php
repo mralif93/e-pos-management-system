@@ -57,15 +57,4 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Outlet::class);
     }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::addGlobalScope('byOutlet', function (Builder $builder) {
-            if (Auth::check() && Auth::user()->role !== 'Admin' && Auth::user()->outlet_id) {
-                $builder->where('outlet_id', Auth::user()->outlet_id);
-            }
-        });
-    }
 }

@@ -13,6 +13,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\TextInput;
@@ -21,6 +22,11 @@ use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 
 class UserResource extends Resource
 {
@@ -30,9 +36,9 @@ class UserResource extends Resource
 
     protected static ?string $navigationGroup = 'User Management';
 
-    public static function canView(): bool
+    public static function canView(Model $record): bool
     {
-        return auth()->user()->role === 'Admin';
+        return auth()->user()->role === 'Admin' || auth()->user()->role === 'Manager';
     }
 
     public static function form(Form $form): Form
@@ -46,7 +52,7 @@ class UserResource extends Resource
                             ->label('Outlet')
                             ->options(Outlet::all()->pluck('name', 'id'))
                             ->searchable()
-                            ->required(fn (string $context): bool => $context === 'create'),
+                            ->required(fn(string $context): bool => $context === 'create'),
                         TextInput::make('name')
                             ->required(),
                         TextInput::make('email')
@@ -58,9 +64,9 @@ class UserResource extends Resource
                             ->readOnly(),
                         TextInput::make('password')
                             ->password()
-                            ->required(fn (string $context): bool => $context === 'create')
-                            ->dehydrated(fn ($state) => filled($state))
-                            ->dehydrateStateUsing(fn ($state) => bcrypt($state)),
+                            ->required(fn(string $context): bool => $context === 'create')
+                            ->dehydrated(fn($state) => filled($state))
+                            ->dehydrateStateUsing(fn($state) => bcrypt($state)),
                         Select::make('role')
                             ->options([
                                 'Admin' => 'Admin',
@@ -104,34 +110,49 @@ class UserResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('role')
+                SelectFilter::make('role')
                     ->options([
                         'Admin' => 'Admin',
                         'Manager' => 'Manager',
                         'Cashier' => 'Cashier',
                         'Viewer' => 'Viewer',
                     ]),
-                Tables\Filters\TernaryFilter::make('is_active'),
+                TernaryFilter::make('is_active'),
             ])
             ->actions([
                 Action::make('edit')
-                    ->icon('heroicon-o-pencil-square') // or 'heroicon-o-pencil'
-                    ->label(false) // 👈 hides text
-                    ->tooltip('Edit') // 👈 optional but recommended
-                    ->url(fn ($record) => route('filament.admin.resources.users.edit', $record)),
+                    ->icon('heroicon-o-pencil-square')
+                    ->label(false)
+                    ->tooltip('Edit')
+                    ->url(fn($record) => route('filament.admin.resources.users.edit', $record)),
 
                 Action::make('delete')
                     ->icon('heroicon-o-trash')
                     ->label(false)
                     ->tooltip('Delete')
                     ->requiresConfirmation()
-                    ->action(fn ($record) => $record->delete()),
+                    ->action(fn($record) => $record->delete()),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (auth()->user()->role === 'Admin') {
+            if (session()->has('selected_admin_outlet_id') && session('selected_admin_outlet_id') !== null) {
+                $query->where('outlet_id', session('selected_admin_outlet_id'));
+            }
+        } elseif (auth()->user()->outlet_id) {
+            $query->where('outlet_id', auth()->user()->outlet_id);
+        }
+
+        return $query;
     }
 
     public static function getRelations(): array
