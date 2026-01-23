@@ -13,6 +13,7 @@ class ProductOutletPrice extends Model
         'product_id',
         'outlet_id',
         'price',
+        'stock_level',
     ];
 
     public function product()

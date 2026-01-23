@@ -29,9 +29,14 @@ class ProductSeeder extends Seeder
             'cost' => 700.00,
             'stock_level' => 100,
             'is_active' => true,
+            'has_variants' => false, // Ensure this is set
         ]);
         foreach ($outlets as $outlet) {
-            $product1->outlets()->attach($outlet->id, ['price' => 999.99, 'stock_level' => rand(5, 50)]);
+            $product1->prices()->create([
+                'outlet_id' => $outlet->id,
+                'price' => 999.99,
+                'stock_level' => rand(5, 50)
+            ]);
         }
 
         // Product 2
@@ -44,9 +49,14 @@ class ProductSeeder extends Seeder
             'cost' => 15.00,
             'stock_level' => 200,
             'is_active' => true,
+            'has_variants' => false,
         ]);
         foreach ($outlets as $outlet) {
-            $product2->outlets()->attach($outlet->id, ['price' => 29.99, 'stock_level' => rand(10, 100)]);
+            $product2->prices()->create([
+                'outlet_id' => $outlet->id,
+                'price' => 29.99,
+                'stock_level' => rand(10, 100)
+            ]);
         }
 
         // Product 3
@@ -59,9 +69,14 @@ class ProductSeeder extends Seeder
             'cost' => 10.00,
             'stock_level' => 50,
             'is_active' => true,
+            'has_variants' => false,
         ]);
         foreach ($outlets as $outlet) {
-            $product3->outlets()->attach($outlet->id, ['price' => 19.50, 'stock_level' => rand(2, 20)]);
+            $product3->prices()->create([
+                'outlet_id' => $outlet->id,
+                'price' => 19.50,
+                'stock_level' => rand(2, 20)
+            ]);
         }
     }
 }

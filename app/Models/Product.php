@@ -26,10 +26,7 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function outlets()
-    {
-        return $this->belongsToMany(Outlet::class, 'product_outlets');
-    }
+
 
     public function variants()
     {

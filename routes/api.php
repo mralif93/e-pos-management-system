@@ -9,6 +9,6 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 Route::prefix('pos')->middleware(['auth:sanctum'])->group(function () {
-    Route::get('/products', [PosController::class, 'searchProducts']);
+    Route::get('/products', [PosController::class, 'searchProducts'])->name('api.pos.products');
     Route::post('/sales', [PosController::class, 'processSale']);
 });

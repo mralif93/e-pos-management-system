@@ -7,6 +7,7 @@ export default {
     "./resources/**/*.blade.php",
     "./resources/**/*.js",
     "./resources/**/*.vue",
+    "./resources/views/pos/**/*.blade.php",
   ],
   theme: {
     extend: {

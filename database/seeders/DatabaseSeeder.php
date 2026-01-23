@@ -15,13 +15,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(OutletSeeder::class);
-
-        User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@example.com',
-            'role' => 'Admin',
-            'password' => bcrypt('password'),
+        $this->call([
+            CategorySeeder::class,
+            OutletSeeder::class,
+            ProductSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }
