@@ -1,0 +1,328 @@
+{
+  "project_name": "Smart e-POS System",
+  "version": "1.0",
+  "description": "A Laravel + Filament-based Point of Sale system with multi-outlet support, LHDN e-Invoice compliance, offline mode, and real-time inventory control.",
+  "tech_stack": {
+    "backend": "Laravel 10+",
+    "admin_panel": "Filament PHP v3",
+    "database": ["MySQL", "PostgreSQL"],
+    "frontend": "Livewire + Alpine.js",
+    "deployment": ["Docker", "Cloud (AWS/Render)"]
+  },
+  "modules": [
+    {
+      "name": "Smart POS Frontend",
+      "description": "User-facing point-of-sale interface for cashier operations",
+      "features": [
+        {
+          "id": "pos-01",
+          "name": "Real-time product search & barcode scanning",
+          "type": "core"
+        },
+        {
+          "id": "pos-02",
+          "name": "Cart with modifiers (e.g., size, extras)",
+          "type": "core"
+        },
+        {
+          "id": "pos-03",
+          "name": "Split payment (Cash + Card + DuitNow QR)",
+          "type": "core"
+        },
+        {
+          "id": "pos-04",
+          "name": "Receipt preview & print (thermal/PDF)",
+          "type": "core"
+        },
+        {
+          "id": "pos-05",
+          "name": "Offline transaction queuing with auto-sync",
+          "type": "advanced"
+        },
+        {
+          "id": "pos-06",
+          "name": "Keyboard & touchscreen optimized UI",
+          "type": "ux"
+        }
+      ]
+    },
+    {
+      "name": "Multi-Outlet Management",
+      "description": "Support for multiple physical or logical business locations",
+      "features": [
+        {
+          "id": "outlet-01",
+          "name": "Create/edit/delete outlets",
+          "type": "core"
+        },
+        {
+          "id": "outlet-02",
+          "name": "Outlet-specific settings (printer, receipt, tax)",
+          "type": "core"
+        },
+        {
+          "id": "outlet-03",
+          "name": "Data isolation by outlet (users, sales, inventory)",
+          "type": "security"
+        },
+        {
+          "id": "outlet-04",
+          "name": "Admin cross-outlet visibility",
+          "type": "core"
+        }
+      ]
+    },
+    {
+      "name": "User & Role Management",
+      "description": "Granular access control for staff and administrators",
+      "features": [
+        {
+          "id": "user-01",
+          "name": "Roles: Admin, Manager, Cashier, Viewer",
+          "type": "core"
+        },
+        {
+          "id": "user-02",
+          "name": "One user = one outlet (except Admin)",
+          "type": "core"
+        },
+        {
+          "id": "user-03",
+          "name": "Role-based Filament navigation & permissions",
+          "type": "security"
+        },
+        {
+          "id": "user-04",
+          "name": "Password reset & session timeout",
+          "type": "security"
+        },
+        {
+          "id": "user-05",
+          "name": "Audit trail via user_id on all actions",
+          "type": "compliance"
+        }
+      ]
+    },
+    {
+      "name": "Product & Inventory Control",
+      "description": "Centralized catalog with per-outlet pricing and stock tracking",
+      "features": [
+        {
+          "id": "inventory-01",
+          "name": "Global product catalog with categories & barcodes",
+          "type": "core"
+        },
+        {
+          "id": "inventory-02",
+          "name": "SKU-level variants (size, color, etc.)",
+          "type": "core"
+        },
+        {
+          "id": "inventory-03",
+          "name": "Per-outlet pricing override",
+          "type": "core"
+        },
+        {
+          "id": "inventory-04",
+          "name": "Real-time stock level tracking",
+          "type": "core"
+        },
+        {
+          "id": "inventory-05",
+          "name": "Low-stock alerts",
+          "type": "advanced"
+        },
+        {
+          "id": "inventory-06",
+          "name": "Inventory adjustment log with reason",
+          "type": "compliance"
+        }
+      ]
+    },
+    {
+      "name": "Sales & Transaction Management",
+      "description": "End-to-end transaction lifecycle",
+      "features": [
+        {
+          "id": "sales-01",
+          "name": "Transaction history with filters",
+          "type": "core"
+        },
+        {
+          "id": "sales-02",
+          "name": "View line items, payment method, cashier",
+          "type": "core"
+        },
+        {
+          "id": "sales-03",
+          "name": "Void/cancel with PIN confirmation",
+          "type": "security"
+        },
+        {
+          "id": "sales-04",
+          "name": "Offline transaction sync monitor",
+          "type": "advanced"
+        },
+        {
+          "id": "sales-05",
+          "name": "Export transactions (CSV/Excel)",
+          "type": "ux"
+        }
+      ]
+    },
+    {
+      "name": "LHDN e-Invoice (MyInvois)",
+      "description": "Malaysian tax-compliant electronic invoicing",
+      "features": [
+        {
+          "id": "einvois-01",
+          "name": "Auto-generate e-invoice XML per transaction",
+          "type": "compliance"
+        },
+        {
+          "id": "einvois-02",
+          "name": "Submit to MyInvois API (manual/auto)",
+          "type": "integration"
+        },
+        {
+          "id": "einvois-03",
+          "name": "Track invoice status (pending/approved/rejected)",
+          "type": "core"
+        },
+        {
+          "id": "einvois-04",
+          "name": "Display & download QR code + XML",
+          "type": "ux"
+        },
+        {
+          "id": "einvois-05",
+          "name": "Secure storage of LHDN API credentials",
+          "type": "security"
+        }
+      ],
+      "compliance": {
+        "standard": "LHDN MyInvois",
+        "region": "Malaysia",
+        "required": true
+      }
+    },
+    {
+      "name": "Analytics & Reporting",
+      "description": "Actionable business insights",
+      "features": [
+        {
+          "id": "report-01",
+          "name": "Daily/Monthly Sales Summary",
+          "type": "core"
+        },
+        {
+          "id": "report-02",
+          "name": "Top-Selling Products",
+          "type": "core"
+        },
+        {
+          "id": "report-03",
+          "name": "Payment Method Breakdown",
+          "type": "core"
+        },
+        {
+          "id": "report-04",
+          "name": "Tax (SST/GST) Summary for LHDN",
+          "type": "compliance"
+        },
+        {
+          "id": "report-05",
+          "name": "Cross-outlet performance comparison",
+          "type": "advanced"
+        },
+        {
+          "id": "report-06",
+          "name": "Export to Excel/PDF",
+          "type": "ux"
+        }
+      ]
+    },
+    {
+      "name": "System Settings",
+      "description": "Global and outlet-specific configuration",
+      "features": [
+        {
+          "id": "settings-01",
+          "name": "Business name, logo, currency",
+          "type": "core"
+        },
+        {
+          "id": "settings-02",
+          "name": "Outlet-specific receipt & printer config",
+          "type": "core"
+        },
+        {
+          "id": "settings-03",
+          "name": "e-Invoice auto-submit toggle",
+          "type": "compliance"
+        },
+        {
+          "id": "settings-04",
+          "name": "Offline mode behavior",
+          "type": "advanced"
+        }
+      ]
+    },
+    {
+      "name": "Admin Panel (Filament)",
+      "description": "Backend management interface",
+      "features": [
+        {
+          "id": "filament-01",
+          "name": "Dashboard with real-time widgets",
+          "type": "ux"
+        },
+        {
+          "id": "filament-02",
+          "name": "CRUD for Outlets, Users, Products, Transactions",
+          "type": "core"
+        },
+        {
+          "id": "filament-03",
+          "name": "Custom pages for Reports & Stock Adjustment",
+          "type": "advanced"
+        },
+        {
+          "id": "filament-04",
+          "name": "Role-based menu visibility",
+          "type": "security"
+        }
+      ]
+    }
+  ],
+  "non_functional_requirements": {
+    "security": [
+      "Password hashing (bcrypt)",
+      "Session timeout (15 mins for cashiers)",
+      "Data isolation by outlet",
+      "Encrypted sensitive fields (e.g., API keys)"
+    ],
+    "performance": [
+      "POS loads in <1s",
+      "Offline-first design",
+      "Optimized DB queries with indexes"
+    ],
+    "compliance": [
+      "LHDN e-Invoice ready",
+      "Audit logs for financial actions",
+      "Data retention per Malaysian law"
+    ],
+    "extensibility": [
+      "RESTful API layer",
+      "Modular Laravel structure",
+      "Docker-ready deployment"
+    ]
+  },
+  "future_roadmap": [
+    "Customer loyalty program",
+    "Supplier & purchase order management",
+    "Mobile app (React Native)",
+    "Multi-language (EN/BM)",
+    "Multi-currency support"
+  ]
+}
