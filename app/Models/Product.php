@@ -28,4 +28,11 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    public function outlets()
+    {
+        return $this->belongsToMany(Outlet::class, 'product_outlets')
+                    ->withPivot('price', 'stock_level')
+                    ->withTimestamps();
+    }
 }

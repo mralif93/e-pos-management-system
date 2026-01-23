@@ -136,16 +136,20 @@ class ProductResource extends Resource
     {
         $query = parent::getEloquentQuery();
 
+        $selectedOutletId = null;
+
         if (auth()->user()->role === 'Admin') {
             if (Session::has('selected_admin_outlet_id') && Session::get('selected_admin_outlet_id') !== null) {
-                // Products don't directly have outlet_id, need to link through a pivot or a direct relationship if it exists
-                // For now, assuming products are global or associated via a future pivot
-                // This will be refined when per-outlet pricing/stock is implemented
+                $selectedOutletId = Session::get('selected_admin_outlet_id');
             }
         } elseif (auth()->user()->outlet_id) {
-            // Products don't directly have outlet_id, need to link through a pivot or a direct relationship if it exists
-            // For now, no filtering for non-admin on products based on outlet_id, assuming global products.
-            // This will be refined when per-outlet pricing/stock is implemented
+            $selectedOutletId = auth()->user()->outlet_id;
+        }
+
+        if ($selectedOutletId !== null) {
+            $query->whereHas('outlets', function (Builder $query) use ($selectedOutletId) {
+                $query->where('outlet_id', $selectedOutletId);
+            });
         }
 
         return $query;
@@ -154,7 +158,7 @@ class ProductResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\ProductOutletsRelationManager::class,
         ];
     }
 
