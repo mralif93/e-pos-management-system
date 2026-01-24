@@ -25,24 +25,51 @@ class OutletResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make()
-                    ->schema([
-                        Forms\Components\TextInput::make('name')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('outlet_code')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('address')
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('phone')
-                            ->tel()
-                            ->maxLength(255),
-                        Forms\Components\Toggle::make('is_active')
-                            ->required(),
-                        Forms\Components\Toggle::make('has_pos_access')
-                            ->required(),
-                    ])->columns(2)
+                Forms\Components\Tabs::make('Outlet Details')
+                    ->tabs([
+                        Forms\Components\Tabs\Tab::make('General')
+                            ->schema([
+                                Forms\Components\TextInput::make('name')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('outlet_code')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('address')
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('phone')
+                                    ->tel()
+                                    ->maxLength(255),
+                                Forms\Components\Toggle::make('is_active')
+                                    ->required(),
+                                Forms\Components\Toggle::make('has_pos_access')
+                                    ->required(),
+                            ])->columns(2),
+                        Forms\Components\Tabs\Tab::make('Settings')
+                            ->schema([
+                                Forms\Components\TextInput::make('settings.currency_symbol')
+                                    ->label('Currency Symbol')
+                                    ->default('$')
+                                    ->maxLength(5),
+                                Forms\Components\TextInput::make('settings.tax_rate')
+                                    ->label('Tax Rate (%)')
+                                    ->numeric()
+                                    ->default(0)
+                                    ->suffix('%'),
+                                Forms\Components\TextInput::make('settings.invoice_prefix')
+                                    ->label('Invoice Prefix')
+                                    ->placeholder('INV-')
+                                    ->maxLength(10),
+                                Forms\Components\Textarea::make('settings.receipt_header')
+                                    ->label('Receipt Header Message')
+                                    ->rows(2)
+                                    ->maxLength(255),
+                                Forms\Components\Textarea::make('settings.invoice_footer')
+                                    ->label('Invoice Footer Message')
+                                    ->rows(2)
+                                    ->maxLength(255),
+                            ])->columns(2),
+                    ])->columnSpanFull()
             ]);
     }
 
@@ -90,7 +117,7 @@ class OutletResource extends Resource
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [

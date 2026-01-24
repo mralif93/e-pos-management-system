@@ -17,6 +17,11 @@ class Outlet extends Model
         'settings',
     ];
 
+    protected $casts = [
+        'settings' => 'array',
+        'is_active' => 'boolean',
+    ];
+
     public function users()
     {
         return $this->hasMany(User::class);

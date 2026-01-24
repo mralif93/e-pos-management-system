@@ -22,7 +22,9 @@ class PosController extends Controller
             $apiToken = $user->createToken('pos-token', ['*'], now()->addMinutes(10))->plainTextToken;
         }
 
-        return view('pos.app', ['apiToken' => $apiToken]);
+        $outletSettings = $user->outlet ? $user->outlet->settings : [];
+
+        return view('pos.app', ['apiToken' => $apiToken, 'outletSettings' => $outletSettings]);
     }
 
     public function checkout()
@@ -37,22 +39,24 @@ class PosController extends Controller
         $userOutletId = $user ? $user->outlet_id : null;
 
         $products = Product::where('is_active', true)
-                            ->when($userOutletId, function ($queryBuilder) use ($userOutletId) {
-                                $queryBuilder->whereHas('prices', function ($priceQuery) use ($userOutletId) {
-                                    $priceQuery->where('outlet_id', $userOutletId);
-                                });
-                            })
-                            ->with(['prices' => function ($query) use ($userOutletId) { // Eager load prices for the specific outlet
-                                $query->where('outlet_id', $userOutletId);
-                            }])
-                           ->where(function ($queryBuilder) use ($query) {
-                               if (!empty($query)) {
-                                   $queryBuilder->where('name', 'like', '%' . $query . '%')
-                                                ->orWhere('slug', 'like', '%' . query . '%');
-                               }
-                           })
-                           ->select('id', 'name', 'description', 'price', 'cost', 'stock_level') // Select only necessary columns from products table
-                           ->get();
+            ->when($userOutletId, function ($queryBuilder) use ($userOutletId) {
+                $queryBuilder->whereHas('prices', function ($priceQuery) use ($userOutletId) {
+                    $priceQuery->where('outlet_id', $userOutletId);
+                });
+            })
+            ->with([
+                'prices' => function ($query) use ($userOutletId) { // Eager load prices for the specific outlet
+                    $query->where('outlet_id', $userOutletId);
+                }
+            ])
+            ->where(function ($queryBuilder) use ($query) {
+                if (!empty($query)) {
+                    $queryBuilder->where('name', 'like', '%' . $query . '%')
+                        ->orWhere('slug', 'like', '%' . $query . '%');
+                }
+            })
+            ->select('id', 'name', 'description', 'price', 'cost', 'stock_level') // Select only necessary columns from products table
+            ->get();
 
         // Map products to include the specific price for the current outlet
         $formattedProducts = $products->map(function ($product) use ($userOutletId) {
