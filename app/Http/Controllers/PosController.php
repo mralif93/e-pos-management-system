@@ -12,14 +12,29 @@ use Illuminate\Support\Facades\DB;
 
 class PosController extends Controller
 {
+    public function index()
+    {
+        $user = auth()->user();
+        $apiToken = null;
+        if ($user) {
+            // Check if user has an existing token, or create a new one
+            // For simplicity, we'll create a new one with a short expiration
+            $apiToken = $user->createToken('pos-token', ['*'], now()->addMinutes(10))->plainTextToken;
+        }
+
+        return view('pos.app', ['apiToken' => $apiToken]);
+    }
+
+    public function checkout()
+    {
+        return view('pos.checkout');
+    }
+
     public function searchProducts(Request $request)
     {
         $query = $request->input('query');
         $user = auth()->user();
         $userOutletId = $user ? $user->outlet_id : null;
-
-        // Debugging statements
-        // dd('User ID: ' . ($user ? $user->id : 'null'), 'User Outlet ID: ' . ($userOutletId ?: 'null'));
 
         $products = Product::where('is_active', true)
                             ->when($userOutletId, function ($queryBuilder) use ($userOutletId) {
@@ -27,16 +42,35 @@ class PosController extends Controller
                                     $priceQuery->where('outlet_id', $userOutletId);
                                 });
                             })
+                            ->with(['prices' => function ($query) use ($userOutletId) { // Eager load prices for the specific outlet
+                                $query->where('outlet_id', $userOutletId);
+                            }])
                            ->where(function ($queryBuilder) use ($query) {
-                               $queryBuilder->where('name', 'like', '%' . $query . '%')
-                                            ->orWhere('slug', 'like', '%' . $query . '%');
+                               if (!empty($query)) {
+                                   $queryBuilder->where('name', 'like', '%' . $query . '%')
+                                                ->orWhere('slug', 'like', '%' . query . '%');
+                               }
                            })
+                           ->select('id', 'name', 'description', 'price', 'cost', 'stock_level') // Select only necessary columns from products table
                            ->get();
 
-        // Debugging statements
-        // dd('Products found: ' . $products->count(), $products->toArray());
+        // Map products to include the specific price for the current outlet
+        $formattedProducts = $products->map(function ($product) use ($userOutletId) {
+            $outletPrice = $product->prices->firstWhere('outlet_id', $userOutletId);
+            $price = $outletPrice ? $outletPrice->price : $product->price; // Use outlet price if available, else default product price
+            $stockLevel = $outletPrice ? $outletPrice->stock_level : $product->stock_level; // Use outlet stock if available, else default product stock
 
-        return response()->json($products);
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'description' => $product->description,
+                'price' => $price,
+                'cost' => $product->cost, // Keep default cost, as it's not per-outlet
+                'stock_level' => $stockLevel,
+            ];
+        });
+
+        return response()->json($formattedProducts);
     }
 
     public function processSale(Request $request)

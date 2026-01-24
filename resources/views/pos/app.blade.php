@@ -55,7 +55,7 @@
                     </div>
                 </div>
                 
-                <button id="process-sale-btn" class="w-full bg-green-500 text-white py-3 px-4 rounded-lg hover:bg-green-600 text-xl font-semibold">Process Sale</button>
+                <button type="button" id="process-sale-btn" onclick="posApp.redirectToCheckout()" class="w-full bg-green-500 text-white py-3 px-4 rounded-lg hover:bg-green-600 text-xl font-semibold">Process Sale</button>
             </div>
         </div>
     </div>
@@ -136,7 +136,17 @@
 
             setupEventListeners() {
                 document.getElementById('product-search-input').addEventListener('input', () => this.fetchProducts());
-                document.getElementById('process-sale-btn').addEventListener('click', () => this.processSale());
+                // The process-sale-btn now uses an onclick handler directly to redirectToCheckout
+                // document.getElementById('process-sale-btn').addEventListener('click', () => this.processSale());
+            },
+
+            redirectToCheckout() {
+                if (this.cart.length === 0) {
+                    Swal.fire('Error', 'Cart is empty. Please add items to the cart before proceeding to checkout.', 'error');
+                    return;
+                }
+                // Redirect to the checkout page
+                window.location.href = '{{ route('pos.checkout') }}';
             },
 
             setupAddToCartButtons() {

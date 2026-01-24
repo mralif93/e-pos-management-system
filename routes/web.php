@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Livewire\Pos\App; // Import the Livewire component
+use App\Http\Controllers\PosController; // Add this
 use App\Http\Controllers\PosLoginController;
 
 Route::get('/', function () {
@@ -20,5 +20,6 @@ Route::get('/login', function () {
 
 
 Route::middleware(['auth:web'])->group(function () { // Use 'web' guard for session-based auth
-    Route::get('/pos', App::class)->name('pos.home')->middleware('can:access-pos'); // Add a gate for POS access
+    Route::get('/pos', [PosController::class, 'index'])->name('pos.home')->middleware('can:access-pos'); // Add a gate for POS access
+    Route::get('/pos/checkout', [PosController::class, 'checkout'])->name('pos.checkout')->middleware('can:access-pos');
 });
