@@ -233,6 +233,9 @@
     <script>
         function checkoutApp() {
             return {
+                apiToken: '{{ $apiToken }}',
+                userId: {{ auth()->id() }},
+                outletId: {{ auth()->user()->outlet_id }},
                 cart: [],
                 currency: '{{ $outletSettings['currency_symbol'] ?? '$' }}',
                 taxRate: {{ $outletSettings['tax_rate'] ?? 0 }},
@@ -243,16 +246,14 @@
 
                 paymentMethod: 'cash',
                 tenderAmount: 0,
-                tenderAmountDisplay: '', // String for input
+                tenderAmountDisplay: '',
 
                 init() {
+                    window.posApp = this; // Expose for Swal onclick
                     const storedCart = localStorage.getItem('pos_cart');
                     if (storedCart) {
                         this.cart = JSON.parse(storedCart);
                         this.calculateTotals();
-                    } else {
-                        // Redirect back if empty (optional safety)
-                        // window.location.href = '{{ route('pos.home') }}';
                     }
                 },
 
@@ -270,7 +271,6 @@
                     return this.currency + parseFloat(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 },
 
-                // Keypad Logic
                 appendNumber(num) {
                     if (num === '.' && this.tenderAmountDisplay.includes('.')) return;
                     if (this.tenderAmountDisplay === '' && num === '.') this.tenderAmountDisplay = '0.';
@@ -291,65 +291,116 @@
 
                 addAmount(amount) {
                     this.tenderAmount += amount;
-                    this.tenderAmountDisplay = this.tenderAmount.toFixed(2); // Or keep normal?
+                    this.tenderAmountDisplay = this.tenderAmount.toFixed(2);
+                },
+
+                finishOrder() {
+                    localStorage.removeItem('pos_cart');
+                    window.location.href = '{{ route('pos.home') }}';
                 },
 
                 processPayment() {
+                    if (this.paymentMethod === 'cash' && this.changeAmount < 0) {
+                        return; // Should be handled by button disabled state too
+                    }
+
                     // 1. Processing State
                     Swal.fire({
                         html: `
                             <div class="py-6">
                                 <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-{{ $theme }}-100 border-t-{{ $theme }}-600 mb-4"></div>
                                 <h3 class="text-xl font-bold text-slate-800">Processing Payment</h3>
-                                <p class="text-sm text-slate-500 mt-2">Please wait while we secure the transaction...</p>
+                                <p class="text-sm text-slate-500 mt-2">Connecting to secure gateway...</p>
                             </div>
                         `,
                         showConfirmButton: false,
                         allowOutsideClick: false,
                         width: 400,
                         padding: '2rem',
-                        customClass: {
-                            popup: 'rounded-[24px] shadow-2xl'
+                        customClass: { popup: 'rounded-[24px] shadow-2xl' },
+                        heightAuto: false // Prevent body height collapse
+                    });
+
+                    // Construct Payload
+                    const payload = {
+                        outlet_id: this.outletId,
+                        user_id: this.userId,
+                        customer_id: null, // Future: Add customer selection
+                        total_amount: this.total,
+                        status: 'completed', // Direct completion for POS
+                        items: this.cart.map(item => ({
+                            product_id: item.id,
+                            quantity: item.quantity,
+                            price: item.price
+                        })),
+                        payments: [{
+                            amount: this.total, // For now assume full payment
+                            payment_method: this.paymentMethod
+                        }]
+                    };
+
+                    fetch('{{ route('api.pos.sales') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + this.apiToken,
+                            'Accept': 'application/json'
                         },
-                        heightAuto: false,
-                        timer: 2000, // Simulate delay
-                    }).then(() => {
-                        // 2. Success State
-                        Swal.fire({
-                            html: `
-                                <div class="text-center py-4">
-                                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        body: JSON.stringify(payload)
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.json().then(err => { throw err; });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            // 2. Success State
+                            Swal.fire({
+                                html: `
+                                <div class="w-full p-6 text-center">
+                                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                     </div>
-                                    <h3 class="text-2xl font-black text-slate-800 mb-2">Payment Successful!</h3>
-                                    <p class="text-slate-500">Order #${this.orderId} has been verified.</p>
+                                    <h3 class="text-xl font-black text-slate-800 mb-1">Payment Successful!</h3>
+                                    <p class="text-xs text-slate-500">Transaction #${data.sale.id}</p>
                                     
-                                    <div class="bg-slate-50 rounded-xl p-4 mt-6 mb-2 border border-slate-100">
-                                        <div class="flex justify-between items-center text-sm text-slate-600 mb-2">
+                                    <div class="bg-slate-50 rounded-lg p-3 mt-4 mb-4 border border-slate-100">
+                                        <div class="flex justify-between items-center text-xs text-slate-600 mb-1">
                                             <span>Amount Paid</span>
                                             <span class="font-bold">${this.tenderAmountDisplay ? this.formatPrice(this.tenderAmount) : this.formatPrice(this.total)}</span>
                                         </div>
-                                        <div class="flex justify-between items-center text-lg text-slate-800 font-bold border-t border-dashed border-slate-200 pt-2">
+                                        <div class="flex justify-between items-center text-base text-slate-800 font-bold border-t border-dashed border-slate-200 pt-1">
                                             <span>Change Due</span>
                                             <span class="text-{{ $theme }}-600">${this.formatPrice(Math.max(0, this.changeAmount))}</span>
                                         </div>
                                     </div>
+
+                                    <button onclick="posApp.finishOrder()" class="w-full bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white font-bold py-3 rounded-xl text-base shadow-md shadow-{{ $theme }}-200 transition-all transform hover:scale-[1.02]">
+                                        Start New Order
+                                    </button>
                                 </div>
                             `,
-                            showConfirmButton: true,
-                            confirmButtonText: 'Start New Order',
-                            heightAuto: false,
-                            width: 450,
-                            padding: '2.5rem',
-                            customClass: {
-                                popup: 'rounded-[32px] shadow-2xl',
-                                confirmButton: 'w-full bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white font-bold py-4 rounded-xl text-lg shadow-lg shadow-{{ $theme }}-200 transition-all transform hover:scale-[1.02]'
-                            }
-                        }).then(() => {
-                            localStorage.removeItem('pos_cart');
-                            window.location.href = '{{ route('pos.home') }}';
+                                showConfirmButton: false, // Hide default button to remove extra spacing
+                                allowOutsideClick: false,
+                                customClass: {
+                                    popup: 'rounded-[24px] shadow-2xl overflow-hidden'
+                                },
+                                padding: 0,
+                                width: 400,
+                                heightAuto: false
+                            }); // No .then() needed as button handles action
+                        })
+                        .catch(error => {
+                            console.error('Payment Error:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Payment Failed',
+                                text: error.message || 'An error occurred while processing the payment.',
+                                customClass: { popup: 'rounded-xl shadow-xl' },
+                                heightAuto: false
+                            });
                         });
-                    });
                 }
             }
         }

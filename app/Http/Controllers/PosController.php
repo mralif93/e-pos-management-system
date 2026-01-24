@@ -30,9 +30,13 @@ class PosController extends Controller
     public function checkout()
     {
         $user = auth()->user();
+        $apiToken = null;
+        if ($user) {
+            $apiToken = $user->createToken('pos-token', ['*'], now()->addMinutes(30))->plainTextToken; // Increased to 30 mins for checkout
+        }
         $outletSettings = $user->outlet ? $user->outlet->settings : [];
 
-        return view('pos.checkout', ['outletSettings' => $outletSettings]);
+        return view('pos.checkout', ['apiToken' => $apiToken, 'outletSettings' => $outletSettings]);
     }
 
     public function searchProducts(Request $request)
