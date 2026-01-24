@@ -248,12 +248,12 @@
 
                     if (this.products.length === 0) {
                         productList.innerHTML = `
-                                                                                                                        <div class="col-span-full flex flex-col items-center justify-center text-slate-400 py-20">
-                                                                                                                            <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                                                                                                                            <p class="text-lg font-medium">No products found</p>
-                                                                                                                            <p class="text-sm">Try searching for something else</p>
-                                                                                                                        </div>
-                                                                                                                    `;
+                                                                                                                                                <div class="col-span-full flex flex-col items-center justify-center text-slate-400 py-20">
+                                                                                                                                                    <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                                                                                                                                    <p class="text-lg font-medium">No products found</p>
+                                                                                                                                                    <p class="text-sm">Try searching for something else</p>
+                                                                                                                                                </div>
+                                                                                                                                            `;
                         return;
                     }
 
@@ -265,48 +265,48 @@
 
                         if (imageUrl) {
                             imageHtml = `
-                                    <img src="${imageUrl}" 
-                                         alt="${product.name}" 
-                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                         onerror="this.onerror=null; this.parentElement.innerHTML=posApp.getFallbackHtml('${product.name.replace(/'/g, "\\'")}')">
-                                    `;
+                                                            <img src="${imageUrl}" 
+                                                                 alt="${product.name}" 
+                                                                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                                                 onerror="this.onerror=null; this.parentElement.innerHTML=posApp.getFallbackHtml('${product.name.replace(/'/g, "\\'")}')">
+                                                            `;
                         } else {
                             imageHtml = this.getFallbackHtml(product.name);
                         }
 
                         const productCard = `
-                                    <div class="group bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-lg hover:border-indigo-100 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full transform hover:-translate-y-1"
-                                            data-product-id="${product.id}"
-                                            data-product-name="${product.name}"
-                                            data-product-price="${product.price}">
+                                                            <div class="group bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-lg hover:border-indigo-100 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full transform hover:-translate-y-1"
+                                                                    data-product-id="${product.id}"
+                                                                    data-product-name="${product.name}"
+                                                                    data-product-price="${product.price}">
 
-                                        <!-- Image Area -->
-                                        <div class="aspect-[3/2] bg-slate-50 relative overflow-hidden">
-                                            ${imageHtml}
+                                                                <!-- Image Area -->
+                                                                <div class="aspect-[3/2] bg-slate-50 relative overflow-hidden">
+                                                                    ${imageHtml}
 
-                                            <div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                <div class="bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-sm text-indigo-600">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                        </div>
+                                                                    <div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                                        <div class="bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-sm text-indigo-600">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                                                            </svg>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
 
-                                        <!-- Content -->
-                                        <div class="p-3 flex flex-col flex-grow">
-                                            <h3 class="font-bold text-slate-800 text-base leading-snug mb-1 group-hover:text-indigo-600 transition-colors line-clamp-2" title="${product.name}">${product.name}</h3>
-                                            <p class="text-xs text-slate-500 line-clamp-2 mb-3 h-8">${product.description || ''}</p>
+                                                                <!-- Content -->
+                                                                <div class="p-3 flex flex-col flex-grow">
+                                                                    <h3 class="font-bold text-slate-800 text-base leading-snug mb-1 group-hover:text-indigo-600 transition-colors line-clamp-2" title="${product.name}">${product.name}</h3>
+                                                                    <p class="text-xs text-slate-500 line-clamp-2 mb-3 h-8">${product.description || ''}</p>
 
-                                            <div class="mt-auto flex items-center justify-between">
-                                                <span class="font-extrabold text-slate-900 text-lg">${this.formatPrice(product.price)}</span>
-                                                <button class="add-to-cart-btn bg-slate-100 hover:bg-indigo-600 hover:text-white text-slate-700 p-2 rounded-lg transition-colors duration-200">
-                                                    <span class="text-xs font-bold px-1">ADD</span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `;
+                                                                    <div class="mt-auto flex items-center justify-between">
+                                                                        <span class="font-extrabold text-slate-900 text-lg">${this.formatPrice(product.price)}</span>
+                                                                        <button class="add-to-cart-btn bg-slate-100 hover:bg-indigo-600 hover:text-white text-slate-700 p-2 rounded-lg transition-colors duration-200">
+                                                                            <span class="text-xs font-bold px-1">ADD</span>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        `;
                         productList.innerHTML += productCard;
                     });
                     this.setupAddToCartButtons();
@@ -327,10 +327,10 @@
                     const textColor = `hsl(${hue}, 70%, 35%)`;
 
                     return `
-                                    <div class="w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:scale-110" style="background-color: ${bgColor}; color: ${textColor};">
-                                        <span class="text-3xl font-extrabold tracking-wider select-none">${initials}</span>
-                                    </div>
-                                `;
+                                                            <div class="w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:scale-110" style="background-color: ${bgColor}; color: ${textColor};">
+                                                                <span class="text-3xl font-extrabold tracking-wider select-none">${initials}</span>
+                                                            </div>
+                                                        `;
                 }, // End getFallbackHtml, and continuation of object...
 
                 setupAddToCartButtons() { // Re-declaring to ensure valid object syntax structure in replace
@@ -356,7 +356,89 @@
                         });
                         return;
                     }
-                    window.location.href = '{{ route('pos.checkout') }}';
+
+                    // Calculate totals for the invoice
+                    let subtotal = 0;
+
+                    // Header - Clean & Minimalist
+                    let invoiceHtml = `
+                                <div class="text-left w-full">
+                                    <div class="flex justify-between items-end mb-6 pb-4 border-b border-dashed border-slate-200">
+                                        <div>
+                                            <h3 class="text-slate-900 font-bold text-2xl">Order Summary</h3>
+                                            <p class="text-slate-500 text-sm mt-1">Order #${Math.floor(1000 + Math.random() * 9000)} • ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <span class="block text-3xl font-bold text-indigo-600">${this.cart.reduce((acc, item) => acc + item.quantity, 0)}</span>
+                                            <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">Items</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="max-h-[350px] overflow-y-auto custom-scrollbar pr-4 -mr-2 mb-8 space-y-4">
+                            `;
+
+                    this.cart.forEach(item => {
+                        const itemTotal = item.price * item.quantity;
+                        subtotal += itemTotal;
+                        invoiceHtml += `
+                                    <div class="flex justify-between items-center group">
+                                        <div class="flex items-center gap-4 overflow-hidden">
+                                             <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-sm font-bold text-slate-600">${item.quantity}×</div>
+                                             <div class="min-w-0">
+                                                <p class="font-bold text-slate-800 text-base truncate">${item.name}</p>
+                                                <p class="text-xs text-slate-400 font-medium">@ ${this.formatPrice(item.price)}</p>
+                                             </div>
+                                        </div>
+                                        <span class="font-bold text-slate-800 text-base whitespace-nowrap pl-4">${this.formatPrice(itemTotal)}</span>
+                                    </div>
+                                `;
+                    });
+
+                    const taxAmount = subtotal * (this.taxRate / 100);
+                    const total = subtotal + taxAmount;
+
+                    invoiceHtml += `
+                                    </div>
+
+                                    <!-- Footer matching Header style -->
+                                    <div class="pt-6 border-t border-dashed border-slate-200 space-y-3">
+                                        <div class="flex justify-between text-base text-slate-500">
+                                            <span>Subtotal</span>
+                                            <span class="font-semibold text-slate-700">${this.formatPrice(subtotal)}</span>
+                                        </div>
+                                        <div class="flex justify-between text-base text-slate-500 pb-4 border-b border-slate-100">
+                                            <span>Service Tax (${this.taxRate}%)</span>
+                                            <span class="font-semibold text-slate-700">${this.formatPrice(taxAmount)}</span>
+                                        </div>
+                                        <div class="flex justify-between items-center pt-2">
+                                            <span class="text-slate-800 font-bold text-xl">Total Amount</span>
+                                            <span class="text-3xl font-black text-indigo-600">${this.formatPrice(total)}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+
+                    Swal.fire({
+                        html: invoiceHtml,
+                        showCancelButton: true,
+                        buttonsStyling: false,
+                        confirmButtonText: 'Confirm & Pay',
+                        cancelButtonText: 'Cancel',
+                        width: 600,
+                        padding: '2.5rem',
+                        customClass: {
+                            popup: 'rounded-[24px] shadow-2xl',
+                            actions: 'gap-2',
+                            confirmButton: 'bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold py-4 px-8 text-base shadow-lg shadow-indigo-200 transition-all transform hover:scale-105',
+                            cancelButton: 'bg-white hover:bg-slate-50 text-slate-500 border border-slate-200 rounded-xl font-bold py-4 px-8 text-base transition-colors'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Persist cart for checkout page
+                            localStorage.setItem('pos_cart', JSON.stringify(this.cart));
+                            window.location.href = '{{ route('pos.checkout') }}';
+                        }
+                    });
                 },
 
                 setupAddToCartButtons() {
@@ -438,11 +520,11 @@
 
                     if (this.cart.length === 0) {
                         cartItemsContainer.innerHTML = `
-                                    <div class="h-full flex flex-col items-center justify-center text-slate-400 p-8 text-center opacity-60">
-                                        <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                                        <p class="text-sm">Your cart is currently empty.</p>
-                                    </div>
-                                `;
+                                                            <div class="h-full flex flex-col items-center justify-center text-slate-400 p-8 text-center opacity-60">
+                                                                <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                                                                <p class="text-sm">Your cart is currently empty.</p>
+                                                            </div>
+                                                        `;
                         // Reset totals
                         document.getElementById('cart-subtotal').innerText = this.formatPrice(0);
                         document.getElementById('cart-tax').innerText = this.formatPrice(0);
@@ -456,39 +538,39 @@
                         subtotal += itemTotal;
 
                         const cartItem = `
-                                        <div class="group flex items-center justify-between p-3 mb-3 bg-white rounded-xl border border-slate-100 shadow-sm hover:border-indigo-200 transition-all animate-fade-in" style="animation-duration: 0.3s">
+                                                                <div class="group flex items-center justify-between p-3 mb-3 bg-white rounded-xl border border-slate-100 shadow-sm hover:border-indigo-200 transition-all animate-fade-in" style="animation-duration: 0.3s">
 
-                                            <!-- Info & Qty -->
-                                            <div class="flex-grow min-w-0 pr-3">
-                                                <div class="flex justify-between items-start mb-1.5">
-                                                    <p class="font-bold text-slate-800 text-sm truncate leading-tight w-full" title="${item.name}">${item.name}</p>
-                                                </div>
+                                                                    <!-- Info & Qty -->
+                                                                    <div class="flex-grow min-w-0 pr-3">
+                                                                        <div class="flex justify-between items-start mb-1.5">
+                                                                            <p class="font-bold text-slate-800 text-sm truncate leading-tight w-full" title="${item.name}">${item.name}</p>
+                                                                        </div>
 
-                                                <div class="flex items-center justify-between">
-                                                    <!-- Qty Controls -->
-                                                    <div class="flex items-center bg-slate-50 rounded-lg border border-slate-200 p-0.5">
-                                                        <button data-product-id="${item.id}" class="remove-from-cart-btn w-6 h-6 flex items-center justify-center text-slate-500 hover:bg-white hover:text-red-500 hover:shadow-sm rounded-md transition-all">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-                                                            </svg>
-                                                        </button>
-                                                        <span class="font-mono font-bold text-slate-700 text-sm w-8 text-center select-none">${item.quantity}</span>
-                                                        <button onclick="posApp.addToCart(${item.id}, '${item.name.replace(/'/g, "\\'")}', ${item.price})" 
-                                                            class="w-6 h-6 flex items-center justify-center text-slate-500 hover:bg-white hover:text-green-600 hover:shadow-sm rounded-md transition-all">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                                                            </svg>
-                                                        </button>
-                                                    </div>
+                                                                        <div class="flex items-center justify-between">
+                                                                            <!-- Qty Controls -->
+                                                                            <div class="flex items-center bg-slate-50 rounded-lg border border-slate-200 p-0.5">
+                                                                                <button data-product-id="${item.id}" class="remove-from-cart-btn w-6 h-6 flex items-center justify-center text-slate-500 hover:bg-white hover:text-red-500 hover:shadow-sm rounded-md transition-all">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                                                                                    </svg>
+                                                                                </button>
+                                                                                <span class="font-mono font-bold text-slate-700 text-sm w-8 text-center select-none">${item.quantity}</span>
+                                                                                <button onclick="posApp.addToCart(${item.id}, '${item.name.replace(/'/g, "\\'")}', ${item.price})" 
+                                                                                    class="w-6 h-6 flex items-center justify-center text-slate-500 hover:bg-white hover:text-green-600 hover:shadow-sm rounded-md transition-all">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                                                                    </svg>
+                                                                                </button>
+                                                                            </div>
 
-                                                    <div class="text-right">
-                                                        <span class="font-bold text-slate-900 text-sm block">${this.formatPrice(itemTotal)}</span>
-                                                        <span class="text-[10px] text-slate-400 font-medium block">@ ${this.formatPrice(item.price)}/ea</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    `;
+                                                                            <div class="text-right">
+                                                                                <span class="font-bold text-slate-900 text-sm block">${this.formatPrice(itemTotal)}</span>
+                                                                                <span class="text-[10px] text-slate-400 font-medium block">@ ${this.formatPrice(item.price)}/ea</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            `;
                         cartItemsContainer.innerHTML += cartItem;
                     });
 

@@ -29,7 +29,10 @@ class PosController extends Controller
 
     public function checkout()
     {
-        return view('pos.checkout');
+        $user = auth()->user();
+        $outletSettings = $user->outlet ? $user->outlet->settings : [];
+
+        return view('pos.checkout', ['outletSettings' => $outletSettings]);
     }
 
     public function searchProducts(Request $request)

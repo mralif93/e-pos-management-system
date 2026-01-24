@@ -1,131 +1,358 @@
-<div class="checkout-screen bg-[#F8F9FA] p-[20px] rounded-[16px] min-h-screen">
-    {{-- Header --}}
-    <div class="navbar flex justify-between items-center mb-[20px]">
-        <button class="back-button bg-white rounded-[24px] py-[8px] px-[16px] text-[14px] font-[500]">← Menu</button>
-        <div class="user-profile flex items-center justify-end">
-            <img src="https://example.com/avatar/khushboo.jpg" alt="User Avatar" class="w-[32px] h-[32px] rounded-full">
-            <span class="username text-[14px] font-[600] ml-[8px]">Khushboo</span>
-            {{-- Assuming a simple settings icon, can be replaced with an actual SVG/FontAwesome icon --}}
-            <svg class="w-[20px] h-[20px] text-[#666] ml-[8px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-        </div>
-    </div>
+<!DOCTYPE html>
+<html lang="en">
 
-    {{-- Customer Info Banner --}}
-    <div class="customer-info bg-white rounded-[12px] p-[12px_16px] mb-[16px] flex items-center gap-[16px]">
-        <img src="https://example.com/avatar/anup.jpg" alt="Customer Avatar" class="w-[32px] h-[32px] rounded-full">
-        <span class="customer-name text-[14px] font-[600]">Anup kumar</span>
-        <span class="phone-number text-[14px] text-[#666] ml-[16px]">7088706543</span>
-        <span class="discount-badge bg-[#E0F7EA] text-[#00C853] py-[4px] px-[8px] rounded-[8px] text-[12px] ml-[16px]">15% Discount offer</span>
-        <span class="customer-type bg-[#F1F3F4] text-[#555] py-[4px] px-[8px] rounded-[8px] text-[12px] ml-[16px]">Regular</span>
-    </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS Payment - {{ config('app.name', 'Laravel') }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
 
-    {{-- Main Content Grid --}}
-    <div class="main-content grid grid-cols-2 gap-[20px]">
-        {{-- Order Details Section --}}
-        <div class="order-details-section bg-white rounded-[12px] p-[16px] shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
-            <h2 class="text-lg font-bold mb-[12px]">Order details</h2>
-            <div class="order-table-header text-[12px] text-[#666] font-[500] pb-[8px] border-b border-[#EEE] grid grid-cols-4">
-                <span>Dish name</span>
-                <span>Add ons</span>
-                <span>Quantity</span>
-                <span class="text-right">Amounts</span>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="bg-slate-100 h-screen overflow-hidden flex items-center justify-center p-4">
+
+    <div x-data="checkoutApp()" x-init="init()"
+        class="bg-white w-full max-w-7xl h-full max-h-[90vh] rounded-3xl shadow-2xl flex overflow-hidden ring-1 ring-black/5">
+
+        <!-- Left: Order Summary -->
+        <div class="w-1/3 border-r border-slate-100 bg-white flex flex-col relative z-20">
+            <div class="p-8 pt-10">
+                <div class="flex items-center gap-4 mb-1">
+                    <button onclick="window.location.href='{{ route('pos.home') }}'"
+                        class="text-slate-400 hover:text-slate-600 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                    </button>
+                    <h2 class="text-2xl font-bold text-slate-800">Order Summary</h2>
+                </div>
+                <div class="ml-10">
+                    <span
+                        class="px-2.5 py-0.5 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-md tracking-wide">#<span
+                            x-text="orderId"></span></span>
+                </div>
             </div>
-            <div class="order-items-list">
-                {{-- Item 1 --}}
-                <div class="flex justify-between items-center py-[12px] border-b border-[#F5F5F5]">
-                    <span class="flex-1">Mexican tacos</span>
-                    <span class="flex-1 text-[#666]">7 Delicious add ons</span>
-                    <span class="w-[50px] text-center">2</span>
-                    <span class="w-[80px] text-right">$12.77</span>
-                </div>
-                {{-- Item 2 --}}
-                <div class="flex justify-between items-center py-[12px] border-b border-[#F5F5F5]">
-                    <span class="flex-1">Submarine sandwich</span>
-                    <span class="flex-1 text-[#666]">3 Delicious add ons</span>
-                    <span class="w-[50px] text-center">2</span>
-                    <span class="w-[80px] text-right">$19.46</span>
-                </div>
-                {{-- Item 3 --}}
-                <div class="flex justify-between items-center py-[12px]">
-                    <span class="flex-1">Garlic toast</span>
-                    <span class="flex-1 text-[#666]">2 Delicious add ons</span>
-                    <span class="w-[50px] text-center">2</span>
-                    <span class="w-[80px] text-right">$8.69</span>
-                </div>
-            </div>
-        </div>
 
-        {{-- Payment Section --}}
-        <div class="payment-section bg-white rounded-[12px] p-[16px] shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
-            <h2 class="text-lg font-bold mb-[4px]">Select payment mode</h2>
-            <p class="text-[12px] text-[#666] mb-[16px]">Select a payment method that helps our customers to feel seamless experience during checkout</p>
-            <div class="payment-options">
-                {{-- Card Option --}}
-                <div class="option-card bg-[#E0F7EA] border border-[#00C853] rounded-[12px] p-[12px_16px] mb-[8px] flex items-center">
-                    {{-- Assuming simple icon placeholder --}}
-                    <svg class="w-[24px] h-[24px] mr-[12px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 0 002 2z"></path></svg>
-                    <div>
-                        <h3 class="font-semibold">Pay using card</h3>
-                        <p class="text-[12px] text-[#666]">Complete the payment using credit or debit card, using swipe machine</p>
+            <div class="flex-grow overflow-y-auto custom-scrollbar px-8 pb-4 space-y-6">
+                <template x-for="item in cart" :key="item.id">
+                    <div class="flex justify-between items-center group">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center font-bold text-slate-600 text-sm"
+                                x-text="item.quantity"></div>
+                            <div>
+                                <p class="font-bold text-slate-800 text-base" x-text="item.name"></p>
+                                <p class="text-xs text-slate-400 font-medium" x-text="'@ ' + formatPrice(item.price)">
+                                </p>
+                            </div>
+                        </div>
+                        <span class="font-bold text-slate-800" x-text="formatPrice(item.price * item.quantity)"></span>
+                    </div>
+                </template>
+            </div>
+
+            <div class="p-8 pt-4 bg-white mt-auto">
+                <div class="space-y-3 mb-6 border-t border-dashed border-slate-100 pt-6">
+                    <div class="flex justify-between text-sm text-slate-500 font-medium">
+                        <span>Subtotal</span>
+                        <span class="text-slate-700" x-text="formatPrice(subtotal)"></span>
+                    </div>
+                    <div class="flex justify-between text-sm text-slate-500 font-medium">
+                        <span>Service Tax (<span x-text="taxRate"></span>%)</span>
+                        <span class="text-slate-700" x-text="formatPrice(taxAmount)"></span>
                     </div>
                 </div>
-                {{-- Cash Option --}}
-                <div class="option-card bg-white border border-[#DDD] rounded-[12px] p-[12px_16px] mb-[8px] flex items-center">
-                    {{-- Assuming simple icon placeholder --}}
-                    <svg class="w-[24px] h-[24px] mr-[12px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                    <div>
-                        <h3 class="font-semibold">Pay on cash</h3>
-                        <p class="text-[12px] text-[#666]">Complete order payment using cash on hand from customers easy and simple</p>
-                    </div>
+                <div class="flex justify-between items-end">
+                    <span class="text-slate-800 font-bold text-lg">Total Payable</span>
+                    <span class="text-3xl font-black text-indigo-600 tracking-tight" x-text="formatPrice(total)"></span>
                 </div>
-                {{-- UPI Option --}}
-                <div class="option-card bg-white border border-[#DDD] rounded-[12px] p-[12px_16px] flex items-center">
-                    {{-- Assuming simple icon placeholder --}}
-                    <svg class="w-[24px] h-[24px] mr-[12px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M12 20a9 9 0 100-18 9 9 0 000 18z"></path></svg>
-                    <div>
-                        <h3 class="font-semibold">Pay using UPI or scan</h3>
-                        <p class="text-[12px] text-[#666]">Ask customer to complete the payment using by scanning QR code or upi it</p>
-                    </div>
-                </div>
-            </div>
-            <button class="confirm-payment-button bg-[#00C853] text-white rounded-[24px] py-[12px] px-[24px] text-[16px] font-[600] mt-[20px] w-full text-center">Confirm payment</button>
-        </div>
-    </div>
-
-    {{-- Bottom Section Grid --}}
-    <div class="bottom-section grid grid-cols-2 gap-[20px] mt-[20px]">
-        {{-- Discount Coupon Section --}}
-        <div class="discount-coupon-section bg-white rounded-[12px] p-[16px] shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
-            <h2 class="text-lg font-bold mb-[12px]">Discount coupon</h2>
-            <p class="coupon-description text-[12px] text-[#666] mb-[12px]">Here apply the offered discount coupons or customers provided coupons for special discount on current cart value.</p>
-            <div class="flex items-center">
-                <input type="text" placeholder="Enter coupon code here ex: 2XCFYD5" class="coupon-input border border-[#DDD] rounded-[8px] py-[8px] px-[12px] w-[70%] text-[14px]">
-                <button class="apply-button bg-[#00C853] text-white rounded-[8px] py-[8px] px-[16px] text-[14px] ml-[8px]">Apply</button>
             </div>
         </div>
 
-        {{-- Billing Summary --}}
-        <div class="billing-summary bg-white rounded-[12px] p-[16px] shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
-            <div class="flex justify-between mb-[8px]">
-                <span>Subtotal</span>
-                <span>$40.92</span>
+        <!-- Right: Payment Interface -->
+        <div class="w-2/3 bg-white flex flex-col relative">
+
+            <div class="absolute top-0 right-0 p-6 flex items-center gap-2">
+                <div class="flex items-center gap-2 text-sm text-slate-500">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span x-text="new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'})"></span>
+                </div>
             </div>
-            <div class="flex justify-between mb-[4px] text-[#666]">
-                <span>Service charges</span>
-                <span>+ $4.88</span>
+
+            <div class="flex-grow flex flex-col justify-center max-w-xl mx-auto w-full px-8">
+
+                <!-- Payment Method Tabs -->
+                <div class="grid grid-cols-3 gap-3 mb-8">
+                    <button @click="paymentMethod = 'cash'"
+                        :class="{'ring-2 ring-indigo-600 bg-indigo-50 text-indigo-700': paymentMethod === 'cash', 'bg-white border border-slate-200 text-slate-600 hover:border-indigo-300': paymentMethod !== 'cash'}"
+                        class="p-4 rounded-xl flex flex-col items-center gap-2 transition-all">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z">
+                            </path>
+                        </svg>
+                        <span class="font-bold">Cash</span>
+                    </button>
+                    <button @click="paymentMethod = 'card'"
+                        :class="{'ring-2 ring-indigo-600 bg-indigo-50 text-indigo-700': paymentMethod === 'card', 'bg-white border border-slate-200 text-slate-600 hover:border-indigo-300': paymentMethod !== 'card'}"
+                        class="p-4 rounded-xl flex flex-col items-center gap-2 transition-all">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z">
+                            </path>
+                        </svg>
+                        <span class="font-bold">Card</span>
+                    </button>
+                    <button @click="paymentMethod = 'qr'"
+                        :class="{'ring-2 ring-indigo-600 bg-indigo-50 text-indigo-700': paymentMethod === 'qr', 'bg-white border border-slate-200 text-slate-600 hover:border-indigo-300': paymentMethod !== 'qr'}"
+                        class="p-4 rounded-xl flex flex-col items-center gap-2 transition-all">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z">
+                            </path>
+                        </svg>
+                        <span class="font-bold">QR Pay</span>
+                    </button>
+                </div>
+
+                <!-- Cash Interface -->
+                <div x-show="paymentMethod === 'cash'">
+                    <div class="bg-indigo-50 rounded-2xl p-6 mb-6">
+                        <div class="flex justify-between mb-2">
+                            <span class="text-slate-500 font-medium">Cash Received</span>
+                            <span class="text-slate-500 font-medium">Change</span>
+                        </div>
+                        <div class="flex justify-between items-end">
+                            <div class="flex items-center text-4xl font-extrabold text-slate-800">
+                                <span class="text-2xl text-slate-400 mr-1" x-text="currency"></span>
+                                <span x-text="tenderAmountDisplay || '0'"></span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-3xl font-bold"
+                                    :class="changeAmount >= 0 ? 'text-green-600' : 'text-slate-300'"
+                                    x-text="formatPrice(Math.max(0, changeAmount))"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Keypad & Quick Amounts -->
+                    <div class="grid grid-cols-4 gap-4">
+                        <div class="col-span-3 grid grid-cols-3 gap-3">
+                            <template x-for="n in [1,2,3,4,5,6,7,8,9]" :key="n">
+                                <button @click="appendNumber(n)"
+                                    class="bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 rounded-xl py-4 text-xl font-bold text-slate-700 transition-colors shadow-sm">
+                                    <span x-text="n"></span>
+                                </button>
+                            </template>
+                            <button @click="appendNumber('.')"
+                                class="bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 rounded-xl py-4 text-xl font-bold text-slate-700 transition-colors shadow-sm">.</button>
+                            <button @click="appendNumber(0)"
+                                class="bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 rounded-xl py-4 text-xl font-bold text-slate-700 transition-colors shadow-sm">0</button>
+                            <button @click="backspace()"
+                                class="bg-slate-100 hover:bg-slate-200 rounded-xl py-4 flex items-center justify-center text-slate-600 transition-colors shadow-sm">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="col-span-1 space-y-3">
+                            <button @click="setExact()"
+                                class="w-full bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-bold py-4 rounded-xl text-sm transition-colors">Exact</button>
+                            <button @click="addAmount(10)"
+                                class="w-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 font-bold py-4 rounded-xl text-sm transition-colors shadow-sm">+10</button>
+                            <button @click="addAmount(50)"
+                                class="w-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 font-bold py-4 rounded-xl text-sm transition-colors shadow-sm">+50</button>
+                            <button @click="addAmount(100)"
+                                class="w-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 font-bold py-4 rounded-xl text-sm transition-colors shadow-sm">+100</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other Payment Methods Placeholder -->
+                <div x-show="paymentMethod !== 'cash'"
+                    class="min-h-[300px] flex flex-col items-center justify-center text-slate-400 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50">
+                    <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p class="font-medium">Selected Payment Integration would go here</p>
+                    <p class="text-sm mt-2">Simulate successful payment for now.</p>
+                </div>
+
             </div>
-            <div class="flex justify-between mb-[4px] text-[#666]">
-                <span>Restaurant tax</span>
-                <span>+ $12.67</span>
-            </div>
-            <div class="flex justify-between mb-[12px] text-[#E53935]">
-                <span>Special discount</span>
-                <span>- $23.43</span>
-            </div>
-            <div class="flex justify-between font-[700] text-[16px] text-[#333]">
-                <span>Total</span>
-                <span>$35.04</span>
+
+            <div class="p-8 border-t border-slate-100 bg-white">
+                <button @click="processPayment()" :disabled="paymentMethod === 'cash' && changeAmount < 0"
+                    :class="{'opacity-50 cursor-not-allowed': paymentMethod === 'cash' && changeAmount < 0}"
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-5 rounded-2xl shadow-xl shadow-indigo-200 text-xl transform hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3">
+                    <span>Complete Order</span>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </button>
             </div>
         </div>
+
     </div>
-</div>
+
+    <script>
+        function checkoutApp() {
+            return {
+                cart: [],
+                currency: '{{ $outletSettings['currency_symbol'] ?? '$' }}',
+                taxRate: {{ $outletSettings['tax_rate'] ?? 0 }},
+                subtotal: 0,
+                taxAmount: 0,
+                total: 0,
+                orderId: Math.floor(1000 + Math.random() * 9000),
+
+                paymentMethod: 'cash',
+                tenderAmount: 0,
+                tenderAmountDisplay: '', // String for input
+
+                init() {
+                    const storedCart = localStorage.getItem('pos_cart');
+                    if (storedCart) {
+                        this.cart = JSON.parse(storedCart);
+                        this.calculateTotals();
+                    } else {
+                        // Redirect back if empty (optional safety)
+                        // window.location.href = '{{ route('pos.home') }}';
+                    }
+                },
+
+                calculateTotals() {
+                    this.subtotal = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                    this.taxAmount = this.subtotal * (this.taxRate / 100);
+                    this.total = this.subtotal + this.taxAmount;
+                },
+
+                get changeAmount() {
+                    return this.tenderAmount - this.total;
+                },
+
+                formatPrice(amount) {
+                    return this.currency + parseFloat(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                },
+
+                // Keypad Logic
+                appendNumber(num) {
+                    if (num === '.' && this.tenderAmountDisplay.includes('.')) return;
+                    if (this.tenderAmountDisplay === '' && num === '.') this.tenderAmountDisplay = '0.';
+                    else this.tenderAmountDisplay += num.toString();
+
+                    this.tenderAmount = parseFloat(this.tenderAmountDisplay);
+                },
+
+                backspace() {
+                    this.tenderAmountDisplay = this.tenderAmountDisplay.slice(0, -1);
+                    this.tenderAmount = this.tenderAmountDisplay ? parseFloat(this.tenderAmountDisplay) : 0;
+                },
+
+                setExact() {
+                    this.tenderAmount = this.total;
+                    this.tenderAmountDisplay = this.total.toFixed(2);
+                },
+
+                addAmount(amount) {
+                    this.tenderAmount += amount;
+                    this.tenderAmountDisplay = this.tenderAmount.toFixed(2); // Or keep normal?
+                },
+
+                processPayment() {
+                    // 1. Processing State
+                    Swal.fire({
+                        html: `
+                            <div class="py-6">
+                                <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-indigo-100 border-t-indigo-600 mb-4"></div>
+                                <h3 class="text-xl font-bold text-slate-800">Processing Payment</h3>
+                                <p class="text-sm text-slate-500 mt-2">Please wait while we secure the transaction...</p>
+                            </div>
+                        `,
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                        width: 400,
+                        padding: '2rem',
+                        customClass: {
+                            popup: 'rounded-[24px] shadow-2xl'
+                        },
+                        heightAuto: false,
+                        timer: 2000, // Simulate delay
+                    }).then(() => {
+                        // 2. Success State
+                        Swal.fire({
+                            html: `
+                                <div class="text-center py-4">
+                                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                    </div>
+                                    <h3 class="text-2xl font-black text-slate-800 mb-2">Payment Successful!</h3>
+                                    <p class="text-slate-500">Order #${this.orderId} has been verified.</p>
+                                    
+                                    <div class="bg-slate-50 rounded-xl p-4 mt-6 mb-2 border border-slate-100">
+                                        <div class="flex justify-between items-center text-sm text-slate-600 mb-2">
+                                            <span>Amount Paid</span>
+                                            <span class="font-bold">${this.tenderAmountDisplay ? this.formatPrice(this.tenderAmount) : this.formatPrice(this.total)}</span>
+                                        </div>
+                                        <div class="flex justify-between items-center text-lg text-slate-800 font-bold border-t border-dashed border-slate-200 pt-2">
+                                            <span>Change Due</span>
+                                            <span class="text-indigo-600">${this.formatPrice(Math.max(0, this.changeAmount))}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `,
+                            showConfirmButton: true,
+                            confirmButtonText: 'Start New Order',
+                            heightAuto: false,
+                            width: 450,
+                            padding: '2.5rem',
+                            customClass: {
+                                popup: 'rounded-[32px] shadow-2xl',
+                                confirmButton: 'w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl text-lg shadow-lg shadow-indigo-200 transition-all transform hover:scale-[1.02]'
+                            }
+                        }).then(() => {
+                            localStorage.removeItem('pos_cart');
+                            window.location.href = '{{ route('pos.home') }}';
+                        });
+                    });
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
