@@ -25,7 +25,7 @@ class PosLoginController extends Controller
 
             // Check if the authenticated user has access to POS roles
             $user = Auth::user();
-            if (! in_array($user->role, ['Cashier', 'Manager', 'Admin', 'Super Admin'])) {
+            if (!in_array($user->role, ['Cashier', 'Manager', 'Admin', 'Super Admin'])) {
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
@@ -33,6 +33,15 @@ class PosLoginController extends Controller
                 throw ValidationException::withMessages([
                     'email' => __('auth.failed'),
                 ]);
+            }
+
+            // Check Outlet POS Access
+            if ($user->outlet && !$user->outlet->has_pos_access) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return back()->with('error_popup', 'POS Access is temporarily disabled for this outlet. Please contact your administrator.');
             }
 
             return redirect()->intended(route('pos.home'));

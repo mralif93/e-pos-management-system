@@ -14,12 +14,14 @@ class Outlet extends Model
         'address',
         'phone',
         'is_active',
+        'has_pos_access',
         'settings',
     ];
 
     protected $casts = [
         'settings' => 'array',
         'is_active' => 'boolean',
+        'has_pos_access' => 'boolean',
     ];
 
     public function users()
