@@ -14,7 +14,10 @@ class Sale extends Model
         'user_id',
         'customer_id',
         'total_amount',
+        'tax_amount',
         'status',
+        'discount_amount',
+        'discount_reason',
     ];
 
     public function outlet()

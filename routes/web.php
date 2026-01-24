@@ -42,4 +42,5 @@ Route::get('/login', function () {
 Route::middleware(['auth:web'])->group(function () { // Use 'web' guard for session-based auth
     Route::get('/pos', [PosController::class, 'index'])->name('pos.home')->middleware('can:access-pos'); // Add a gate for POS access
     Route::get('/pos/checkout', [PosController::class, 'checkout'])->name('pos.checkout')->middleware('can:access-pos');
+    Route::get('/pos/sales/{id}/receipt-pdf', [PosController::class, 'generateReceiptPdf'])->name('pos.sales.receipt-pdf')->middleware('can:access-pos');
 });

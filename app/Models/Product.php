@@ -13,6 +13,8 @@ class Product extends Model
         'category_id',
         'name',
         'slug',
+        'sku',
+        'barcode',
         'description',
         'price',
         'cost',
@@ -36,5 +38,15 @@ class Product extends Model
     public function prices()
     {
         return $this->hasMany(ProductOutletPrice::class);
+    }
+
+    public function modifiers()
+    {
+        return $this->belongsToMany(Modifier::class, 'product_modifiers');
+    }
+
+    public function saleItems()
+    {
+        return $this->hasMany(SaleItem::class);
     }
 }

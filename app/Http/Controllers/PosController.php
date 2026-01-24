@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Category;
 use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Models\Payment;
 use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PosController extends Controller
 {
@@ -54,15 +57,21 @@ class PosController extends Controller
             ->with([
                 'prices' => function ($query) use ($userOutletId) { // Eager load prices for the specific outlet
                     $query->where('outlet_id', $userOutletId);
-                }
+                },
+                'modifiers.items' // Eager load modifiers and their items
             ])
             ->where(function ($queryBuilder) use ($query) {
                 if (!empty($query)) {
                     $queryBuilder->where('name', 'like', '%' . $query . '%')
-                        ->orWhere('slug', 'like', '%' . $query . '%');
+                        ->orWhere('slug', 'like', '%' . $query . '%')
+                        ->orWhere('sku', 'like', '%' . $query . '%')
+                        ->orWhere('barcode', 'like', '%' . $query . '%');
                 }
             })
-            ->select('id', 'name', 'description', 'price', 'cost', 'stock_level') // Select only necessary columns from products table
+            ->when($request->category_id, function ($q) use ($request) {
+                $q->where('category_id', $request->category_id);
+            })
+            ->select('id', 'name', 'description', 'price', 'cost', 'stock_level', 'sku', 'barcode') // Select only necessary columns from products table
             ->get();
 
         // Map products to include the specific price for the current outlet
@@ -78,10 +87,24 @@ class PosController extends Controller
                 'price' => $price,
                 'cost' => $product->cost, // Keep default cost, as it's not per-outlet
                 'stock_level' => $stockLevel,
+                'modifiers' => $product->modifiers,
             ];
         });
 
         return response()->json($formattedProducts);
+    }
+
+    public function verifyPin(Request $request)
+    {
+        $request->validate(['pin' => 'required|string']);
+
+        $manager = User::where('pin', $request->pin)->where('role', 'Super Admin')->first(); // Or 'Manager' role if exists
+
+        if ($manager) {
+            return response()->json(['valid' => true, 'manager_name' => $manager->name]);
+        }
+
+        return response()->json(['valid' => false], 401);
     }
 
     public function processSale(Request $request)
@@ -93,7 +116,10 @@ class PosController extends Controller
             'user_id' => 'required|exists:users,id',
             'customer_id' => 'nullable|exists:customers,id',
             'total_amount' => 'required|numeric|min:0',
+            'tax_amount' => 'required|numeric|min:0',
             'status' => 'required|string',
+            'discount_amount' => 'nullable|numeric|min:0',
+            'discount_reason' => 'nullable|string',
             'items' => 'required|array',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
@@ -107,6 +133,15 @@ class PosController extends Controller
             return response()->json(['message' => 'Unauthorized access to outlet.'], 403);
         }
 
+        $discount = $request->discount_amount ?? 0;
+        $finalTotal = $request->total_amount; // Total usually includes tax, depends on logic. Assuming frontend sends breakdown.
+
+        // Validate Total Payment
+        $totalPayment = collect($request->payments)->sum('amount');
+        if ($totalPayment < $finalTotal - 0.01) { // Float tolerance
+            return response()->json(['message' => 'Insufficient payment amount.'], 422);
+        }
+
         DB::beginTransaction();
 
         try {
@@ -115,6 +150,9 @@ class PosController extends Controller
                 'user_id' => $request->user_id,
                 'customer_id' => $request->customer_id,
                 'total_amount' => $request->total_amount,
+                'tax_amount' => $request->tax_amount,
+                'discount_amount' => $discount,
+                'discount_reason' => $request->discount_reason,
                 'status' => $request->status,
             ]);
 
@@ -136,6 +174,8 @@ class PosController extends Controller
             }
 
             DB::commit();
+
+            $sale->load(['saleItems.product', 'payments', 'customer', 'outlet', 'user']);
 
             return response()->json(['message' => 'Sale processed successfully', 'sale' => $sale], 201);
         } catch (\Exception $e) {
@@ -189,7 +229,7 @@ class PosController extends Controller
 
         return response()->json(['message' => 'Sale voided successfully', 'sale' => $sale]);
     }
-    public function searchCustomers(Request $request)
+    public function searchCustomer(Request $request)
     {
         $query = $request->input('query');
         if (empty($query)) {
@@ -220,5 +260,29 @@ class PosController extends Controller
         ]);
 
         return response()->json(['message' => 'Customer created successfully', 'customer' => $customer], 201);
+    }
+    public function getCategories()
+    {
+        $categories = Category::orderBy('sort_order', 'asc')->get();
+        return response()->json($categories);
+    }
+
+    public function generateReceiptPdf($id)
+    {
+        $sale = Sale::with(['saleItems.product', 'payments', 'customer', 'user', 'outlet'])->findOrFail($id);
+        $outletSettings = $sale->outlet ? $sale->outlet->settings : []; // Or fetch from user session if outlet not on sale directly, but sale logic implies connection. Ideally Sale has outlet_id. Assuming User has outlet for now or fetching generic.
+
+        // If sale doesn't have outlet relation loaded or present (based on implementation), fallback to auth user's outlet
+        if (!$sale->outlet) {
+            $user = auth()->user();
+            $outletSettings = $user->outlet ? $user->outlet->settings : [];
+        }
+
+        $pdf = Pdf::loadView('pos.receipt-pdf', [
+            'sale' => $sale,
+            'outletSettings' => $outletSettings
+        ]);
+
+        return $pdf->stream('receipt-' . $sale->id . '.pdf');
     }
 }

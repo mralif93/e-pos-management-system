@@ -23,14 +23,18 @@ class TopSellingProducts extends Page implements HasTable
     {
         return $table
             ->query(
-                SaleItem::query()
-                    ->selectRaw('product_id, sum(quantity) as total_quantity')
-                    ->groupBy('product_id')
-                    ->orderBy('total_quantity', 'desc')
+                \App\Models\Product::query()
+                    ->withSum('saleItems', 'quantity')
+                    ->whereHas('saleItems')
+                    ->orderBy('sale_items_sum_quantity', 'desc')
             )
             ->columns([
-                TextColumn::make('product.name'),
-                TextColumn::make('total_quantity'),
+                TextColumn::make('name')
+                    ->label('Product Name')
+                    ->searchable(),
+                TextColumn::make('sale_items_sum_quantity')
+                    ->label('Total Sold')
+                    ->sortable(),
             ]);
     }
 }

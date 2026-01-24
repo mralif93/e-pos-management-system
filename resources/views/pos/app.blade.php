@@ -127,6 +127,13 @@
                     </div>
                 </div>
 
+                <!-- Category Tabs -->
+                <div class="px-5 py-2 overflow-x-auto custom-scrollbar">
+                    <div id="category-tabs" class="flex gap-3 pb-2 min-w-max">
+                        <!-- JS populated -->
+                    </div>
+                </div>
+
                 <!-- Product Grid -->
                 <div id="product-list"
                     class="flex-grow overflow-y-auto p-5 custom-scrollbar grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 content-start bg-slate-50/50">
@@ -326,6 +333,39 @@
         </div>
     </div>
 
+    <!-- Modifier Modal -->
+    <div id="modifier-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"></div>
+
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                <div
+                    class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-100">
+                    <div class="bg-white px-6 py-5 border-b border-slate-100">
+                        <h3 class="text-xl font-bold text-slate-900" id="modal-title">Customize Item</h3>
+                        <p class="text-sm text-slate-500">Select modifiers for this product</p>
+                    </div>
+
+                    <div class="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar" id="modifier-options-container">
+                        <!-- Modifiers injected here -->
+                    </div>
+
+                    <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse gap-3 border-t border-slate-100">
+                        <button type="button" onclick="posApp.confirmModifiers()"
+                            class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-3 bg-{{ $theme }}-600 text-base font-bold text-white hover:bg-{{ $theme }}-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-{{ $theme }}-500 sm:w-auto sm:text-sm shadow-md shadow-{{ $theme }}-200">
+                            Add to Order
+                        </button>
+                        <button type="button" onclick="posApp.closeModifierModal()"
+                            class="mt-3 w-full inline-flex justify-center rounded-xl border border-slate-300 shadow-sm px-4 py-3 bg-white text-base font-bold text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Customer Modal -->
     <div id="customer-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
         aria-modal="true">
@@ -413,6 +453,8 @@
         <script>
             const posApp = {
                 apiToken: null,
+                categories: [],
+                activeCategoryId: null,
                 products: [],
                 cart: [],
                 cart: [],
@@ -426,6 +468,7 @@
                 init() {
                     this.apiToken = this.getApiToken();
                     this.productSearchInput = document.getElementById('product-search-input');
+                    this.fetchCategories();
                     this.fetchProducts();
                     this.setupEventListeners();
                     this.updateDateTime();
@@ -443,7 +486,133 @@
                         }
                         if (removeBtn) removeBtn.classList.remove('hidden');
                     }
+
+                    // Keyboard Shortcuts
+                    document.addEventListener('keydown', (e) => {
+                        // CMD/CTRL + K: Focus Search
+                        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                            e.preventDefault();
+                            if (this.productSearchInput) this.productSearchInput.focus();
+                        }
+
+                        // ESC: Close Modals or Clear Search
+                        if (e.key === 'Escape') {
+                            if (!document.getElementById('modifier-modal').classList.contains('hidden')) {
+                                this.closeModifierModal();
+                            } else if (!document.getElementById('history-modal').classList.contains('hidden')) {
+                                this.closeHistory();
+                            } else if (!document.getElementById('customer-modal').classList.contains('hidden')) {
+                                this.closeCustomerModal();
+                            } else if (document.activeElement === this.productSearchInput) {
+                                this.productSearchInput.blur();
+                            }
+                        }
+
+                        // CMD/CTRL + S: Checkout
+                        if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+                            e.preventDefault();
+                            this.redirectToCheckout();
+                        }
+
+                        // CMD/CTRL + H: History
+                        if ((e.metaKey || e.ctrlKey) && e.key === 'h') {
+                            e.preventDefault();
+                            this.openHistory();
+                        }
+                    });
+
                 },
+
+                // --- Modifier Logic ---
+                currentProductForModifiers: null,
+                selectedModifiers: {}, // { modifier_id: [item_id, ...] }
+
+                openModifierModal(product) {
+                    this.currentProductForModifiers = product;
+                    this.selectedModifiers = {};
+
+                    // Render Modal Content
+                    const container = document.getElementById('modifier-options-container');
+                    container.innerHTML = '';
+
+                    product.modifiers.forEach(mod => {
+                        let optionsHtml = '';
+                        mod.items.forEach(item => {
+                            const inputType = mod.type === 'multiple' ? 'checkbox' : 'radio';
+                            const inputName = `modifier_${mod.id}`;
+                            const checked = false;
+
+                            optionsHtml += `
+                                                                                                                            <label class="flex items-center justify-between p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+                                                                                                                                <div class="flex items-center">
+                                                                                                                                    <input type="${inputType}" name="${inputName}" value="${item.id}" 
+                                                                                                                                        data-modifier-id="${mod.id}"
+                                                                                                                                        data-item-price="${item.price}"
+                                                                                                                                        data-item-name="${item.name}"
+                                                                                                                                        class="w-4 h-4 text-{{ $theme }}-600 border-gray-300 focus:ring-{{ $theme }}-500"
+                                                                                                                                        onchange="posApp.handleModifierChange(this, '${mod.type}')">
+                                                                                                                                    <span class="ml-3 font-medium text-slate-700">${item.name}</span>
+                                                                                                                                </div>
+                                                                                                                                <span class="text-sm text-slate-500">+${this.formatPrice(item.price)}</span>
+                                                                                                                            </label>
+                                                                                                                        `;
+                        });
+
+                        const html = `
+                                                                                                                        <div class="mb-4">
+                                                                                                                            <h4 class="font-bold text-slate-800 mb-2">${mod.name} <span class="text-xs font-normal text-slate-500">(${mod.type === 'multiple' ? 'Choose multiple' : 'Choose one'})</span></h4>
+                                                                                                                            <div class="space-y-2">
+                                                                                                                                ${optionsHtml}
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                    `;
+                        container.innerHTML += html;
+                    });
+
+                    document.getElementById('modifier-modal').classList.remove('hidden');
+                },
+
+                handleModifierChange(input, type) {
+                    const modId = input.dataset.modifierId;
+                    const itemId = parseInt(input.value);
+                    const itemPrice = parseFloat(input.dataset.itemPrice);
+                    const itemName = input.dataset.itemName;
+
+                    if (type === 'single') {
+                        // Reset this modifier group
+                        this.selectedModifiers[modId] = [{ id: itemId, price: itemPrice, name: itemName }];
+                    } else {
+                        if (!this.selectedModifiers[modId]) this.selectedModifiers[modId] = [];
+
+                        if (input.checked) {
+                            this.selectedModifiers[modId].push({ id: itemId, price: itemPrice, name: itemName });
+                        } else {
+                            this.selectedModifiers[modId] = this.selectedModifiers[modId].filter(i => i.id !== itemId);
+                        }
+                    }
+                },
+
+                closeModifierModal() {
+                    document.getElementById('modifier-modal').classList.add('hidden');
+                    this.currentProductForModifiers = null;
+                    this.selectedModifiers = {};
+                },
+
+                confirmModifiers() {
+                    // Flatten selected modifiers
+                    let flatModifiers = [];
+                    Object.values(this.selectedModifiers).forEach(items => {
+                        flatModifiers = flatModifiers.concat(items);
+                    });
+
+                    this.addItemToCart(this.currentProductForModifiers, flatModifiers);
+                    this.closeModifierModal();
+                },
+
+                // --- End Modifier Logic ---
+
+
+
 
                 getApiToken() {
                     return '{{ $apiToken }}';
@@ -459,9 +628,56 @@
                     if (el) el.innerText = now.toLocaleDateString('en-US', options);
                 },
 
+                fetchCategories() {
+                    fetch('{{ route('api.pos.categories') }}', {
+                        headers: { 'Accept': 'application/json', 'Authorization': 'Bearer ' + this.apiToken }
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            this.categories = data;
+                            this.renderCategories();
+                        });
+                },
+
+                renderCategories() {
+                    const el = document.getElementById('category-tabs');
+                    if (!el) return;
+
+                    let html = `
+                                                                                                                                            <button onclick="posApp.filterCategory(null)" 
+                                                                                                                                                class="px-4 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap
+                                                                                                                                                ${this.activeCategoryId === null ? 'bg-{{ $theme }}-600 text-white shadow-md shadow-{{ $theme }}-200' : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-100'}">
+                                                                                                                                                All Items
+                                                                                                                                            </button>
+                                                                                                                                        `;
+
+                    this.categories.forEach(cat => {
+                        html += `
+                                                                                                                                                <button onclick="posApp.filterCategory(${cat.id})" 
+                                                                                                                                                    class="px-4 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap
+                                                                                                                                                    ${this.activeCategoryId === cat.id ? 'bg-{{ $theme }}-600 text-white shadow-md shadow-{{ $theme }}-200' : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-100'}">
+                                                                                                                                                    ${cat.name}
+                                                                                                                                                </button>
+                                                                                                                                            `;
+                    });
+
+                    el.innerHTML = html;
+                },
+
+                filterCategory(id) {
+                    this.activeCategoryId = id;
+                    this.renderCategories(); // Re-render to update active state
+                    this.fetchProducts();
+                },
+
                 fetchProducts() {
                     const query = this.productSearchInput ? this.productSearchInput.value : '';
-                    fetch('{{ route('api.pos.products') }}?query=' + query, {
+                    let url = '{{ route('api.pos.products') }}?query=' + query;
+                    if (this.activeCategoryId) {
+                        url += '&category_id=' + this.activeCategoryId;
+                    }
+
+                    fetch(url, {
                         headers: {
                             'Accept': 'application/json',
                             'Authorization': 'Bearer ' + this.apiToken
@@ -483,12 +699,12 @@
 
                     if (this.products.length === 0) {
                         productList.innerHTML = `
-                                                                                                                                                                                                                                                                                                <div class="col-span-full flex flex-col items-center justify-center text-slate-400 py-20">
-                                                                                                                                                                                                                                                                                                    <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                                                                                                                                                                                                                                                                                                    <p class="text-lg font-medium">No products found</p>
-                                                                                                                                                                                                                                                                                                    <p class="text-sm">Try searching for something else</p>
-                                                                                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                                                                                                            `;
+                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="col-span-full flex flex-col items-center justify-center text-slate-400 py-20">
+                                                                                                                                                                                                                                                                                                                                                                                                                                <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                                                                                                                                                                                                                                                                                                                                                                                                                <p class="text-lg font-medium">No products found</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                <p class="text-sm">Try searching for something else</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                        `;
                         return;
                     }
 
@@ -500,48 +716,48 @@
 
                         if (imageUrl) {
                             imageHtml = `
-                                                                                                                                                                                                            <img src="${imageUrl}" 
-                                                                                                                                                                                                                 alt="${product.name}" 
-                                                                                                                                                                                                                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                                                                                                                                                                                                 onerror="this.onerror=null; this.parentElement.innerHTML=posApp.getFallbackHtml('${product.name.replace(/'/g, "\\'")}')">
-                                                                                                                                                                                                            `;
+                                                                                                                                                                                                                                                                                                                                        <img src="${imageUrl}" 
+                                                                                                                                                                                                                                                                                                                                             alt="${product.name}" 
+                                                                                                                                                                                                                                                                                                                                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                                                                                                                                                                                                                                                                                                                             onerror="this.onerror=null; this.parentElement.innerHTML=posApp.getFallbackHtml('${product.name.replace(/'/g, "\\'")}')">
+                                                                                                                                                                                                                                                                                                                                        `;
                         } else {
                             imageHtml = this.getFallbackHtml(product.name);
                         }
 
                         const productCard = `
-                                                                                                                                                                                                            <div class="group bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-lg hover:border-{{ $theme }}-100 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full transform hover:-translate-y-1"
-                                                                                                                                                                                                                    data-product-id="${product.id}"
-                                                                                                                                                                                                                    data-product-name="${product.name}"
-                                                                                                                                                                                                                    data-product-price="${product.price}">
+                                                                                                                                                                                                                                                                                                                                        <div class="group bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-lg hover:border-{{ $theme }}-100 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full transform hover:-translate-y-1"
+                                                                                                                                                                                                                                                                                                                                                data-product-id="${product.id}"
+                                                                                                                                                                                                                                                                                                                                                data-product-name="${product.name}"
+                                                                                                                                                                                                                                                                                                                                                data-product-price="${product.price}">
 
-                                                                                                                                                                                                                <!-- Image Area -->
-                                                                                                                                                                                                                <div class="aspect-[3/2] bg-slate-50 relative overflow-hidden">
-                                                                                                                                                                                                                    ${imageHtml}
+                                                                                                                                                                                                                                                                                                                                            <!-- Image Area -->
+                                                                                                                                                                                                                                                                                                                                            <div class="aspect-[3/2] bg-slate-50 relative overflow-hidden">
+                                                                                                                                                                                                                                                                                                                                                ${imageHtml}
 
-                                                                                                                                                                                                                    <div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                                                                                                                                                                                        <div class="bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-sm text-{{ $theme }}-600">
-                                                                                                                                                                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                                                                                                                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                                                                                                                                                                                                                            </svg>
-                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                <div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                                                                                                                                                                                                                                                                                                                    <div class="bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-sm text-{{ $theme }}-600">
+                                                                                                                                                                                                                                                                                                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                                                                                                                                                                                                                                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                                                                                                                                                                                                                                                                                                                                        </svg>
+                                                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                            </div>
 
-                                                                                                                                                                                                                <!-- Content -->
-                                                                                                                                                                                                                <div class="p-3 flex flex-col flex-grow">
-                                                                                                                                                                                                                    <h3 class="font-bold text-slate-800 text-base leading-snug mb-1 group-hover:text-{{ $theme }}-600 transition-colors line-clamp-2" title="${product.name}">${product.name}</h3>
-                                                                                                                                                                                                                    <p class="text-xs text-slate-500 line-clamp-2 mb-3 h-8">${product.description || ''}</p>
+                                                                                                                                                                                                                                                                                                                                            <!-- Content -->
+                                                                                                                                                                                                                                                                                                                                            <div class="p-3 flex flex-col flex-grow">
+                                                                                                                                                                                                                                                                                                                                                <h3 class="font-bold text-slate-800 text-base leading-snug mb-1 group-hover:text-{{ $theme }}-600 transition-colors line-clamp-2" title="${product.name}">${product.name}</h3>
+                                                                                                                                                                                                                                                                                                                                                <p class="text-xs text-slate-500 line-clamp-2 mb-3 h-8">${product.description || ''}</p>
 
-                                                                                                                                                                                                                    <div class="mt-auto flex items-center justify-between">
-                                                                                                                                                                                                                        <span class="font-extrabold text-slate-900 text-lg">${this.formatPrice(product.price)}</span>
-                                                                                                                                                                                                                        <button class="add-to-cart-btn bg-slate-100 hover:bg-{{ $theme }}-600 hover:text-white text-slate-700 p-2 rounded-lg transition-colors duration-200">
-                                                                                                                                                                                                                            <span class="text-xs font-bold px-1">ADD</span>
-                                                                                                                                                                                                                        </button>
-                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                        `;
+                                                                                                                                                                                                                                                                                                                                                <div class="mt-auto flex items-center justify-between">
+                                                                                                                                                                                                                                                                                                                                                    <span class="font-extrabold text-slate-900 text-lg">${this.formatPrice(product.price)}</span>
+                                                                                                                                                                                                                                                                                                                                                    <button class="add-to-cart-btn bg-slate-100 hover:bg-{{ $theme }}-600 hover:text-white text-slate-700 p-2 rounded-lg transition-colors duration-200">
+                                                                                                                                                                                                                                                                                                                                                        <span class="text-xs font-bold px-1">ADD</span>
+                                                                                                                                                                                                                                                                                                                                                    </button>
+                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                    `;
                         productList.innerHTML += productCard;
                     });
                     this.setupAddToCartButtons();
@@ -562,10 +778,10 @@
                     const textColor = `hsl(${hue}, 70%, 35%)`;
 
                     return `
-                                                                                                                                                                                                            <div class="w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:scale-110" style="background-color: ${bgColor}; color: ${textColor};">
-                                                                                                                                                                                                                <span class="text-3xl font-extrabold tracking-wider select-none">${initials}</span>
-                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                        `;
+                                                                                                                                                                                                                                                                                                                                        <div class="w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:scale-110" style="background-color: ${bgColor}; color: ${textColor};">
+                                                                                                                                                                                                                                                                                                                                            <span class="text-3xl font-extrabold tracking-wider select-none">${initials}</span>
+                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                    `;
                 }, // End getFallbackHtml, and continuation of object...
 
                 setupAddToCartButtons() { // Re-declaring to ensure valid object syntax structure in replace
@@ -601,62 +817,75 @@
 
                     // Header - Clean & Minimalist
                     let invoiceHtml = `
-                                                                                                                                                                                <div class="text-left w-full">
-                                                                                                                                                                                    <div class="flex justify-between items-end mb-6 pb-4 border-b border-dashed border-slate-200">
-                                                                                                                                                                                        <div>
-                                                                                                                                                                                            <h3 class="text-slate-900 font-bold text-2xl">Order Summary</h3>
-                                                                                                                                                                                            <p class="text-slate-500 text-sm mt-1">Order #${Math.floor(1000 + Math.random() * 9000)} • ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                        <div class="text-right">
-                                                                                                                                                       <div class="text-right">
-                                                                                                                                            <span class="block text-3xl font-bold text-{{ $theme }}-600">${this.cart.reduce((acc, item) => acc + item.quantity, 0)}</span>
-                                                                                                                                            <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">Items</span>
-                                                                                                                                        </div>                                                </div>
-                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                            <div class="text-left w-full">
+                                                                                                                                                                                                                                                                                                                <div class="flex justify-between items-end mb-6 pb-4 border-b border-dashed border-slate-200">
+                                                                                                                                                                                                                                                                                                                    <div>
+                                                                                                                                                                                                                                                                                                                        <h3 class="text-slate-900 font-bold text-2xl">Order Summary</h3>
+                                                                                                                                                                                                                                                                                                                        <p class="text-slate-500 text-sm mt-1">Order #${Math.floor(1000 + Math.random() * 9000)} • ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
+                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                    <div class="text-right">
+                                                                                                                                                                                                                                                                                   <div class="text-right">
+                                                                                                                                                                                                                                                                        <span class="block text-3xl font-bold text-{{ $theme }}-600">${this.cart.reduce((acc, item) => acc + item.quantity, 0)}</span>
+                                                                                                                                                                                                                                                                        <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">Items</span>
+                                                                                                                                                                                                                                                                    </div>                                                </div>
+                                                                                                                                                                                                                                                                                                                </div>
 
-                                                                                                                                                                                    <div class="max-h-[350px] overflow-y-auto custom-scrollbar pr-4 -mr-2 mb-8 space-y-4">
-                                                                                                                                                                            `;
+                                                                                                                                                                                                                                                                                                                <div class="max-h-[350px] overflow-y-auto custom-scrollbar pr-4 -mr-2 mb-8 space-y-4">
+                                                                                                                                                                                                                                                                                                        `;
 
                     this.cart.forEach(item => {
-                        const itemTotal = item.price * item.quantity;
+                        const itemTotal = (item.unitPrice || item.price) * item.quantity; // Use unitPrice which includes modifier costs
                         subtotal += itemTotal;
+
+                        // Modifiers HTML
+                        let modifiersHtml = '';
+                        if (item.modifiers && item.modifiers.length > 0) {
+                            modifiersHtml = '<div class="text-xs text-slate-500 mt-1 space-y-0.5">';
+                            item.modifiers.forEach(mod => {
+                                modifiersHtml += `<div class="flex justify-between"><span>+ ${mod.name}</span><span>${this.formatPrice(mod.price)}</span></div>`;
+                            });
+                            modifiersHtml += '</div>';
+                        }
+
                         invoiceHtml += `
-                                                                                                                                                                                    <div class="flex justify-between items-center group">
-                                                                                                                                                                                        <div class="flex items-center gap-4 overflow-hidden">
-                                                                                                                                                                                             <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-sm font-bold text-slate-600">${item.quantity}×</div>
-                                                                                                                                                                                             <div class="min-w-0">
-                                                                                                                                                                                                <p class="font-bold text-slate-800 text-base truncate">${item.name}</p>
-                                                                                                                                                                                                <p class="text-xs text-slate-400 font-medium">@ ${this.formatPrice(item.price)}</p>
-                                                                                                                                                                                             </div>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                        <span class="font-bold text-slate-800 text-base whitespace-nowrap pl-4">${this.formatPrice(itemTotal)}</span>
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                `;
+                                                                                                                                                                                                                                                                                                                <div class="p-3 mb-2 bg-slate-50 border border-slate-100 rounded-xl flex flex-col group transition-all duration-300 hover:shadow-sm hover:border-{{ $theme }}-200">
+                                                                                                                                                                                                                                                                                                                    <div class="flex justify-between items-start mb-2">
+                                                                                                                                                                                                                                                                                                                        <div class="flex-grow">
+                                                                                                                                                                                                                                                                                                                            <h4 class="font-bold text-slate-800 text-sm leading-tight">${item.quantity}× ${item.name}</h4>
+                                                                                                                                                                                                                                                                                                                            <div class="text-xs text-slate-400 font-medium mt-0.5">@ ${this.formatPrice(item.unitPrice || item.price)}</div>
+                                                                                                                                                                                                                                                                                                                            ${modifiersHtml}
+                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                        <div class="text-right">
+                                                                                                                                                                                                                                                                                                                            <span class="font-extrabold text-slate-800 text-sm">${this.formatPrice((item.unitPrice || item.price) * item.quantity)}</span>
+                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                            `;
                     });
 
                     const taxAmount = subtotal * (this.taxRate / 100);
                     const total = subtotal + taxAmount;
 
                     invoiceHtml += `
-                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                </div>
 
-                                                                                                                                                                                    <!-- Footer matching Header style -->
-                                                                                                                                                                                    <div class="pt-6 border-t border-dashed border-slate-200 space-y-3">
-                                                                                                                                                                                        <div class="flex justify-between text-base text-slate-500">
-                                                                                                                                                                                            <span>Subtotal</span>
-                                                                                                                                                                                            <span class="font-semibold text-slate-700">${this.formatPrice(subtotal)}</span>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                        <div class="flex justify-between text-base text-slate-500 pb-4 border-b border-slate-100">
-                                                                                                                                                                                            <span>Service Tax (${this.taxRate}%)</span>
-                                                                                                                                                                                            <span class="font-semibold text-slate-700">${this.formatPrice(taxAmount)}</span>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                        <div class="flex justify-between items-center pt-2">
-                                                                                                                                            <span class="text-slate-800 font-bold text-xl">Total Amount</span>
-                                                                                                                                            <span class="text-3xl font-black text-{{ $theme }}-600">${this.formatPrice(total)}</span>
-                                                                                                                                        </div>                                                </div>
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                </div>
-                                                                                                                                                                            `;
+                                                                                                                                                                                                                                                                                                                <!-- Footer matching Header style -->
+                                                                                                                                                                                                                                                                                                                <div class="pt-6 border-t border-dashed border-slate-200 space-y-3">
+                                                                                                                                                                                                                                                                                                                    <div class="flex justify-between text-base text-slate-500">
+                                                                                                                                                                                                                                                                                                                        <span>Subtotal</span>
+                                                                                                                                                                                                                                                                                                                        <span class="font-semibold text-slate-700">${this.formatPrice(subtotal)}</span>
+                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                    <div class="flex justify-between text-base text-slate-500 pb-4 border-b border-slate-100">
+                                                                                                                                                                                                                                                                                                                        <span>Service Tax (${this.taxRate}%)</span>
+                                                                                                                                                                                                                                                                                                                        <span class="font-semibold text-slate-700">${this.formatPrice(taxAmount)}</span>
+                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                    <div class="flex justify-between items-center pt-2">
+                                                                                                                                                                                                                                                                        <span class="text-slate-800 font-bold text-xl">Total Amount</span>
+                                                                                                                                                                                                                                                                        <span class="text-3xl font-black text-{{ $theme }}-600">${this.formatPrice(total)}</span>
+                                                                                                                                                                                                                                                                    </div>                                                </div>
+                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                        `;
 
                     Swal.fire({
                         html: invoiceHtml,
@@ -692,7 +921,7 @@
                                 const productId = el.dataset.productId;
                                 const productName = el.dataset.productName;
                                 const productPrice = parseFloat(el.dataset.productPrice);
-                                this.addToCart(productId, productName, productPrice);
+                                this.addToCart({ id: productId, name: productName, price: productPrice, modifiers: [] });
 
                                 // Visual feedback
                                 const originalTransform = el.style.transform;
@@ -703,17 +932,42 @@
                     });
                 },
 
-                addToCart(productId, productName, productPrice) {
-                    const existingItemIndex = this.cart.findIndex(item => item.id == productId);
+                addToCart(product) {
+                    // Check if product has modifiers
+                    if (product.modifiers && product.modifiers.length > 0) {
+                        this.openModifierModal(product);
+                    } else {
+                        this.addItemToCart(product, []);
+                    }
+                },
 
-                    if (existingItemIndex > -1) {
-                        this.cart[existingItemIndex].quantity++;
+                addItemToCart(product, selectedModifiers = []) {
+                    const price = parseFloat(product.price);
+
+                    // Calculate modifier total cost
+                    const modifiersCost = selectedModifiers.reduce((sum, mod) => sum + parseFloat(mod.price), 0);
+                    const unitPrice = price + modifiersCost;
+
+                    // Create unique ID based on product AND modifiers
+                    // Sort modifiers by ID to ensure consistent key
+                    const sortedModifiers = selectedModifiers.slice().sort((a, b) => a.id - b.id);
+                    const modifierKey = sortedModifiers.map(m => m.id).join('-');
+                    const cartItemId = `${product.id}-${modifierKey}`;
+
+                    const existingItem = this.cart.find(item => item.cartItemId === cartItemId);
+
+                    if (existingItem) {
+                        existingItem.quantity++;
                     } else {
                         this.cart.push({
-                            id: productId,
-                            name: productName,
-                            price: productPrice,
+                            cartItemId: cartItemId,
+                            id: product.id,
+                            name: product.name,
+                            price: price, // Base price
+                            unitPrice: unitPrice, // Price + Modifiers
+                            image: product.image, // Ensure image is passed if available
                             quantity: 1,
+                            modifiers: sortedModifiers
                         });
                     }
 
@@ -733,7 +987,7 @@
 
                     Toast.fire({
                         icon: 'success',
-                        title: `Added ${productName}`
+                        title: `Added ${product.name}`
                     })
 
                     this.renderCart();
@@ -760,11 +1014,11 @@
 
                     if (this.cart.length === 0) {
                         cartItemsContainer.innerHTML = `
-                                                                                                                                                                                                            <div class="h-full flex flex-col items-center justify-center text-slate-400 p-8 text-center opacity-60">
-                                                                                                                                                                                                                <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                                                                                                                                                                                                                <p class="text-sm">Your cart is currently empty.</p>
-                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                        `;
+                                                                                                                                                                                                                                                                                                                                        <div class="h-full flex flex-col items-center justify-center text-slate-400 p-8 text-center opacity-60">
+                                                                                                                                                                                                                                                                                                                                            <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                                                                                                                                                                                                                                                                                                                                            <p class="text-sm">Your cart is currently empty.</p>
+                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                    `;
                         // Reset totals
                         document.getElementById('cart-subtotal').innerText = this.formatPrice(0);
                         document.getElementById('cart-tax').innerText = this.formatPrice(0);
@@ -773,44 +1027,56 @@
                     }
 
                     let subtotal = 0;
-                    this.cart.slice().reverse().forEach((item, index) => { // Show newest on top? or bottom. Array order is usually append. Let's keep normal order for now.
-                        const itemTotal = item.price * item.quantity;
+                    this.cart.slice().reverse().forEach((item, index) => {
+                        const itemTotal = (item.unitPrice || item.price) * item.quantity;
                         subtotal += itemTotal;
 
+                        // Modifiers HTML
+                        let modifiersHtml = '';
+                        if (item.modifiers && item.modifiers.length > 0) {
+                            modifiersHtml = '<div class="text-xs text-slate-500 mt-1 space-y-0.5 border-t border-dashed border-slate-100 pt-1">';
+                            item.modifiers.forEach(mod => {
+                                modifiersHtml += `<div class="flex justify-between"><span>+ ${mod.name}</span><span>${this.formatPrice(mod.price)}</span></div>`;
+                            });
+                            modifiersHtml += '</div>';
+                        }
+
                         const cartItem = `
-                                                                                                                                                                                                                <div class="group flex items-center justify-between p-3 mb-3 bg-white rounded-xl border border-slate-100 shadow-sm hover:border-{{ $theme }}-200 transition-all animate-fade-in" style="animation-duration: 0.3s">
+                            <div class="group flex items-center justify-between p-3 mb-3 bg-white rounded-xl border border-slate-100 shadow-sm hover:border-{{ $theme }}-200 transition-all animate-fade-in" style="animation-duration: 0.3s">
 
-                                                                                                                                                                                                                    <!-- Info & Qty -->
-                                                                                                                                                                                                                    <div class="flex-grow min-w-0 pr-3">
-                                                                                                                                                                                                                        <div class="flex justify-between items-start mb-1.5">
-                                                                                                                                                                                                                            <p class="font-bold text-slate-800 text-sm truncate leading-tight w-full" title="${item.name}">${item.name}</p>
-                                                                                                                                                                                                                        </div>
+                                <!-- Info & Qty -->
+                                <div class="flex-grow min-w-0 pr-3">
+                                    <div class="flex justify-between items-start mb-1.5">
+                                        <p class="font-bold text-slate-800 text-sm truncate leading-tight w-full" title="${item.name}">${item.name}</p>
+                                    </div>
 
-                                                                                                                                                                                                                        <div class="flex items-center justify-between">
-                                                                                                                                                                                                                            <!-- Qty Controls -->
-                                                                                                                                                                                                                            <div class="flex items-center bg-slate-50 rounded-lg border border-slate-200 p-0.5">
-                                                                                                                                                                                                                                <button data-product-id="${item.id}" class="remove-from-cart-btn w-6 h-6 flex items-center justify-center text-slate-500 hover:bg-white hover:text-red-500 hover:shadow-sm rounded-md transition-all">
-                                                                                                                                                                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                                                                                                                                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-                                                                                                                                                                                                                                    </svg>
-                                                                                                                                                                                                                                </button>
-                                                                                                                                                                                                                                <span class="font-mono font-bold text-slate-700 text-sm w-8 text-center select-none">${item.quantity}</span>
-                                                                                                                                                                                                                                <button onclick="posApp.addToCart(${item.id}, '${item.name.replace(/'/g, "\\'")}', ${item.price})" 
-                                                                                                                                                                                                                                    class="w-6 h-6 flex items-center justify-center text-slate-500 hover:bg-white hover:text-green-600 hover:shadow-sm rounded-md transition-all">
-                                                                                                                                                                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                                                                                                                                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                                                                                                                                                                                                                                    </svg>
-                                                                                                                                                                                                                                </button>
-                                                                                                                                                                                                                            </div>
+                                    ${modifiersHtml}
 
-                                                                                                                                                                                                                            <div class="text-right">
-                                                                                                                                                                                                                                <span class="font-bold text-slate-900 text-sm block">${this.formatPrice(itemTotal)}</span>
-                                                                                                                                                                                                                                <span class="text-[10px] text-slate-400 font-medium block">@ ${this.formatPrice(item.price)}/ea</span>
-                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                            `;
+                                    <div class="flex items-center justify-between mt-2">
+                                        <!-- Qty Controls -->
+                                        <div class="flex items-center bg-slate-50 rounded-lg border border-slate-200 p-0.5">
+                                            <button data-product-id="${item.id}" class="remove-from-cart-btn w-6 h-6 flex items-center justify-center text-slate-500 hover:bg-white hover:text-red-500 hover:shadow-sm rounded-md transition-all">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                                                </svg>
+                                            </button>
+                                            <span class="font-mono font-bold text-slate-700 text-sm w-8 text-center select-none">${item.quantity}</span>
+                                            <button onclick="posApp.addToCart({id: ${item.id}, name: '${(item.name || '').replace(/'/g, "\\'")}', price: ${item.price}, modifiers: []})" 
+                                                class="w-6 h-6 flex items-center justify-center text-slate-500 hover:bg-white hover:text-green-600 hover:shadow-sm rounded-md transition-all">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                                </svg>
+                                            </button>
+                                        </div>
+
+                                        <div class="text-right">
+                                            <span class="font-bold text-slate-900 text-sm block">${this.formatPrice(itemTotal)}</span>
+                                            <span class="text-[10px] text-slate-400 font-medium block">@ ${this.formatPrice(item.unitPrice || item.price)}/ea</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
                         cartItemsContainer.innerHTML += cartItem;
                     });
 
@@ -958,27 +1224,27 @@
                         const statusClass = statusColors[sale.status] || 'bg-slate-100 text-slate-700';
 
                         const row = `
-                                                                                                    <tr class="hover:bg-slate-50 transition-colors group">
-                                                                                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">#${sale.id}</td>
-                                                                                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">${date}</td>
-                                                                                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-slate-800">${this.formatPrice(sale.total_amount)}</td>
-                                                                                                        <td class="px-6 py-4 whitespace-nowrap">
-                                                                                                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${statusClass} capitalize">
-                                                                                                                ${sale.status}
-                                                                                                            </span>
-                                                                                                        </td>
-                                                                                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                                                                            <button class="text-slate-400 hover:text-{{ $theme }}-600 mr-3 hidden">View</button> 
-                                                                                                            ${sale.status !== 'void' ? `
-                                                                                                                <button onclick="posApp.voidSale(${sale.id})" class="text-slate-400 hover:text-red-600 transition-colors" title="Void Transaction">
-                                                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                                                                                    </svg>
-                                                                                                                </button>
-                                                                                                            ` : ''}
-                                                                                                        </td>
-                                                                                                    </tr>
-                                                                                                `;
+                                                                                                                                                                                                                                <tr class="hover:bg-slate-50 transition-colors group">
+                                                                                                                                                                                                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">#${sale.id}</td>
+                                                                                                                                                                                                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">${date}</td>
+                                                                                                                                                                                                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-slate-800">${this.formatPrice(sale.total_amount)}</td>
+                                                                                                                                                                                                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                                                                                                                                                                                                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${statusClass} capitalize">
+                                                                                                                                                                                                                                            ${sale.status}
+                                                                                                                                                                                                                                        </span>
+                                                                                                                                                                                                                                    </td>
+                                                                                                                                                                                                                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                                                                                                                                                                                                        <button class="text-slate-400 hover:text-{{ $theme }}-600 mr-3 hidden">View</button> 
+                                                                                                                                                                                                                                        ${sale.status !== 'void' ? `
+                                                                                                                                                                                                                                            <button onclick="posApp.voidSale(${sale.id})" class="text-slate-400 hover:text-red-600 transition-colors" title="Void Transaction">
+                                                                                                                                                                                                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                                                                                                                                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                                                                                                                                                                                                </svg>
+                                                                                                                                                                                                                                            </button>
+                                                                                                                                                                                                                                        ` : ''}
+                                                                                                                                                                                                                                    </td>
+                                                                                                                                                                                                                                </tr>
+                                                                                                                                                                                                                            `;
                         tbody.innerHTML += row;
                     });
                 },
@@ -1017,10 +1283,10 @@
                                     if (!response.ok) {
                                         const contentType = response.headers.get("content-type");
                                         if (contentType && contentType.indexOf("application/json") !== -1) {
-                                             const data = await response.json();
-                                             throw new Error(data.message || 'Failed to void');
+                                            const data = await response.json();
+                                            throw new Error(data.message || 'Failed to void');
                                         } else {
-                                             throw new Error("Server returned non-JSON error. Check networking/auth.");
+                                            throw new Error("Server returned non-JSON error. Check networking/auth.");
                                         }
                                     }
                                     return response.json()
@@ -1113,12 +1379,12 @@
                                 const el = document.createElement('div');
                                 el.className = 'p-3 hover:bg-slate-50 rounded-lg cursor-pointer border border-transparent hover:border-slate-100 transition-colors flex justify-between items-center group';
                                 el.innerHTML = `
-                                                                                <div>
-                                                                                    <p class="font-bold text-slate-800">${customer.name}</p>
-                                                                                    <p class="text-xs text-slate-500">${customer.phone || 'No Phone'}</p>
-                                                                                </div>
-                                                                                <button class="text-{{ $theme }}-600 font-bold text-xs bg-{{ $theme }}-50 px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Select</button>
-                                                                            `;
+                                                                                                                                                                                                            <div>
+                                                                                                                                                                                                                <p class="font-bold text-slate-800">${customer.name}</p>
+                                                                                                                                                                                                                <p class="text-xs text-slate-500">${customer.phone || 'No Phone'}</p>
+                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                            <button class="text-{{ $theme }}-600 font-bold text-xs bg-{{ $theme }}-50 px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Select</button>
+                                                                                                                                                                                                        `;
                                 el.onclick = () => this.selectCustomer(customer);
                                 container.appendChild(el);
                             });

@@ -12,6 +12,8 @@ class Category extends Model
     protected $fillable = [
         'name',
         'slug',
+        'image',
+        'sort_order',
     ];
 
     public function products()

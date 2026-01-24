@@ -51,6 +51,17 @@ class ProductResource extends Resource
                             ->unique(ignoreRecord: true)
                             ->disabled()
                             ->dehydrated(),
+                        Forms\Components\TextInput::make('sku')
+                            ->label('SKU')
+                            ->unique(ignoreRecord: true),
+                        Forms\Components\TextInput::make('barcode')
+                            ->label('Barcode')
+                            ->unique(ignoreRecord: true),
+                        Forms\Components\Select::make('modifiers')
+                            ->relationship('modifiers', 'name')
+                            ->multiple()
+                            ->preload()
+                            ->searchable(),
                         Forms\Components\Textarea::make('description')
                             ->columnSpanFull(),
                         Forms\Components\Toggle::make('has_variants')
@@ -101,8 +112,8 @@ class ProductResource extends Resource
                     ->description('Set specific prices for each outlet.')
                     ->schema([
                         Repeater::make('prices')
-                            ->relationship()
-                            ->modifyQueryUsing(
+                            ->relationship(
+                                'prices',
                                 fn(Builder $query) =>
                                 auth()->user()->role !== 'Super Admin' && auth()->user()->outlet_id
                                 ? $query->where('outlet_id', auth()->user()->outlet_id)
@@ -145,6 +156,12 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('sku')
+                    ->label('SKU')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('barcode')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('price')
                     ->money('USD')

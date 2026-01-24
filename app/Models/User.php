@@ -29,6 +29,7 @@ class User extends Authenticatable
         'is_active',
         'staff_id',
         'theme_color',
+        'pin',
     ];
 
     /**
