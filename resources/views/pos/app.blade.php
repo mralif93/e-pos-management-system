@@ -4,7 +4,20 @@
     <div class="flex flex-col h-screen bg-gray-200">
         <!-- Header -->
         <div class="p-4 bg-gray-800 text-white flex justify-between items-center z-20 shadow-md">
-            <h1 class="text-xl font-bold">POS Terminal - {{ Auth::user()->name }} - {{ Auth::user()->outlet->name ?? 'No Outlet Assigned' }}</h1>
+            {{-- Left Section: App Info & Date/Time --}}
+            <div class="flex items-center space-x-4">
+                <h1 class="text-xl font-bold">POS Terminal</h1>
+                <span id="current-date-time" class="text-sm"></span> {{-- Placeholder for JS to update --}}
+            </div>
+
+            {{-- Center Section: User & Outlet Info --}}
+            <div class="flex items-center space-x-2">
+                <span class="text-lg font-semibold">{{ Auth::user()->name }}</span>
+                <span class="text-gray-400">|</span>
+                <span class="text-base">{{ Auth::user()->outlet->name ?? 'No Outlet Assigned' }}</span>
+            </div>
+
+            {{-- Right Section: Actions --}}
             <form method="POST" action="{{ route('pos.logout') }}" id="pos-logout-form">
                 @csrf
                 <button type="button" onclick="confirmLogout()" class="text-gray-300 hover:text-white text-sm p-2 rounded-md bg-gray-700 hover:bg-gray-600 transition duration-150 ease-in-out">Logout</button>
@@ -59,10 +72,26 @@
                 this.productSearchInput = document.getElementById('product-search-input'); // Add this line
                 this.fetchProducts();
                 this.setupEventListeners();
+                this.updateDateTime(); // New call
+                setInterval(() => this.updateDateTime(), 1000); // Update every second
             },
 
             getApiToken() {
                 return '{{ $apiToken }}'; // Dynamically provided token
+            },
+
+            updateDateTime() {
+                const now = new Date();
+                const options = {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                };
+                document.getElementById('current-date-time').innerText = now.toLocaleDateString('en-US', options);
             },
 
             fetchProducts() {
