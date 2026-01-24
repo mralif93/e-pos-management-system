@@ -60,6 +60,9 @@
                     <span
                         class="px-2.5 py-0.5 bg-{{ $theme }}-50 text-{{ $theme }}-700 text-xs font-bold rounded-md tracking-wide">#<span
                             x-text="orderId"></span></span>
+                    <div x-show="cartCustomer" class="mt-2 text-sm text-slate-500 font-medium">
+                        Customer: <span class="text-slate-800 font-bold" x-text="cartCustomer.name"></span>
+                    </div>
                 </div>
             </div>
 
@@ -248,12 +251,18 @@
                 tenderAmount: 0,
                 tenderAmountDisplay: '',
 
+                cartCustomer: null,
+
                 init() {
                     window.posApp = this; // Expose for Swal onclick
                     const storedCart = localStorage.getItem('pos_cart');
                     if (storedCart) {
                         this.cart = JSON.parse(storedCart);
                         this.calculateTotals();
+                    }
+                    const storedCustomer = localStorage.getItem('pos_customer');
+                    if (storedCustomer) {
+                        this.cartCustomer = JSON.parse(storedCustomer);
                     }
                 },
 
@@ -296,6 +305,7 @@
 
                 finishOrder() {
                     localStorage.removeItem('pos_cart');
+                    localStorage.removeItem('pos_customer');
                     window.location.href = '{{ route('pos.home') }}';
                 },
 
@@ -325,7 +335,7 @@
                     const payload = {
                         outlet_id: this.outletId,
                         user_id: this.userId,
-                        customer_id: null, // Future: Add customer selection
+                        customer_id: this.cartCustomer ? this.cartCustomer.id : null,
                         total_amount: this.total,
                         status: 'completed', // Direct completion for POS
                         items: this.cart.map(item => ({

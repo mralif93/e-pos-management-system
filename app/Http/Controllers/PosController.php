@@ -143,4 +143,82 @@ class PosController extends Controller
             return response()->json(['message' => 'Error processing sale', 'error' => $e->getMessage()], 500);
         }
     }
+
+    public function history(Request $request)
+    {
+        $user = auth()->user();
+        $outletId = $user->outlet_id;
+
+        $query = Sale::where('outlet_id', $outletId)
+            ->with(['saleItems.product', 'user']) // Eager load
+            ->latest();
+
+        // Filter by Order ID if provided
+        if ($request->filled('search')) {
+            $query->where('id', 'like', '%' . $request->search . '%');
+        } else {
+            // Default to today's sales if no search
+            $query->whereDate('created_at', today());
+        }
+
+        $sales = $query->paginate(20);
+
+        return response()->json($sales);
+    }
+
+    public function voidSale(Request $request, $id)
+    {
+        $request->validate([
+            'pin' => 'required|string', // Supervisor PIN
+        ]);
+
+        // Placeholder PIN check
+        if ($request->pin !== '1234') { // Simple hardcoded PIN for now
+            return response()->json(['message' => 'Invalid Supervisor PIN'], 403);
+        }
+
+        $sale = Sale::where('id', $id)->where('outlet_id', auth()->user()->outlet_id)->firstOrFail();
+
+        if ($sale->status === 'void') {
+            return response()->json(['message' => 'Sale is already voided'], 400);
+        }
+
+        $sale->update(['status' => 'void']);
+
+        // Optional: Restore stock levels here if needed
+
+        return response()->json(['message' => 'Sale voided successfully', 'sale' => $sale]);
+    }
+    public function searchCustomers(Request $request)
+    {
+        $query = $request->input('query');
+        if (empty($query)) {
+            return response()->json([]);
+        }
+
+        $customers = Customer::where('name', 'like', '%' . $query . '%')
+            ->orWhere('phone', 'like', '%' . $query . '%')
+            ->limit(10)
+            ->get(['id', 'name', 'phone', 'email']);
+
+        return response()->json($customers);
+    }
+
+    public function createCustomer(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:20|unique:customers,phone',
+            'email' => 'nullable|email|max:255|unique:customers,email',
+        ]);
+
+        $customer = Customer::create([
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'email' => $request->email,
+            'created_by' => auth()->id(),
+        ]);
+
+        return response()->json(['message' => 'Customer created successfully', 'customer' => $customer], 201);
+    }
 }
