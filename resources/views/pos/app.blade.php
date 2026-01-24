@@ -1,63 +1,80 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex flex-col h-screen bg-gray-200">
-        <!-- Header -->
-        <div class="p-4 bg-gray-800 text-white flex justify-between items-center z-20 shadow-md">
+    <div class="flex flex-col h-screen bg-gray-100 font-sans"> {{-- Lighter background, professional font --}}
+
+        <!-- Header - Retained from previous good design -->
+        <div class="p-4 bg-gray-800 text-white flex justify-between items-center z-20 shadow-lg">
             {{-- Left Section: App Info & Date/Time --}}
             <div class="flex items-center space-x-4">
-                <h1 class="text-xl font-bold">POS Terminal</h1>
-                <span id="current-date-time" class="text-sm"></span> {{-- Placeholder for JS to update --}}
+                <h1 class="text-2xl font-bold tracking-tight">POS Terminal</h1> {{-- Larger, more pronounced title --}}
+                <span id="current-date-time" class="text-sm opacity-80"></span> {{-- Subtle date/time --}}
             </div>
 
             {{-- Center Section: User & Outlet Info --}}
-            <div class="flex items-center space-x-2">
-                <span class="text-lg font-semibold">{{ Auth::user()->name }}</span>
+            <div class="flex items-center space-x-3 text-sm">
+                <span class="font-semibold">{{ Auth::user()->name }}</span>
                 <span class="text-gray-400">|</span>
-                <span class="text-base">{{ Auth::user()->outlet->name ?? 'No Outlet Assigned' }}</span>
+                <span class="text-gray-300">{{ Auth::user()->outlet->name ?? 'No Outlet Assigned' }}</span>
             </div>
 
             {{-- Right Section: Actions --}}
             <form method="POST" action="{{ route('pos.logout') }}" id="pos-logout-form">
                 @csrf
-                <button type="button" onclick="confirmLogout()" class="text-gray-300 hover:text-white text-sm p-2 rounded-md bg-gray-700 hover:bg-gray-600 transition duration-150 ease-in-out">Logout</button>
+                <button type="button" onclick="confirmLogout()" class="px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white text-sm font-medium transition duration-150 ease-in-out shadow-sm">
+                    Logout
+                </button>
             </form>
         </div>
 
-        <div class="flex flex-grow">
+        <!-- Main Content Area -->
+        <div class="flex flex-grow overflow-hidden p-4 space-x-4"> {{-- Added padding and spacing --}}
+            
             <!-- Left Panel: Product Search/Catalog -->
-            <div class="w-2/3 p-4 bg-white shadow-lg overflow-y-auto" id="product-catalog">
-                <h2 class="text-2xl font-bold mb-4">Product Catalog</h2>
-                <input type="text" id="product-search-input" placeholder="Search products..." class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            <div class="w-2/3 flex flex-col bg-white rounded-xl shadow-lg p-6 overflow-hidden"> {{-- Card styling, more padding --}}
+                <h2 class="text-2xl font-semibold text-gray-800 mb-5">Product Catalog</h2> {{-- Stronger heading --}}
+                
+                <div class="mb-5">
+                    <input type="text" id="product-search-input" placeholder="Search products by name or SKU..." class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-lg"> {{-- Larger, better styled search --}}
+                </div>
 
-                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="product-list">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto custom-scrollbar flex-grow" id="product-list"> {{-- Responsive grid, custom scrollbar --}}
                     <!-- Products will be loaded here by JavaScript -->
-                    <p class="col-span-full text-center text-gray-500">Loading products...</p>
+                    <p class="col-span-full text-center text-gray-500 py-10">Loading products...</p>
                 </div>
             </div>
 
             <!-- Right Panel: Cart/Payment -->
-            <div class="w-1/3 p-4 bg-gray-100 shadow-lg flex flex-col" id="pos-cart">
-                <h2 class="text-2xl font-bold mb-4">Shopping Cart</h2>
-                <div class="flex-grow bg-white p-4 rounded-lg shadow mb-4 overflow-y-auto" id="cart-items">
+            <div class="w-1/3 flex flex-col bg-white rounded-xl shadow-lg p-6"> {{-- Card styling, more padding --}}
+                <h2 class="text-2xl font-semibold text-gray-800 mb-5 border-b pb-4">Shopping Cart</h2> {{-- Stronger heading, separator --}}
+                
+                <div class="flex-grow overflow-y-auto custom-scrollbar mb-5" id="cart-items"> {{-- Custom scrollbar, margin --}}
                     <!-- Cart items will be loaded here by JavaScript -->
-                    <p class="text-gray-500">Cart is empty.</p>
+                    <p class="text-gray-500 text-center py-10">Cart is empty.</p>
                 </div>
-                <!-- Subtotal and Total -->
-                <div class="mb-4">
-                    <div class="flex justify-between items-center py-2 text-lg">
+
+                <!-- Summary -->
+                <div class="border-t pt-4 mt-auto"> {{-- Top border for summary --}}
+                    <div class="flex justify-between items-center py-2 text-lg text-gray-700">
                         <span>Subtotal:</span>
-                        <span id="cart-subtotal">$0.00</span>
+                        <span id="cart-subtotal" class="font-medium">$0.00</span>
                     </div>
-                    <div class="flex justify-between items-center py-2 font-bold text-xl">
+                    <div class="flex justify-between items-center py-2 font-bold text-2xl text-gray-900">
                         <span>Total:</span>
                         <span id="cart-total">$0.00</span>
                     </div>
                 </div>
                 
-                <button type="button" id="process-sale-btn" onclick="posApp.redirectToCheckout()" class="w-full bg-green-500 text-white py-3 px-4 rounded-lg hover:bg-green-600 text-xl font-semibold">Process Sale</button>
+                <button type="button" id="process-sale-btn" onclick="posApp.redirectToCheckout()" class="w-full bg-green-600 hover:bg-green-700 text-white py-4 px-6 rounded-lg text-xl font-bold transition duration-150 ease-in-out shadow-md mt-6"> {{-- Larger, bolder button --}}
+                    Process Sale
+                </button>
             </div>
         </div>
+
+        <!-- Footer -->
+        <footer class="p-3 bg-gray-800 text-white text-center text-xs opacity-75 shadow-inner">
+            &copy; {{ date('Y') }} My POS System. All rights reserved.
+        </footer>
     </div>
 
     @push('scripts')
@@ -120,13 +137,17 @@
 
                 this.products.forEach(product => {
                     const productCard = `
-                        <div class="bg-gray-100 p-4 rounded-lg shadow">
-                            <h3 class="font-semibold text-lg">${product.name}</h3>
-                            <p class="text-gray-600">$${product.price.toFixed(2)}</p>
-                            <button data-product-id="${product.id}"
-                                    data-product-name="${product.name}"
-                                    data-product-price="${product.price}"
-                                    class="mt-2 w-full bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600 add-to-cart-btn">Add to Cart</button>
+                        <div class="bg-white rounded-lg shadow hover:shadow-md transition-shadow duration-200 cursor-pointer p-4 flex flex-col justify-between"
+                             data-product-id="${product.id}"
+                             data-product-name="${product.name}"
+                             data-product-price="${product.price}">
+                            <img src="https://via.placeholder.com/100x100?text=Product" alt="${product.name}" class="mx-auto mb-3 rounded">
+                            <h3 class="font-semibold text-gray-800 text-lg mb-1">${product.name}</h3>
+                            <p class="text-gray-600 text-sm mb-3">${product.description || 'No description'}</p>
+                            <div class="flex justify-between items-center mt-auto">
+                                <span class="font-bold text-green-600 text-xl">$${product.price.toFixed(2)}</span>
+                                <button class="add-to-cart-btn bg-indigo-500 text-white text-sm px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors duration-200">Add</button>
+                            </div>
                         </div>
                     `;
                     productList.innerHTML += productCard;
@@ -152,9 +173,10 @@
             setupAddToCartButtons() {
                 document.querySelectorAll('.add-to-cart-btn').forEach(button => {
                     button.addEventListener('click', (event) => {
-                        const productId = event.target.dataset.productId;
-                        const productName = event.target.dataset.productName;
-                        const productPrice = parseFloat(event.target.dataset.productPrice);
+                        const productCard = event.target.closest('[data-product-id]');
+                        const productId = productCard.dataset.productId;
+                        const productName = productCard.dataset.productName;
+                        const productPrice = parseFloat(productCard.dataset.productPrice);
                         this.addToCart(productId, productName, productPrice);
                     });
                 });
@@ -194,7 +216,7 @@
                 cartItemsContainer.innerHTML = ''; // Clear previous cart items
 
                 if (this.cart.length === 0) {
-                    cartItemsContainer.innerHTML = '<p class="text-gray-500">Cart is empty.</p>';
+                    cartItemsContainer.innerHTML = '<p class="text-gray-500 text-center py-4">Cart is empty.</p>';
                 }
 
                 let subtotal = 0;
@@ -202,10 +224,15 @@
                     const itemTotal = item.price * item.quantity;
                     subtotal += itemTotal;
                     const cartItem = `
-                        <div class="flex justify-between items-center py-2 border-b">
-                            <span>${item.name} x ${item.quantity}</span>
-                            <span>$${itemTotal.toFixed(2)}</span>
-                            <button data-product-id="${item.id}" class="text-red-500 hover:text-red-700 text-sm ml-2 remove-from-cart-btn">Remove</button>
+                        <div class="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0">
+                            <div class="flex-grow">
+                                <p class="font-medium text-gray-800">${item.name}</p>
+                                <p class="text-sm text-gray-600">${item.quantity} x $${item.price.toFixed(2)}</p>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="font-semibold text-gray-900">$${itemTotal.toFixed(2)}</span>
+                                <button data-product-id="${item.id}" class="remove-from-cart-btn text-red-500 hover:text-red-700 text-xs px-2 py-1 rounded">Remove</button>
+                            </div>
                         </div>
                     `;
                     cartItemsContainer.innerHTML += cartItem;
@@ -226,6 +253,8 @@
             },
 
             processSale() {
+                // This function is still here but will only be called after checkout process completion
+                // or if specific API logic is needed from the main POS screen directly (unlikely with a separate checkout)
                 if (this.cart.length === 0) {
                     Swal.fire('Error', 'Cart is empty. Cannot process sale.', 'error');
                     return;
