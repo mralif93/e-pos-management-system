@@ -182,7 +182,7 @@ class ProductResource extends Resource
             $selectedOutletId = Session::get('selected_super_admin_outlet_id');
             if ($selectedOutletId) {
                 // Filter by selected outlet for Super Admin
-                $query->whereHas('outlets', function (Builder $query) use ($selectedOutletId) {
+                $query->whereHas('prices', function (Builder $query) use ($selectedOutletId) {
                     $query->where('outlet_id', $selectedOutletId);
                 });
             }
@@ -193,7 +193,7 @@ class ProductResource extends Resource
         } else {
             // For all other roles, filter by their assigned outlet.
             if ($user->outlet_id) {
-                $query->whereHas('outlets', function (Builder $query) use ($user) {
+                $query->whereHas('prices', function (Builder $query) use ($user) {
                     $query->where('outlet_id', $user->outlet_id);
                 });
             } else {
@@ -208,7 +208,7 @@ class ProductResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\OutletsRelationManager::class,
+            //
         ];
     }
 
