@@ -149,6 +149,26 @@ class OutletResource extends Resource
                             ->visibility('public'),
                     ])->columns(2),
 
+                Forms\Components\Section::make('Theme Customization')
+                    ->schema([
+                        Forms\Components\Select::make('settings.pos_theme_color')
+                            ->label('POS App Theme')
+                            ->options([
+                                'indigo' => 'Indigo (Default)',
+                                'blue' => 'Blue',
+                                'red' => 'Red',
+                                'green' => 'Green',
+                                'teal' => 'Teal',
+                                'orange' => 'Orange',
+                                'purple' => 'Purple',
+                                'pink' => 'Pink',
+                                'slate' => 'Slate',
+                                'amber' => 'Amber',
+                            ])
+                            ->default('indigo')
+                            ->required(),
+                    ])->columns(1),
+
                 Forms\Components\Section::make('MyInvois API Settings')
                     ->description('Credentials for LHDN e-Invoicing Integration.')
                     ->schema([

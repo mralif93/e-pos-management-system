@@ -88,6 +88,9 @@ class OutletSeeder extends Seeder
                 'show_outlet_name' => true,
                 'show_cashier_name' => true,
 
+                // Theme Customization
+                'pos_theme_color' => 'green', // POS App -> Green for contrast
+
                 // API
                 'myinvois_environment' => 'sandbox',
             ]

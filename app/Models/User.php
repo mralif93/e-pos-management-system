@@ -28,6 +28,7 @@ class User extends Authenticatable
         'role',
         'is_active',
         'staff_id',
+        'theme_color',
     ];
 
     /**

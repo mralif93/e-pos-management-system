@@ -39,7 +39,7 @@
 </head>
 
 <body class="bg-slate-100 h-screen overflow-hidden flex items-center justify-center p-4">
-
+    @php $theme = $outletSettings['pos_theme_color'] ?? 'indigo'; @endphp
     <div x-data="checkoutApp()" x-init="init()"
         class="bg-white w-full max-w-7xl h-full max-h-[90vh] rounded-3xl shadow-2xl flex overflow-hidden ring-1 ring-black/5">
 
@@ -58,7 +58,7 @@
                 </div>
                 <div class="ml-10">
                     <span
-                        class="px-2.5 py-0.5 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-md tracking-wide">#<span
+                        class="px-2.5 py-0.5 bg-{{ $theme }}-50 text-{{ $theme }}-700 text-xs font-bold rounded-md tracking-wide">#<span
                             x-text="orderId"></span></span>
                 </div>
             </div>
@@ -93,7 +93,8 @@
                 </div>
                 <div class="flex justify-between items-end">
                     <span class="text-slate-800 font-bold text-lg">Total Payable</span>
-                    <span class="text-3xl font-black text-indigo-600 tracking-tight" x-text="formatPrice(total)"></span>
+                    <span class="text-3xl font-black text-{{ $theme }}-600 tracking-tight"
+                        x-text="formatPrice(total)"></span>
                 </div>
             </div>
         </div>
@@ -116,7 +117,7 @@
                 <!-- Payment Method Tabs -->
                 <div class="grid grid-cols-3 gap-3 mb-8">
                     <button @click="paymentMethod = 'cash'"
-                        :class="{'ring-2 ring-indigo-600 bg-indigo-50 text-indigo-700': paymentMethod === 'cash', 'bg-white border border-slate-200 text-slate-600 hover:border-indigo-300': paymentMethod !== 'cash'}"
+                        :class="{'ring-2 ring-{{ $theme }}-600 bg-{{ $theme }}-50 text-{{ $theme }}-700': paymentMethod === 'cash', 'bg-white border border-slate-200 text-slate-600 hover:border-{{ $theme }}-300': paymentMethod !== 'cash'}"
                         class="p-4 rounded-xl flex flex-col items-center gap-2 transition-all">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -126,7 +127,7 @@
                         <span class="font-bold">Cash</span>
                     </button>
                     <button @click="paymentMethod = 'card'"
-                        :class="{'ring-2 ring-indigo-600 bg-indigo-50 text-indigo-700': paymentMethod === 'card', 'bg-white border border-slate-200 text-slate-600 hover:border-indigo-300': paymentMethod !== 'card'}"
+                        :class="{'ring-2 ring-{{ $theme }}-600 bg-{{ $theme }}-50 text-{{ $theme }}-700': paymentMethod === 'card', 'bg-white border border-slate-200 text-slate-600 hover:border-{{ $theme }}-300': paymentMethod !== 'card'}"
                         class="p-4 rounded-xl flex flex-col items-center gap-2 transition-all">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -136,7 +137,7 @@
                         <span class="font-bold">Card</span>
                     </button>
                     <button @click="paymentMethod = 'qr'"
-                        :class="{'ring-2 ring-indigo-600 bg-indigo-50 text-indigo-700': paymentMethod === 'qr', 'bg-white border border-slate-200 text-slate-600 hover:border-indigo-300': paymentMethod !== 'qr'}"
+                        :class="{'ring-2 ring-{{ $theme }}-600 bg-{{ $theme }}-50 text-{{ $theme }}-700': paymentMethod === 'qr', 'bg-white border border-slate-200 text-slate-600 hover:border-{{ $theme }}-300': paymentMethod !== 'qr'}"
                         class="p-4 rounded-xl flex flex-col items-center gap-2 transition-all">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -149,7 +150,7 @@
 
                 <!-- Cash Interface -->
                 <div x-show="paymentMethod === 'cash'">
-                    <div class="bg-indigo-50 rounded-2xl p-6 mb-6">
+                    <div class="bg-{{ $theme }}-50 rounded-2xl p-6 mb-6">
                         <div class="flex justify-between mb-2">
                             <span class="text-slate-500 font-medium">Cash Received</span>
                             <span class="text-slate-500 font-medium">Change</span>
@@ -191,7 +192,7 @@
                         </div>
                         <div class="col-span-1 space-y-3">
                             <button @click="setExact()"
-                                class="w-full bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-bold py-4 rounded-xl text-sm transition-colors">Exact</button>
+                                class="w-full bg-{{ $theme }}-100 hover:bg-{{ $theme }}-200 text-{{ $theme }}-700 font-bold py-4 rounded-xl text-sm transition-colors">Exact</button>
                             <button @click="addAmount(10)"
                                 class="w-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 font-bold py-4 rounded-xl text-sm transition-colors shadow-sm">+10</button>
                             <button @click="addAmount(50)"
@@ -218,7 +219,7 @@
             <div class="p-8 border-t border-slate-100 bg-white">
                 <button @click="processPayment()" :disabled="paymentMethod === 'cash' && changeAmount < 0"
                     :class="{'opacity-50 cursor-not-allowed': paymentMethod === 'cash' && changeAmount < 0}"
-                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-5 rounded-2xl shadow-xl shadow-indigo-200 text-xl transform hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3">
+                    class="w-full bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white font-bold py-5 rounded-2xl shadow-xl shadow-{{ $theme }}-200 text-xl transform hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3">
                     <span>Complete Order</span>
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -298,7 +299,7 @@
                     Swal.fire({
                         html: `
                             <div class="py-6">
-                                <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-indigo-100 border-t-indigo-600 mb-4"></div>
+                                <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-{{ $theme }}-100 border-t-{{ $theme }}-600 mb-4"></div>
                                 <h3 class="text-xl font-bold text-slate-800">Processing Payment</h3>
                                 <p class="text-sm text-slate-500 mt-2">Please wait while we secure the transaction...</p>
                             </div>
@@ -330,7 +331,7 @@
                                         </div>
                                         <div class="flex justify-between items-center text-lg text-slate-800 font-bold border-t border-dashed border-slate-200 pt-2">
                                             <span>Change Due</span>
-                                            <span class="text-indigo-600">${this.formatPrice(Math.max(0, this.changeAmount))}</span>
+                                            <span class="text-{{ $theme }}-600">${this.formatPrice(Math.max(0, this.changeAmount))}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -342,7 +343,7 @@
                             padding: '2.5rem',
                             customClass: {
                                 popup: 'rounded-[32px] shadow-2xl',
-                                confirmButton: 'w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl text-lg shadow-lg shadow-indigo-200 transition-all transform hover:scale-[1.02]'
+                                confirmButton: 'w-full bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white font-bold py-4 rounded-xl text-lg shadow-lg shadow-{{ $theme }}-200 transition-all transform hover:scale-[1.02]'
                             }
                         }).then(() => {
                             localStorage.removeItem('pos_cart');

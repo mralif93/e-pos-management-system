@@ -56,6 +56,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                \App\Http\Middleware\ApplyUserTheme::class,
             ]);
     }
 
@@ -63,12 +64,12 @@ class AdminPanelProvider extends PanelProvider
     {
         Filament::registerRenderHook(
             PanelsRenderHook::TOPBAR_END,
-            fn (): string => Blade::render('@livewire(\'admin.outlet-switcher\')'),
+            fn(): string => Blade::render('@livewire(\'admin.outlet-switcher\')'),
         );
 
         Filament::registerRenderHook(
             PanelsRenderHook::STYLES_AFTER,
-            fn () => Blade::render('<style>.fi-main { max-width: 100% !important; }</style>'),
+            fn() => Blade::render('<style>.fi-main { max-width: 100% !important; }</style>'),
         );
     }
 }
