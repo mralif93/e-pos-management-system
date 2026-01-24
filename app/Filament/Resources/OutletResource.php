@@ -25,51 +25,153 @@ class OutletResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Tabs::make('Outlet Details')
-                    ->tabs([
-                        Forms\Components\Tabs\Tab::make('General')
-                            ->schema([
-                                Forms\Components\TextInput::make('name')
-                                    ->required()
-                                    ->maxLength(255),
-                                Forms\Components\TextInput::make('outlet_code')
-                                    ->required()
-                                    ->maxLength(255),
-                                Forms\Components\TextInput::make('address')
-                                    ->maxLength(255),
-                                Forms\Components\TextInput::make('phone')
-                                    ->tel()
-                                    ->maxLength(255),
-                                Forms\Components\Toggle::make('is_active')
-                                    ->required(),
-                                Forms\Components\Toggle::make('has_pos_access')
-                                    ->required(),
-                            ])->columns(2),
-                        Forms\Components\Tabs\Tab::make('Settings')
-                            ->schema([
-                                Forms\Components\TextInput::make('settings.currency_symbol')
-                                    ->label('Currency Symbol')
-                                    ->default('$')
-                                    ->maxLength(5),
-                                Forms\Components\TextInput::make('settings.tax_rate')
-                                    ->label('Tax Rate (%)')
-                                    ->numeric()
-                                    ->default(0)
-                                    ->suffix('%'),
-                                Forms\Components\TextInput::make('settings.invoice_prefix')
-                                    ->label('Invoice Prefix')
-                                    ->placeholder('INV-')
-                                    ->maxLength(10),
-                                Forms\Components\Textarea::make('settings.receipt_header')
-                                    ->label('Receipt Header Message')
-                                    ->rows(2)
-                                    ->maxLength(255),
-                                Forms\Components\Textarea::make('settings.invoice_footer')
-                                    ->label('Invoice Footer Message')
-                                    ->rows(2)
-                                    ->maxLength(255),
-                            ])->columns(2),
-                    ])->columnSpanFull()
+                Forms\Components\Section::make('General')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('outlet_code')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('address')
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('phone')
+                            ->tel()
+                            ->maxLength(255),
+                        Forms\Components\Toggle::make('is_active')
+                            ->required(),
+                        Forms\Components\Toggle::make('has_pos_access')
+                            ->required(),
+                    ])->columns(2),
+                Forms\Components\Section::make('Business Identity (LHDN)')
+                    ->description('Mandatory business details for LHDN e-Invoicing.')
+                    ->schema([
+                        Forms\Components\TextInput::make('settings.business_name')
+                            ->label('Business Name')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('settings.business_registration_number')
+                            ->label('Registration No. (SSM)')
+                            ->required()
+                            ->maxLength(50),
+                        Forms\Components\TextInput::make('settings.tax_identification_number')
+                            ->label('Tax ID (TIN)')
+                            ->required()
+                            ->maxLength(50),
+                        Forms\Components\Textarea::make('settings.business_address')
+                            ->label('Business Address')
+                            ->required()
+                            ->rows(3),
+                        Forms\Components\TextInput::make('settings.contact_email')
+                            ->label('Contact Email')
+                            ->email()
+                            ->required(),
+                        Forms\Components\TextInput::make('settings.contact_phone')
+                            ->label('Contact Phone')
+                            ->tel(),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Invoice Format & Numbering')
+                    ->schema([
+                        Forms\Components\TextInput::make('settings.invoice_prefix')
+                            ->label('Invoice Prefix')
+                            ->default('INV/')
+                            ->placeholder('INV/'),
+                        Forms\Components\TextInput::make('settings.invoice_number_counter')
+                            ->label('Next Invoice Number')
+                            ->numeric()
+                            ->default(1)
+                            ->hint('Auto-increments. Change only to reset/adjust.'),
+                        Forms\Components\Toggle::make('settings.reset_counter_monthly')
+                            ->label('Reset Counter Monthly')
+                            ->default(true),
+                        Forms\Components\Toggle::make('settings.show_barcode')
+                            ->label('Show Barcode on Receipt')
+                            ->default(true),
+                        Forms\Components\Toggle::make('settings.show_qr_code')
+                            ->label('Show LHDN QR Code')
+                            ->default(true),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Tax & Compliance')
+                    ->schema([
+                        Forms\Components\Select::make('settings.default_tax_type')
+                            ->label('Tax Type')
+                            ->options([
+                                'SST' => 'SST',
+                                'GST' => 'GST',
+                                'VAT' => 'VAT',
+                                'None' => 'None',
+                            ])
+                            ->default('SST'),
+                        Forms\Components\TextInput::make('settings.currency_symbol')
+                            ->label('Currency Symbol')
+                            ->default('$')
+                            ->maxLength(5),
+                        Forms\Components\TextInput::make('settings.tax_rate') // Mapped to existing tax_rate logic if any, or new key
+                            ->label('Default Tax Rate (%)')
+                            ->numeric()
+                            ->default(6)
+                            ->suffix('%'),
+                        Forms\Components\Toggle::make('settings.tax_inclusive_pricing')
+                            ->label('Tax Inclusive Pricing')
+                            ->default(true),
+                        Forms\Components\Toggle::make('settings.auto_submit_e_invoice')
+                            ->label('Auto-Submit e-Invoice')
+                            ->default(true)
+                            ->helperText('Submit to MyInvois immediately after sale.'),
+                        Forms\Components\TextInput::make('settings.e_invoice_delay_minutes')
+                            ->label('Submission Delay (Minutes)')
+                            ->numeric()
+                            ->default(5),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Receipt Customization')
+                    ->schema([
+                        Forms\Components\Textarea::make('settings.receipt_header')
+                            ->label('Receipt Header')
+                            ->rows(3)
+                            ->placeholder("Thank you for your visit!\nOpen daily 8AM–10PM"),
+                        Forms\Components\Textarea::make('settings.receipt_footer')
+                            ->label('Receipt Footer')
+                            ->rows(3)
+                            ->placeholder("Follow us on IG @kedai_kopi\ne-Invoice avail at myinvois.hasil.gov.my"),
+                        Forms\Components\Toggle::make('settings.show_outlet_name')
+                            ->label('Show Outlet Name')
+                            ->default(true),
+                        Forms\Components\Toggle::make('settings.show_cashier_name')
+                            ->label('Show Cashier Name')
+                            ->default(true),
+                        Forms\Components\FileUpload::make('settings.logo_path')
+                            ->label('Receipt Logo')
+                            ->image()
+                            ->directory('outlet-logos')
+                            ->visibility('public'),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('MyInvois API Settings')
+                    ->description('Credentials for LHDN e-Invoicing Integration.')
+                    ->schema([
+                        Forms\Components\Select::make('settings.myinvois_environment')
+                            ->label('Environment')
+                            ->options([
+                                'sandbox' => 'Sandbox',
+                                'production' => 'Production',
+                            ])
+                            ->default('sandbox'),
+                        Forms\Components\TextInput::make('settings.myinvois_client_id')
+                            ->label('Client ID')
+                            ->password()
+                            ->revealable(),
+                        Forms\Components\TextInput::make('settings.myinvois_client_secret')
+                            ->label('Client Secret')
+                            ->password()
+                            ->revealable(),
+                        Forms\Components\Toggle::make('settings.auto_retry_failed_submissions')
+                            ->label('Auto-Retry Failed Submissions')
+                            ->default(true),
+                    ])->columns(2)
+                    ->collapsed(), // Collapse by default for security/space
             ]);
     }
 

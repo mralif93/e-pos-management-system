@@ -45,7 +45,7 @@ class ProductResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->live(onBlur: true)
-                            ->afterStateUpdated(fn (string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
+                            ->afterStateUpdated(fn(string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
                         Forms\Components\TextInput::make('slug')
                             ->required()
                             ->unique(ignoreRecord: true)
@@ -60,18 +60,18 @@ class ProductResource extends Resource
                             ->numeric()
                             ->default(0.00)
                             ->prefix('$')
-                            ->hidden(fn (Forms\Get $get) => $get('has_variants')),
+                            ->hidden(fn(Forms\Get $get) => $get('has_variants')),
                         Forms\Components\TextInput::make('cost')
                             ->required()
                             ->numeric()
                             ->default(0.00)
                             ->prefix('$')
-                            ->hidden(fn (Forms\Get $get) => $get('has_variants')),
+                            ->hidden(fn(Forms\Get $get) => $get('has_variants')),
                         Forms\Components\TextInput::make('stock_level')
                             ->required()
                             ->numeric()
                             ->default(0)
-                            ->hidden(fn (Forms\Get $get) => $get('has_variants')),
+                            ->hidden(fn(Forms\Get $get) => $get('has_variants')),
                         Repeater::make('variants')
                             ->relationship()
                             ->schema([
@@ -93,7 +93,7 @@ class ProductResource extends Resource
                                     ->default(0),
                             ])
                             ->columns(2)
-                            ->visible(fn (Forms\Get $get) => $get('has_variants')),
+                            ->visible(fn(Forms\Get $get) => $get('has_variants')),
                         Forms\Components\Toggle::make('is_active')
                             ->required(),
                     ])->columns(2),
@@ -102,9 +102,25 @@ class ProductResource extends Resource
                     ->schema([
                         Repeater::make('prices')
                             ->relationship()
+                            ->modifyQueryUsing(
+                                fn(Builder $query) =>
+                                auth()->user()->role !== 'Super Admin' && auth()->user()->outlet_id
+                                ? $query->where('outlet_id', auth()->user()->outlet_id)
+                                : $query
+                            )
                             ->schema([
                                 Forms\Components\Select::make('outlet_id')
-                                    ->relationship('outlet', 'name')
+                                    ->relationship(
+                                        'outlet',
+                                        'name',
+                                        modifyQueryUsing: fn(Builder $query) =>
+                                        auth()->user()->role !== 'Super Admin' && auth()->user()->outlet_id
+                                        ? $query->where('id', auth()->user()->outlet_id)
+                                        : $query
+                                    )
+                                    ->default(fn() => auth()->user()->role !== 'Super Admin' ? auth()->user()->outlet_id : null)
+                                    ->disabled(fn() => auth()->user()->role !== 'Super Admin')
+                                    ->dehydrated()
                                     ->required(),
                                 Forms\Components\TextInput::make('price')
                                     ->required()
@@ -113,7 +129,7 @@ class ProductResource extends Resource
                                     ->prefix('$'),
                             ])
                             ->columns(2)
-                            ->itemLabel(fn (array $state): ?string => \App\Models\Outlet::find($state['outlet_id'])?->name),
+                            ->itemLabel(fn(array $state): ?string => \App\Models\Outlet::find($state['outlet_id'])?->name),
                     ]),
             ]);
     }

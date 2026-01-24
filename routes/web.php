@@ -13,6 +13,26 @@ Route::get('/pos/login', [PosLoginController::class, 'create'])->name('pos.login
 Route::post('/pos/login', [PosLoginController::class, 'store']);
 Route::post('/pos/logout', [PosLoginController::class, 'destroy'])->name('pos.logout');
 
+// Debug Route
+Route::get('/debug-scope', function () {
+    $user = auth()->user();
+    $outletId = $user ? $user->outlet_id : 'NULL';
+
+    $products = \App\Models\Product::where('is_active', true)
+        ->when($outletId, function ($q) use ($outletId) {
+            $q->whereHas('prices', function ($pq) use ($outletId) {
+                $pq->where('outlet_id', $outletId);
+            });
+        })->get();
+
+    return [
+        'user' => $user ? $user->name : 'GUEST',
+        'outlet_id' => $outletId,
+        'visible_products' => $products->pluck('name'),
+        'all_prices_db' => \App\Models\ProductOutletPrice::all()
+    ];
+});
+
 // Alias the 'login' route to 'pos.login' for Laravel's default redirection
 Route::get('/login', function () {
     return redirect()->route('pos.login');
