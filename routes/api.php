@@ -16,7 +16,8 @@ Route::prefix('pos')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/sales/{id}/void', [PosController::class, 'voidSale'])->name('api.pos.void');
     Route::get('/categories', [PosController::class, 'getCategories'])->name('api.pos.categories');
 
-    Route::get('/customers/search', [PosController::class, 'searchCustomer'])->name('api.pos.customers.search');
+    Route::post('/verify-pin', [PosController::class, 'verifyPinEndpoint'])->name('api.pos.verify-pin');
+    Route::get('/customers', [PosController::class, 'searchCustomer'])->name('api.pos.customers.search');
     Route::post('/customers', [PosController::class, 'createCustomer'])->name('api.pos.customers.create');
 
     // POS Manager Auth

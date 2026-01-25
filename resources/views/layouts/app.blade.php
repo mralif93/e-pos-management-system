@@ -16,7 +16,20 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
     <!-- SweetAlert2 CSS -->
+    <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/dist/sweetalert2.min.css">
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/serviceworker.js')
+                    .then(registration => console.log('SW registered:', registration))
+                    .catch(err => console.log('SW registration failed:', err));
+            });
+        }
+    </script>
 </head>
 
 <body class="font-sans antialiased">

@@ -15,6 +15,23 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class PosController extends Controller
 {
+    public function verifyPinEndpoint(Request $request)
+    {
+        $request->validate(['pin' => 'required|string']);
+        $user = auth()->user();
+
+        // If user has a specific PIN, check it. 
+        // If not, check if any manager PIN matches (optional, but for now strict user PIN or manager override PIN?)
+        // Let's assume the user MUST have a PIN set to unlock their own session, OR use a manager PIN.
+        // Simple implementation: Check against Auth user's PIN.
+
+        if ($user->pin === $request->pin) {
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['message' => 'Invalid PIN'], 403);
+    }
+
     public function index()
     {
         $user = auth()->user();

@@ -722,6 +722,54 @@
                         }))
                     };
 
+                    // Offline Mode Handling
+                    if (!navigator.onLine) {
+                        const tempId = 'OFF-' + Date.now();
+                        const offlineSale = { ...payload, id: tempId, created_at: new Date().toISOString(), is_offline: true };
+
+                        const offlineSales = JSON.parse(localStorage.getItem('pos_offline_sales') || '[]');
+                        offlineSales.push(offlineSale);
+                        localStorage.setItem('pos_offline_sales', JSON.stringify(offlineSales));
+
+                        this.lastSale = offlineSale;
+
+                        Swal.fire({
+                            icon: 'warning',
+                            html: `
+                                <div class="w-full p-6 text-center">
+                                    <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                        <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    </div>
+                                    <h3 class="text-xl font-black text-slate-800 mb-1">Sale Queued (Offline)</h3>
+                                    <p class="text-xs text-slate-500">Sales will sync when online.</p>
+                                    
+                                    <div class="bg-slate-50 rounded-lg p-3 mt-4 mb-4 border border-slate-100">
+                                         <div class="flex justify-between items-center text-xs text-slate-600 mb-1">
+                                            <span>Amount Paid</span>
+                                            <span class="font-bold">${this.tenderAmountDisplay ? this.formatPrice(this.tenderAmount) : this.formatPrice(this.total)}</span>
+                                        </div>
+                                        <div class="flex justify-between items-center text-base text-slate-800 font-bold border-t border-dashed border-slate-200 pt-1">
+                                            <span>Change Due</span>
+                                            <span class="text-{{ $theme }}-600">${this.formatPrice(Math.max(0, this.changeAmount))}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 gap-3">
+                                        <button onclick="posApp.finishOrder()" class="w-full bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white font-bold py-3 rounded-xl text-sm shadow-md shadow-{{ $theme }}-200 transition-all">
+                                            New Order
+                                        </button>
+                                    </div>
+                                </div>
+                            `,
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                            customClass: { popup: 'rounded-[24px] shadow-2xl overflow-hidden' },
+                            padding: 0,
+                            width: 400
+                        });
+                        return;
+                    }
+
                     fetch('{{ route('api.pos.sales') }}', {
                         method: 'POST',
                         headers: {
