@@ -1,6 +1,5 @@
-const CACHE_NAME = 'epos-v1';
+const CACHE_NAME = 'epos-v2';
 const STATIC_ASSETS = [
-    '/pos',
     '/manifest.json',
     // External assets are cached on runtime to handle CORS/Opaque responses
 ];
@@ -30,10 +29,6 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-    // For API requests, try network first, falling back to nothing (handled by app)
-    // Or we could cache get requests. For now, let's keep it simple: 
-    // Cache First for static, Network First for navigation/API
-
     const url = new URL(event.request.url);
 
     // Static Assets Cache
@@ -51,17 +46,23 @@ self.addEventListener('fetch', (event) => {
         (async () => {
             // Navigation Preload / Special Handling for Navigation
             if (event.request.mode === 'navigate') {
+                // ... existing navigation logic ...
                 try {
-                    // Try network first
                     const networkResponse = await fetch(event.request);
+                    // Update Cache with new HTML
+                    const cache = await caches.open(CACHE_NAME);
+                    cache.put(event.request, networkResponse.clone());
                     return networkResponse;
                 } catch (error) {
-                    // Fallback to cache if offline
-                    const cachedResponse = await caches.match('/pos');
+                    const cachedResponse = await caches.match(event.request); // Match exact request (e.g. /pos)
                     if (cachedResponse) return cachedResponse;
-                    // Last resort valid offline page if /pos isn't cached
-                    return caches.match('/manifest.json'); // Just to return something valid or custom offline.html
+                    return caches.match('/manifest.json');
                 }
+            }
+
+            // Only cache GET requests
+            if (event.request.method !== 'GET') {
+                return fetch(event.request);
             }
 
             try {

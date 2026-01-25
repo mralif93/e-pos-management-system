@@ -723,7 +723,8 @@
                     };
 
                     // Offline Mode Handling
-                    if (!navigator.onLine) {
+                    const isForcedOffline = localStorage.getItem('pos_forced_offline') === 'true';
+                    if (!navigator.onLine || isForcedOffline) {
                         const tempId = 'OFF-' + Date.now();
                         const offlineSale = { ...payload, id: tempId, created_at: new Date().toISOString(), is_offline: true };
 
