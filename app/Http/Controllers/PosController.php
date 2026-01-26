@@ -25,7 +25,8 @@ class PosController extends Controller
         // Let's assume the user MUST have a PIN set to unlock their own session, OR use a manager PIN.
         // Simple implementation: Check against Auth user's PIN.
 
-        if ($user->pin === $request->pin) {
+        if ((string) $user->pin === (string) $request->pin) {
+            session(['pos_locked' => false]);
             return response()->json(['success' => true]);
         }
 
@@ -57,6 +58,20 @@ class PosController extends Controller
         $outletSettings = $user->outlet ? $user->outlet->settings : [];
 
         return view('pos.checkout', ['apiToken' => $apiToken, 'outletSettings' => $outletSettings]);
+    }
+
+    public function lock()
+    {
+        $user = auth()->user();
+        $apiToken = null;
+        if ($user) {
+            $apiToken = $user->createToken('pos-token', ['*'], now()->addMinutes(120))->plainTextToken;
+        }
+        $outletSettings = $user->outlet ? $user->outlet->settings : [];
+
+        session(['pos_locked' => true]);
+
+        return view('pos.lock', ['apiToken' => $apiToken, 'outletSettings' => $outletSettings]);
     }
 
     public function searchProducts(Request $request)

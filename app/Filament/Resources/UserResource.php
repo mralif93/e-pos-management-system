@@ -74,6 +74,14 @@ class UserResource extends Resource
                         Toggle::make('is_active')
                             ->required(),
                         TextInput::make('staff_id'),
+                        TextInput::make('pin')
+                            ->label('Security PIN')
+                            ->numeric()
+                            ->length(4)
+                            ->password() // Hide characters
+                            ->revealable() // Allow toggling visibility
+                            ->required(fn(string $context): bool => $context === 'create')
+                            ->helperText('4-digit numeric PIN for POS login/unlock.'),
                     ])->columns(2),
             ]);
     }
