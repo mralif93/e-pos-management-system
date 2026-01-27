@@ -3,7 +3,6 @@
 @section('content')
     @php $theme = $outletSettings['pos_theme_color'] ?? 'indigo'; @endphp
     <div x-data="posApp" class="flex flex-col h-screen bg-slate-100 font-sans antialiased text-slate-800 overflow-hidden">
-
         <style>
             @keyframes fadeIn {
                 from {
@@ -91,7 +90,7 @@
                     </button>
                     <!-- Mobile History Icon Only -->
                     <button onclick="posApp.openHistory()"
-                        class="md:hidden p-2 bg-white border border-slate-200 rounded-full text-slate-500 hover:text-{{ $theme }}-600 shadow-sm">
+                        class="md:hidden pos-btn-icon-responsive bg-white border border-slate-200 rounded-full text-slate-500 hover:text-{{ $theme }}-600 shadow-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -110,9 +109,9 @@
                         </div>
                         <div class="hidden md:flex flex-col pr-2">
                             <span
-                                class="text-[10px] font-bold text-slate-700 leading-none mb-0.5">{{ Auth::user()->name }}</span>
+                                class="text-[9px] sm:text-[10px] font-bold text-slate-700 leading-none mb-0.5">{{ Auth::user()->name }}</span>
                             <span
-                                class="text-[8px] font-bold text-slate-400 uppercase tracking-wider leading-none">{{ Auth::user()->outlet->name ?? 'Headquarters' }}</span>
+                                class="text-[7px] sm:text-[8px] font-bold text-slate-400 uppercase tracking-wider leading-none">{{ Auth::user()->outlet->name ?? 'Headquarters' }}</span>
                         </div>
                     </div>
 
@@ -120,10 +119,10 @@
 
                     <div class="flex items-center gap-1">
                         <button @click="lockScreen()"
-                            class="p-1.5 rounded-full text-slate-400 hover:bg-white hover:text-indigo-600 hover:shadow-sm transition-all duration-200"
+                            class="pos-btn-icon-responsive text-slate-400 hover:bg-white hover:text-indigo-600 hover:shadow-sm"
                             title="Lock">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                             </svg>
@@ -132,10 +131,10 @@
                         <form method="POST" action="{{ route('pos.logout') }}">
                             @csrf
                             <button type="button" onclick="confirmLogout()"
-                                class="p-1.5 rounded-full text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-all duration-200"
+                                class="pos-btn-icon-responsive text-slate-400 hover:bg-rose-50 hover:text-rose-500"
                                 title="Logout">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                 </svg>
@@ -147,126 +146,131 @@
         </header>
 
         <!-- Main Workspace -->
-        <main class="flex-grow flex overflow-hidden p-4 gap-4 animate-fade-in">
-
+        <main class="flex-grow flex flex-col md:flex-row overflow-hidden p-4 gap-4 animate-fade-in">
             <!-- Left Panel: Catalog -->
-            <section
-                class="flex-grow flex flex-col bg-white rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] ring-1 ring-black/5 overflow-hidden w-3/4">
+            <section class="flex-grow flex flex-col bg-white rounded-2xl shadow-sm overflow-hidden w-full md:w-2/3 h-full">
+                <!-- Header: Search & Categories -->
+                <div
+                    class="flex-shrink-0 bg-white border-b border-slate-100 z-20 flex flex-col shadow-[0_4px_12px_-4px_rgba(0,0,0,0.05)]">
 
-                <!-- Search & Filters -->
-                <div class="p-5 border-b border-slate-100 bg-white z-20">
-                    <div class="relative max-w-2xl">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-{{ $theme }}-500" xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                        <input type="text" id="product-search-input"
-                            class="block w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg leading-5 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-{{ $theme }}-500/20 focus:border-{{ $theme }}-500 transition-all duration-200 text-[10px]"
-                            placeholder="Search by product name, SKU, or barcode...">
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                            <span class="text-[10px] text-slate-400 border border-slate-200 rounded px-1.5 py-0.5">⌘K</span>
+                    <!-- Search Bar Area -->
+                    <div class="px-5 pt-5 pb-3">
+                        <div class="relative w-full">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-{{ $theme }}-500 transition-colors group-focus-within:text-{{ $theme }}-600"
+                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <input type="text" id="product-search-input"
+                                class="peer block w-full pl-11 pr-12 py-3 text-sm rounded-xl border border-slate-200 bg-slate-50 text-slate-700 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-{{ $theme }}-500 focus:ring-4 focus:ring-{{ $theme }}-500/10 transition-all duration-200 shadow-sm"
+                                placeholder="Search products...">
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                <span
+                                    class="text-[10px] font-bold text-slate-400 bg-white border border-slate-200 rounded-md px-1.5 py-0.5 shadow-sm peer-focus:border-{{ $theme }}-200 peer-focus:text-{{ $theme }}-500 transition-colors">⌘K</span>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Category Tabs -->
-                <div class="px-5 py-2 overflow-x-auto custom-scrollbar">
-                    <div id="category-tabs" class="flex gap-3 pb-2 min-w-max">
-                        <!-- JS populated -->
+                    <!-- Category Tabs Area -->
+                    <div class="px-5 pb-3 overflow-x-auto custom-scrollbar">
+                        <div id="category-tabs" class="flex gap-2 min-w-max pb-1">
+                            <!-- JS populated -->
+                        </div>
                     </div>
                 </div>
 
                 <!-- Product Grid -->
+                <!-- Improved grid with auto-fill for better flexibility across screen sizes -->
                 <div id="product-list"
-                    class="flex-grow overflow-y-auto p-5 custom-scrollbar grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 content-start bg-slate-50/50">
+                    class="flex-grow overflow-y-auto p-5 custom-scrollbar grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-4 content-start bg-slate-50/50">
                     <!-- Javascript will populate this -->
                 </div>
             </section>
 
             <!-- Right Panel: Cart -->
-            <section
-                class="w-[280px] flex-shrink-0 flex flex-col bg-white rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] ring-1 ring-black/5 overflow-hidden relative">
-
-                <div class="p-5 border-b border-slate-100 bg-white">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            @php $orderId = rand(1000, 9999); @endphp
-                            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                                Order #{{ $orderId }}
-                            </h2>
-                            <div id="cart-customer-container" class="flex items-center gap-2 mt-1">
-                                <p id="cart-customer-name"
-                                    class="text-[10px] text-slate-400 font-medium cursor-pointer hover:text-{{ $theme }}-600 transition-colors"
-                                    onclick="posApp.openCustomerModal()">
-                                    Guest Customer
-                                </p>
-                                <button id="remove-customer-btn" onclick="posApp.removeCustomer()"
-                                    class="hidden text-slate-400 hover:text-red-500 transition-colors"
-                                    title="Remove Customer">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
-                                        fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                            clip-rule="evenodd" />
+            <section class="w-full md:w-1/3 flex-shrink-0 flex flex-col gap-3 overflow-hidden relative">
+                <!-- Card 1: Header & Items -->
+                <div class="flex-grow flex flex-col bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="p-4 border-b border-slate-100 bg-white">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                @php $orderId = rand(1000, 9999); @endphp
+                                <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                    Order #{{ $orderId }}
+                                </h2>
+                                <div id="cart-customer-container" class="flex items-center gap-2 mt-1">
+                                    <p id="cart-customer-name"
+                                        class="pos-text-responsive-base text-slate-400 font-medium cursor-pointer hover:text-{{ $theme }}-600 transition-colors"
+                                        onclick="posApp.openCustomerModal()">
+                                        Guest Customer
+                                    </p>
+                                    <button id="remove-customer-btn" onclick="posApp.removeCustomer()"
+                                        class="hidden text-slate-400 hover:text-red-500 transition-colors"
+                                        title="Remove Customer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
+                                            fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="posApp.openCustomerModal()"
+                                    class="pos-btn-icon-responsive text-slate-400 hover:text-{{ $theme }}-600 hover:bg-slate-50"
+                                    title="Add Customer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                </button>
+                                <button onclick="posApp.clearCart()"
+                                    class="pos-btn-icon-responsive text-slate-400 hover:text-red-600 hover:bg-red-50"
+                                    title="Clear All Items">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                     </svg>
                                 </button>
                             </div>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <button onclick="posApp.openCustomerModal()"
-                                class="p-2 rounded-lg text-slate-400 hover:text-{{ $theme }}-600 hover:bg-slate-50 transition-all duration-200"
-                                title="Add Customer">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                            </button>
-                            <button onclick="posApp.clearCart()"
-                                class="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all duration-200"
-                                title="Clear All Items">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
-                            </button>
-                        </div>
+                    </div>
+
+                    <!-- Cart Items -->
+                    <div id="cart-items" class="flex-grow overflow-y-auto p-2 custom-scrollbar space-y-1">
+                        <!-- Javascript will populate this -->
                     </div>
                 </div>
 
-                <!-- Cart Items -->
-                <div id="cart-items" class="flex-grow overflow-y-auto p-2 custom-scrollbar space-y-1">
-                    <!-- Javascript will populate this -->
-                </div>
-
-                <!-- Footer / Totals -->
-                <div class="mt-auto bg-white border-t border-slate-100 p-5 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20">
-                    <div class="space-y-3 mb-6">
-                        <div class="flex justify-between text-slate-500 text-[10px]">
+                <!-- Card 2: Totals & Checkout -->
+                <div class="flex-shrink-0 bg-white rounded-xl shadow-sm border border-slate-100 p-4">
+                    <div class="mb-3">
+                        <div class="flex justify-between text-slate-500 pos-text-responsive-lg">
                             <span>Subtotal</span>
                             <span id="cart-subtotal"
                                 class="font-medium text-slate-700">{{ $outletSettings['currency_symbol'] ?? '$' }}0.00</span>
                         </div>
-                        <div class="flex justify-between text-slate-500 text-[10px]">
+                        <div class="flex justify-between text-slate-500 pos-text-responsive-lg">
                             <span>Service Tax ({{ $outletSettings['tax_rate'] ?? 0 }}%)</span>
                             <span id="cart-tax"
                                 class="font-medium text-slate-700">{{ $outletSettings['currency_symbol'] ?? '$' }}0.00</span>
                         </div>
-                        <div class="flex justify-between items-end">
-                            <span class="text-slate-800 font-bold text-[10px] md:text-[10px]">Total</span>
+                        <div class="flex justify-between items-end mt-1">
+                            <span class="text-slate-800 font-bold pos-text-responsive-lg">Total</span>
                             <span id="cart-total"
-                                class="text-base md:text-lg font-extrabold text-{{ $theme }}-600">{{ $outletSettings['currency_symbol'] ?? '$' }}0.00</span>
+                                class="pos-text-responsive-xl font-extrabold text-{{ $theme }}-600">{{ $outletSettings['currency_symbol'] ?? '$' }}0.00</span>
                         </div>
                     </div>
 
                     <button type="button" onclick="posApp.redirectToCheckout()"
-                        class="w-full bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-{{ $theme }}-200 transform hover:-translate-y-0.5 hover:shadow-{{ $theme }}-300 transition-all duration-200 flex justify-between items-center group">
-                        <span class="text-[10px] md:text-[10px]">Checkout</span>
+                        class="w-full bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white shadow-sm shadow-{{ $theme }}-200 pos-btn-responsive transform hover:-translate-y-0.5 hover:shadow-{{ $theme }}-300 transition-all duration-200 flex justify-between items-center group !py-3 sm:!py-3 sm:!px-4">
+                        <span class="pos-text-responsive-lg">Checkout</span>
                         <svg xmlns="http://www.w3.org/2000/svg"
                             class="h-5 w-5 transform group-hover:translate-x-1 transition-transform" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
@@ -277,217 +281,221 @@
                 </div>
             </section>
         </main>
-    </div>
 
-    <div id="history-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" onclick="posApp.closeHistory()">
-        </div>
-
-        <div class="fixed inset-0 z-10 overflow-y-auto">
-            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-                <div
-                    class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-100">
-
-                    <!-- Modal Header -->
-                    <div class="bg-white px-6 py-5 border-b border-slate-100 flex justify-between items-center">
-                        <div class="flex items-center gap-3">
-                            <div class="bg-{{ $theme }}-100 p-2 rounded-lg text-{{ $theme }}-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                </svg>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-bold text-slate-900" id="modal-title">Transaction History
-                                </h3>
-                                <p class="text-[10px] text-slate-500">View and manage recent sales</p>
-                            </div>
-                        </div>
-                        <button onclick="posApp.closeHistory()"
-                            class="text-slate-400 hover:text-slate-600 transition-colors bg-slate-50 hover:bg-slate-100 p-2 rounded-lg">
-                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </button>
-                    </div>
-
-                    <!-- Modal Body -->
-                    <div class="bg-slate-50/50 px-6 py-6 h-[500px] flex flex-col">
-                        <!-- Search Bar -->
-                        <div class="mb-4">
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                                <input type="text" id="history-search"
-                                    class="block w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-xl leading-5 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-{{ $theme }}-200 focus:border-{{ $theme }}-500 sm:text-[10px] transition-all"
-                                    placeholder="Search by Order ID...">
-                            </div>
-                        </div>
-
-                        <!-- Table -->
-                        <div class="flex-grow overflow-hidden rounded-xl border border-slate-200 bg-white flex flex-col">
-                            <div class="overflow-y-auto custom-scrollbar flex-grow">
-                                <table class="min-w-full divide-y divide-slate-100">
-                                    <thead class="bg-slate-50 sticky top-0 z-10">
-                                        <tr>
-                                            <th scope="col"
-                                                class="px-6 py-3 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                                                Order ID</th>
-                                            <th scope="col"
-                                                class="px-6 py-3 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                                                Time</th>
-                                            <th scope="col"
-                                                class="px-6 py-3 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                                                Total</th>
-                                            <th scope="col"
-                                                class="px-6 py-3 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                                                Status</th>
-                                            <th scope="col"
-                                                class="px-6 py-3 text-right text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                                                Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="history-list-body" class="bg-white divide-y divide-slate-100">
-                                        <!-- Populated via JS -->
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- Pagination -->
-                            <div class="bg-slate-50 px-6 py-3 border-t border-slate-100 flex items-center justify-between">
-                                <span class="text-[10px] text-slate-500">Showing recent transactions</span>
-                                <div class="flex gap-2">
-                                    <button id="prev-page-btn"
-                                        class="px-3 py-1 bg-white border border-slate-200 rounded text-[10px] font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-50">Previous</button>
-                                    <button id="next-page-btn"
-                                        class="px-3 py-1 bg-white border border-slate-200 rounded text-[10px] font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-50">Next</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <!-- History Modal -->
+        <div id="history-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
+            aria-modal="true">
+            <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" onclick="posApp.closeHistory()">
             </div>
-        </div>
-    </div>
 
-    <!-- Modifier Modal -->
-    <div id="modifier-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
-        aria-modal="true">
-        <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"></div>
+            <div class="fixed inset-0 z-10 overflow-y-auto">
+                <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                    <div
+                        class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-2xl border border-slate-100">
 
-        <div class="fixed inset-0 z-10 overflow-y-auto">
-            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-                <div
-                    class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-100">
-                    <div class="bg-white px-6 py-5 border-b border-slate-100">
-                        <h3 class="text-lg font-bold text-slate-900" id="modal-title">Customize Item</h3>
-                        <p class="text-[10px] text-slate-500">Select modifiers for this product</p>
-                    </div>
-
-                    <div class="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar" id="modifier-options-container">
-                        <!-- Modifiers injected here -->
-                    </div>
-
-                    <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse gap-3 border-t border-slate-100">
-                        <button type="button" onclick="posApp.confirmModifiers()"
-                            class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-3 bg-{{ $theme }}-600 text-base font-bold text-white hover:bg-{{ $theme }}-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-{{ $theme }}-500 sm:w-auto sm:text-[10px] shadow-md shadow-{{ $theme }}-200">
-                            Add to Order
-                        </button>
-                        <button type="button" onclick="posApp.closeModifierModal()"
-                            class="mt-3 w-full inline-flex justify-center rounded-xl border border-slate-300 shadow-sm px-4 py-3 bg-white text-base font-bold text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-[10px]">
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Customer Modal -->
-    <div id="customer-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
-        aria-modal="true">
-        <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"
-            onclick="posApp.closeCustomerModal()"></div>
-
-        <div class="fixed inset-0 z-10 overflow-y-auto">
-            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-                <div
-                    class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-100">
-
-                    <!-- Modal Header -->
-                    <div class="bg-white px-6 py-5 border-b border-slate-100 flex justify-between items-center">
-                        <h3 class="text-lg font-bold text-slate-900">Select Customer</h3>
-                        <button onclick="posApp.closeCustomerModal()"
-                            class="text-slate-400 hover:text-slate-600 transition-colors">
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
-
-                    <!-- Tabs -->
-                    <div class="flex border-b border-slate-200">
-                        <button onclick="posApp.switchCustomerTab('search')" id="tab-search-btn"
-                            class="flex-1 py-3 text-[10px] font-bold text-{{ $theme }}-600 border-b-2 border-{{ $theme }}-600 bg-slate-50">Search</button>
-                        <button onclick="posApp.switchCustomerTab('create')" id="tab-create-btn"
-                            class="flex-1 py-3 text-[10px] font-medium text-slate-500 hover:text-slate-700">Register
-                            New</button>
-                    </div>
-
-                    <!-- Modal Body -->
-                    <div class="p-6">
-                        <!-- Search Tab -->
-                        <div id="customer-tab-search">
-                            <div class="relative mb-4">
-                                <input type="text" id="customer-search-input"
-                                    class="block w-full pl-4 pr-10 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500 transition-all text-[10px]"
-                                    placeholder="Search name or phone..." autofocus>
-                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                    <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24"
+                        <!-- Modal Header -->
+                        <div class="bg-white px-6 py-5 border-b border-slate-100 flex justify-between items-center">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-{{ $theme }}-100 p-2 rounded-lg text-{{ $theme }}-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                                         stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                     </svg>
                                 </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-900" id="modal-title">Transaction History
+                                    </h3>
+                                    <p class="text-[10px] text-slate-500">View and manage recent sales</p>
+                                </div>
                             </div>
-                            <div id="customer-search-results"
-                                class="max-h-[300px] overflow-y-auto custom-scrollbar space-y-2">
-                                <!-- Results -->
-                                <p class="text-center text-slate-400 py-4 text-[10px]">Start typing to search...</p>
-                            </div>
+                            <button onclick="posApp.closeHistory()"
+                                class="text-slate-400 hover:text-slate-600 transition-colors bg-slate-50 hover:bg-slate-100 p-2 rounded-lg">
+                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </button>
                         </div>
 
-                        <!-- Create Tab -->
-                        <div id="customer-tab-create" class="hidden space-y-4">
-                            <div>
-                                <label class="block text-[10px] font-medium text-slate-700 mb-1">Full Name</label>
-                                <input type="text" id="new-customer-name"
-                                    class="block w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500 text-[10px]">
+                        <!-- Modal Body -->
+                        <div class="bg-slate-50/50 px-6 py-6 h-[500px] flex flex-col">
+                            <!-- Search Bar -->
+                            <div class="mb-4">
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <input type="text" id="history-search"
+                                        class="block w-full pl-10 pr-3 pos-input-responsive leading-5 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-{{ $theme }}-200 focus:border-{{ $theme }}-500 transition-all"
+                                        placeholder="Search by Order ID...">
+                                </div>
                             </div>
-                            <div>
-                                <label class="block text-[10px] font-medium text-slate-700 mb-1">Phone Number</label>
-                                <input type="tel" id="new-customer-phone"
-                                    class="block w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500">
+
+                            <!-- Table -->
+                            <div
+                                class="flex-grow overflow-hidden rounded-xl border border-slate-200 bg-white flex flex-col">
+                                <div class="overflow-y-auto custom-scrollbar flex-grow">
+                                    <table class="min-w-full divide-y divide-slate-100">
+                                        <thead class="bg-slate-50 sticky top-0 z-10">
+                                            <tr>
+                                                <th scope="col"
+                                                    class="px-6 py-3 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                                    Order ID</th>
+                                                <th scope="col"
+                                                    class="px-6 py-3 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                                    Time</th>
+                                                <th scope="col"
+                                                    class="px-6 py-3 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                                    Total</th>
+                                                <th scope="col"
+                                                    class="px-6 py-3 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                                    Status</th>
+                                                <th scope="col"
+                                                    class="px-6 py-3 text-right text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                                    Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="history-list-body" class="bg-white divide-y divide-slate-100">
+                                            <!-- Populated via JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- Pagination -->
+                                <div
+                                    class="bg-slate-50 px-6 py-3 border-t border-slate-100 flex items-center justify-between">
+                                    <span class="text-[10px] text-slate-500">Showing recent transactions</span>
+                                    <div class="flex gap-2">
+                                        <button id="prev-page-btn"
+                                            class="pos-btn-responsive bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 disabled:opacity-50">Previous</button>
+                                        <button id="next-page-btn"
+                                            class="pos-btn-responsive bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 disabled:opacity-50">Next</button>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <label class="block text-[10px] font-medium text-slate-700 mb-1">Email
-                                    (Optional)</label>
-                                <input type="email" id="new-customer-email"
-                                    class="block w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500">
-                            </div>
-                            <button onclick="posApp.createCustomer()"
-                                class="w-full bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white font-bold py-3 rounded-xl shadow-md shadow-{{ $theme }}-200 transition-all">
-                                Create & Select Customer
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modifier Modal -->
+        <div id="modifier-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
+            aria-modal="true">
+            <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"></div>
+
+            <div class="fixed inset-0 z-10 overflow-y-auto">
+                <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                    <div
+                        class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-2xl border border-slate-100">
+                        <div class="bg-white px-6 py-5 border-b border-slate-100">
+                            <h3 class="text-lg font-bold text-slate-900" id="modal-title">Customize Item</h3>
+                            <p class="text-[10px] text-slate-500">Select modifiers for this product</p>
+                        </div>
+
+                        <div class="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar" id="modifier-options-container">
+                            <!-- Modifiers injected here -->
+                        </div>
+
+                        <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse gap-3 border-t border-slate-100">
+                            <button type="button" onclick="posApp.confirmModifiers()"
+                                class="pos-btn-responsive w-full sm:w-auto bg-{{ $theme }}-600 text-white hover:bg-{{ $theme }}-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-{{ $theme }}-500 shadow-md shadow-{{ $theme }}-200">
+                                Add to Order
                             </button>
+                            <button type="button" onclick="posApp.closeModifierModal()"
+                                class="pos-btn-responsive mt-3 sm:mt-0 w-full sm:w-auto bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Modal -->
+        <div id="customer-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
+            aria-modal="true">
+            <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"
+                onclick="posApp.closeCustomerModal()"></div>
+
+            <div class="fixed inset-0 z-10 overflow-y-auto">
+                <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                    <div
+                        class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-2xl border border-slate-100">
+
+                        <!-- Modal Header -->
+                        <div class="bg-white px-6 py-5 border-b border-slate-100 flex justify-between items-center">
+                            <h3 class="text-lg font-bold text-slate-900">Select Customer</h3>
+                            <button onclick="posApp.closeCustomerModal()"
+                                class="text-slate-400 hover:text-slate-600 transition-colors">
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Tabs -->
+                        <div class="flex border-b border-slate-200">
+                            <button onclick="posApp.switchCustomerTab('search')" id="tab-search-btn"
+                                class="flex-1 py-3 text-[10px] font-bold text-{{ $theme }}-600 border-b-2 border-{{ $theme }}-600 bg-slate-50">Search</button>
+                            <button onclick="posApp.switchCustomerTab('create')" id="tab-create-btn"
+                                class="flex-1 py-3 text-[10px] font-medium text-slate-500 hover:text-slate-700">Register
+                                New</button>
+                        </div>
+
+                        <!-- Modal Body -->
+                        <div class="p-6">
+                            <!-- Search Tab -->
+                            <div id="customer-tab-search">
+                                <div class="relative mb-4">
+                                    <input type="text" id="customer-search-input"
+                                        class="block w-full pl-4 pr-10 pos-input-responsive focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500 transition-all"
+                                        placeholder="Search name or phone..." autofocus>
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24"
+                                            stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div id="customer-search-results"
+                                    class="max-h-[300px] overflow-y-auto custom-scrollbar space-y-2">
+                                    <!-- Results -->
+                                    <p class="text-center text-slate-400 py-4 text-[10px]">Start typing to search...</p>
+                                </div>
+                            </div>
+
+                            <!-- Create Tab -->
+                            <div id="customer-tab-create" class="hidden space-y-4">
+                                <div>
+                                    <label class="block text-[10px] font-medium text-slate-700 mb-1">Full Name</label>
+                                    <input type="text" id="new-customer-name"
+                                        class="block w-full pos-input-responsive focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-medium text-slate-700 mb-1">Phone Number</label>
+                                    <input type="tel" id="new-customer-phone"
+                                        class="block w-full pos-input-responsive focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-medium text-slate-700 mb-1">Email
+                                        (Optional)</label>
+                                    <input type="email" id="new-customer-email"
+                                        class="block w-full pos-input-responsive focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500">
+                                </div>
+                                <button onclick="posApp.createCustomer()"
+                                    class="w-full pos-btn-responsive bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white shadow-md shadow-{{ $theme }}-200 transition-all">
+                                    Create & Select Customer
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -497,7 +505,7 @@
 
     @push('scripts')
         <script>
-            const posApp = {
+            window.posApp = {
                 apiToken: null,
                 categories: [],
                 activeCategoryId: null,
@@ -848,14 +856,14 @@
                     const renderTabs = (categories) => {
                         tabsContainer.innerHTML = `
                             <button onclick="posApp.filterCategory('all')" 
-                                class="category-tab px-4 py-2 rounded-xl text-[10px] font-bold whitespace-nowrap transition-all duration-200 bg-{{ $theme }}-600 text-white shadow-md transform scale-105"
+                                class="category-tab pos-btn-responsive !py-1 sm:!py-1.5 bg-{{ $theme }}-600 text-white shadow-md transform scale-105"
                                 data-category="all">
                                 All Items
                             </button>
                         `;
                         categories.forEach(cat => {
                             const btn = document.createElement('button');
-                            btn.className = `category-tab px-4 py-2 rounded-xl text-[10px] font-bold whitespace-nowrap transition-all duration-200 bg-white text-slate-500 hover:bg-slate-50 border border-slate-200`;
+                            btn.className = `category-tab pos-btn-responsive !py-1 sm:!py-1.5 bg-white text-slate-500 hover:bg-slate-50 border border-slate-200`;
                             btn.onclick = () => this.filterCategory(cat.id);
                             btn.innerText = cat.name;
                             btn.dataset.category = cat.id;
@@ -1001,90 +1009,114 @@
                         return;
                     }
 
+                    let html = '';
                     this.products.forEach(product => {
+                        const safeName = this.escapeHtml(product.name);
+                        const safeDesc = this.escapeHtml(product.description || '');
+                        const safePrice = this.formatPrice(product.price);
 
                         // Image Fallback Logic
                         const imageUrl = product.image || product.image_url;
                         let imageHtml = '';
 
                         if (imageUrl) {
-                            imageHtml = `
-                            <img src="${imageUrl}"
-                                alt="${product.name}"
-                                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                onerror="this.onerror=null; this.parentElement.innerHTML=posApp.getFallbackHtml('${product.name.replace(/'/g, "\\'")}')">
-                            `;
+                            imageHtml = `<img src="${imageUrl}" alt="${safeName}" data-name="${safeName}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="this.onerror=null; this.parentElement.innerHTML=window.posApp.getFallbackHtml(this.dataset.name)">`;
                         } else {
-                            imageHtml = this.getFallbackHtml(product.name);
+                            imageHtml = this.getFallbackHtml(safeName);
                         }
 
-                        const productCard = `
-                            <div class="group bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-lg hover:border-{{ $theme }}-100 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full transform hover:-translate-y-1"
+                        html += `
+                            <div class="group bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-lg hover:border-{{ $theme }}-200 transition-all duration-300 cursor-pointer flex flex-col transform hover:-translate-y-1"
                                 data-product-id="${product.id}"
-                                data-product-name="${product.name}"
+                                data-product-name="${safeName}"
                                 data-product-price="${product.price}">
 
-                                <!-- Image Area -->
-                                <div class="aspect-[3/2] bg-slate-50 relative overflow-hidden">
-                                    ${imageHtml}
+                            <!-- Image Area -->
+                            <div class="h-40 w-full bg-slate-100 relative overflow-hidden flex items-center justify-center flex-shrink-0 rounded-t-xl">
+                                ${imageHtml}
+                                <div class="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            </div>
 
-                                    <div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                        <div class="bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-sm text-{{ $theme }}-600">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                                            </svg>
-                                        </div>
-                                    </div>
-                                </div>
+                            <!-- Content -->
+                            <div class="p-3 flex flex-col flex-grow">
+                                <h3 class="font-bold text-slate-800 text-xs sm:text-sm leading-tight mb-1 group-hover:text-{{ $theme }}-600 transition-colors line-clamp-2" title="${safeName}">${safeName}</h3>
+                                <p class="text-[10px] text-slate-500 line-clamp-2 mb-3 leading-relaxed">${safeDesc}</p>
 
-                                <!-- Content -->
-                                <div class="p-3 flex flex-col flex-grow">
-                                    <h3 class="font-bold text-slate-800 text-[10px] md:text-[10px] leading-snug mb-1 group-hover:text-{{ $theme }}-600 transition-colors line-clamp-2" title="${product.name}">${product.name}</h3>
-                                    <p class="text-[9px] text-slate-500 line-clamp-2 mb-3 h-8">${product.description || ''}</p>
-
-                                    <div class="mt-auto flex items-center justify-between">
-                                        <span class="font-extrabold text-slate-900 text-[10px] md:text-[10px]">${this.formatPrice(product.price)}</span>
-                                        <button class="add-to-cart-btn bg-slate-100 hover:bg-{{ $theme }}-600 hover:text-white text-slate-700 p-2 rounded-lg transition-colors duration-200">
-                                            <span class="text-[9px] font-bold px-1">ADD</span>
-                                        </button>
-                                    </div>
+                                <div class="mt-auto pt-2 flex items-center justify-between border-t border-dashed border-slate-100">
+                                    <span class="font-extrabold text-slate-900 text-sm">${safePrice}</span>
+                                    <button class="add-to-cart-btn bg-{{ $theme }}-50 text-{{ $theme }}-700 hover:bg-{{ $theme }}-600 hover:text-white p-1.5 rounded-lg transition-all duration-200 shadow-sm border border-{{ $theme }}-100 group-hover:shadow-{{ $theme }}-100/50">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+                                        </svg>
+                                    </button>
                                 </div>
                             </div>
-                        `;
-                        productList.innerHTML += productCard;
+                        </div>
+                    `;
                     });
+                    productList.innerHTML = html;
                     this.setupAddToCartButtons();
                 },
 
-                // New helper for fallback HTML
-                getFallbackHtml(name) {
-                    // Generate initials (max 2 chars)
-                    const initials = name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+                escapeHtml(unsafe) {
+                    if (typeof unsafe !== 'string') return unsafe;
+                    return unsafe
+                        .replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;")
+                        .replace(/"/g, "&quot;")
+                        .replace(/'/g, "&#039;");
+                },
 
-                    // Generate consistent pastel color based on name
+                getFallbackHtml(name) {
+                    const initials = name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
                     let hash = 0;
                     for (let i = 0; i < name.length; i++) {
                         hash = name.charCodeAt(i) + ((hash << 5) - hash);
                     }
                     const hue = Math.abs(hash % 360);
-                    const bgColor = `hsl(${hue}, 70%, 90%)`;
-                    const textColor = `hsl(${hue}, 70%, 35%)`;
+                    const bgColor = `hsl(${hue}, 60%, 85%)`;
+                    const textColor = `hsl(${hue}, 70%, 30%)`;
 
-                    return `
-                        <div class="w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:scale-110" style="background-color: ${bgColor}; color: ${textColor};">
-                            <span class="text-base md:text-lg font-extrabold tracking-wider select-none">${initials}</span>
-                        </div>`;
-                }, // End getFallbackHtml, and continuation of object...
+                    return `<div class="w-full h-full flex items-center justify-center" style="background-color: ${bgColor}; color: ${textColor};"><span class="text-xl md:text-2xl font-black tracking-widest select-none opacity-80">${initials}</span></div>`;
+                },
 
-                setupAddToCartButtons() { // Re-declaring to ensure valid object syntax structure in replace
+                setupAddToCartButtons() {
+                    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const card = btn.closest('.group');
+                            const product = {
+                                id: card.dataset.productId,
+                                name: card.dataset.productName, // This will be the escaped name, which is fine for display but careful with logic
+                                price: parseFloat(card.dataset.productPrice)
+                            };
+                            this.addToCart(product);
 
+                            // Animation
+                            const icon = btn.querySelector('svg');
+                            icon.classList.add('scale-125', 'text-{{ $theme }}-600');
+                            setTimeout(() => icon.classList.remove('scale-125', 'text-{{ $theme }}-600'), 200);
+                        });
+                    });
+
+                    document.querySelectorAll('#product-list .group').forEach(card => {
+                        card.addEventListener('click', () => {
+                            const product = {
+                                id: card.dataset.productId,
+                                name: card.dataset.productName,
+                                price: parseFloat(card.dataset.productPrice)
+                            };
+                            this.addToCart(product);
+                        });
+                    });
                 },
 
                 setupEventListeners() {
                     const searchInput = document.getElementById('product-search-input');
                     if (searchInput) {
                         searchInput.addEventListener('input', () => this.fetchProducts());
-                        searchInput.focus(); // Auto focus on load
+                        // searchInput.focus(); // Auto focus on load - removed to prevent mobile keyboard layout issues
                     }
                 },
 
@@ -1110,21 +1142,19 @@
                     // Header - Clean & Minimalist
                     let invoiceHtml = `
                         <div class="text-left w-full">
-                            <div class="flex justify-between items-end mb-6 pb-4 border-b border-dashed border-slate-200">
+                            <div class="flex justify-between items-end mb-3 pb-2 border-b border-dashed border-slate-200">
                                 <div>
-                                    <h3 class="text-slate-900 font-bold text-2xl">Order Summary</h3>
-                                    <p class="text-slate-500 text-[10px] mt-1">Order #${Math.floor(1000 + Math.random() * 9000)} • ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
+                                    <h3 class="text-slate-900 font-bold text-xl md:text-2xl">Order Summary</h3>
+                                    <p class="text-slate-500 text-[9px] md:text-[10px]">Order #${Math.floor(1000 + Math.random() * 9000)} • ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
                                 </div>
                                 <div class="text-right">
-                                    <div class="text-right">
-                                        <span class="block text-3xl font-bold text-{{ $theme }}-600">${this.cart.reduce((acc, item) => acc + item.quantity, 0)}</span>
-                                        <span class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Items</span>
-                                    </div>
-                                </div>
+                                <span class="block text-2xl md:text-3xl font-bold text-{{ $theme }}-600">${this.cart.reduce((acc, item) => acc + item.quantity, 0)}</span>
+                                <span class="text-[9px] md:text-[10px] text-slate-400 font-medium uppercase tracking-wider">Items</span>
                             </div>
+                        </div>
 
-                            <div class="max-h-[350px] overflow-y-auto custom-scrollbar pr-4 -mr-2 mb-8 space-y-4">
-                        `;
+                        <div class="max-h-[250px] md:max-h-[300px] overflow-y-auto overflow-x-hidden custom-scrollbar mb-4 md:mb-5 space-y-1.5 md:space-y-2">
+                    `;
 
                     this.cart.forEach(item => {
                         const itemTotal = (item.unitPrice || item.price) * item.quantity; // Use unitPrice which includes modifier costs
@@ -1141,15 +1171,15 @@
                         }
 
                         invoiceHtml += `
-                            <div class="p-3 mb-2 bg-slate-50 border border-slate-100 rounded-xl flex flex-col group transition-all duration-300 hover:shadow-sm hover:border-{{ $theme }}-200">
-                                <div class="flex justify-between items-start mb-2">
+                            <div class="p-1.5 md:p-2 mb-1.5 bg-slate-50 border border-slate-100 rounded-xl flex flex-col group transition-all duration-300 hover:shadow-sm hover:border-{{ $theme }}-200">
+                                <div class="flex justify-between items-start">
                                     <div class="flex-grow">
-                                        <h4 class="font-bold text-slate-800 text-[10px] leading-tight">${item.quantity}× ${item.name}</h4>
-                                        <div class="text-[10px] text-slate-400 font-medium mt-0.5">@ ${this.formatPrice(item.unitPrice || item.price)}</div>
+                                        <h4 class="font-bold text-slate-800 text-[9px] md:text-[10px] leading-tight">${item.quantity}× ${item.name}</h4>
+                                        <div class="text-[9px] md:text-[10px] text-slate-400 font-medium">@ ${this.formatPrice(item.unitPrice || item.price)}</div>
                                         ${modifiersHtml}
                                     </div>
                                     <div class="text-right">
-                                        <span class="font-extrabold text-slate-800 text-[10px]">${this.formatPrice((item.unitPrice || item.price) * item.quantity)}</span>
+                                        <span class="font-extrabold text-slate-800 text-[9px] md:text-[10px]">${this.formatPrice((item.unitPrice || item.price) * item.quantity)}</span>
                                     </div>
                                 </div>
                             </div>
@@ -1162,19 +1192,27 @@
                     invoiceHtml += `
                         </div>
 
-                        <!-- Footer matching Header style -->
-                        <div class="pt-6 border-t border-dashed border-slate-200 space-y-3">
-                            <div class="flex justify-between text-base text-slate-500">
-                                <span>Subtotal</span>
-                                <span class="font-semibold text-slate-700">${this.formatPrice(subtotal)}</span>
+                        <!-- Footer -->
+                        <div class="pt-2"> 
+                            <div class="space-y-1 md:space-y-1.5 mb-2 px-1">
+                                <div class="flex justify-between text-xs md:text-sm text-slate-500">
+                                    <span>Subtotal</span>
+                                    <span class="font-semibold text-slate-700">${this.formatPrice(subtotal)}</span>
+                                </div>
+                                <div class="flex justify-between text-xs md:text-sm text-slate-500">
+                                    <span>Service Tax (${this.taxRate}%)</span>
+                                    <span class="font-semibold text-slate-700">${this.formatPrice(taxAmount)}</span>
+                                </div>
                             </div>
-                            <div class="flex justify-between text-base text-slate-500 pb-4 border-b border-slate-100">
-                                <span>Service Tax (${this.taxRate}%)</span>
-                                <span class="font-semibold text-slate-700">${this.formatPrice(taxAmount)}</span>
-                            </div>
-                            <div class="flex justify-between items-center pt-2">
-                                <span class="text-slate-800 font-bold text-lg">Total Amount</span>
-                                <span class="text-3xl font-black text-{{ $theme }}-600">${this.formatPrice(total)}</span>
+
+                            <!-- Total Amount (Styled like Header) -->
+                            <div class="flex justify-between items-center mt-3 pt-3 border-t border-b border-dashed border-slate-200 pb-3 mb-3">
+                                <div>
+                                    <h3 class="text-slate-900 font-bold text-xl md:text-2xl">Total Amount</h3>
+                                </div>
+                                <div class="text-right">
+                                    <span class="block text-2xl md:text-3xl font-black text-{{ $theme }}-600">${this.formatPrice(total)}</span>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -1185,13 +1223,11 @@
                         buttonsStyling: false,
                         confirmButtonText: 'Confirm & Pay',
                         cancelButtonText: 'Cancel',
-                        width: 600,
-                        padding: '2.5rem',
                         customClass: {
-                            popup: 'rounded-[24px] shadow-2xl',
-                            actions: 'gap-2',
-                            confirmButton: 'bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white rounded-xl font-bold py-4 px-8 text-base shadow-lg shadow-{{ $theme }}-200 transition-all transform hover:scale-105',
-                            cancelButton: 'bg-white hover:bg-slate-50 text-slate-500 border border-slate-200 rounded-xl font-bold py-4 px-8 text-base transition-colors'
+                            popup: 'rounded-[24px] shadow-2xl w-full max-w-2xl',
+                            actions: 'gap-3 mt-6',
+                            confirmButton: 'pos-btn-responsive bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white shadow-lg shadow-{{ $theme }}-200 transition-all transform hover:scale-105',
+                            cancelButton: 'pos-btn-responsive bg-white hover:bg-slate-50 text-slate-500 border border-slate-200 transition-colors'
                         }
                     }).then((result) => {
                         if (result.isConfirmed) {
@@ -1234,6 +1270,18 @@
                 },
 
                 addItemToCart(product, selectedModifiers = []) {
+                    // If called from cart for incrementing
+                    if (product.cartItemId && selectedModifiers.length === 0) {
+                        const existingItem = this.cart.find(item => item.cartItemId === product.cartItemId);
+                        if (existingItem) {
+                            existingItem.quantity++;
+                            this.saveCart();
+                            this.renderCart();
+                            return; // Early exit
+                        }
+                    }
+
+                    // If called from product list or with modifiers
                     const price = parseFloat(product.price);
 
                     // Calculate modifier total cost
@@ -1241,7 +1289,6 @@
                     const unitPrice = price + modifiersCost;
 
                     // Create unique ID based on product AND modifiers
-                    // Sort modifiers by ID to ensure consistent key
                     const sortedModifiers = selectedModifiers.slice().sort((a, b) => a.id - b.id);
                     const modifierKey = sortedModifiers.map(m => m.id).join('-');
                     const cartItemId = `${product.id}-${modifierKey}`;
@@ -1290,8 +1337,8 @@
                     localStorage.setItem('pos_cart', JSON.stringify(this.cart));
                 },
 
-                removeItemFromCart(productId) {
-                    const existingItemIndex = this.cart.findIndex(item => item.id == productId);
+                removeItemFromCart(cartItemId) {
+                    const existingItemIndex = this.cart.findIndex(item => item.cartItemId === cartItemId);
 
                     if (existingItemIndex > -1) {
                         if (this.cart[existingItemIndex].quantity > 1) {
@@ -1312,11 +1359,12 @@
 
                     if (this.cart.length === 0) {
                         cartItemsContainer.innerHTML = `
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="h-full flex flex-col items-center justify-center text-slate-400 p-8 text-center opacity-60">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <p class="text-[10px]">Your cart is currently empty.</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        `;
+                            <div class="h-full flex flex-col items-center justify-center text-slate-400 p-8 text-center opacity-60">
+                                <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                                <p class="text-[10px]">Your cart is currently empty.</p>
+                            </div>
+                        `;
+
                         // Reset totals
                         document.getElementById('cart-subtotal').innerText = this.formatPrice(0);
                         document.getElementById('cart-tax').innerText = this.formatPrice(0);
@@ -1340,37 +1388,30 @@
                         }
 
                         const cartItem = `
-                            <div class="group flex items-center justify-between p-3 mb-3 bg-white rounded-xl border border-slate-100 shadow-sm hover:border-{{ $theme }}-200 transition-all animate-fade-in" style="animation-duration: 0.3s">
-
-                                <!-- Info & Qty -->
-                                <div class="flex-grow min-w-0 pr-3">
-                                    <div class="flex justify-between items-start mb-1.5">
-                                        <p class="font-bold text-slate-800 text-[10px] truncate leading-tight w-full" title="${item.name}">${item.name}</p>
+                            <div class="group flex items-center justify-between pos-card-padding mb-2 bg-white rounded-xl border border-slate-100 shadow-sm hover:border-{{ $theme }}-200 transition-all animate-fade-in" style="animation-duration: 0.3s">
+                                <div class="flex-grow min-w-0">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <p class="font-bold text-slate-800 pos-text-responsive-base truncate" title="${item.name}">${item.name}</p>
+                                            ${modifiersHtml}
+                                        </div>
+                                        <span class="font-bold text-slate-900 pos-text-responsive-lg">${this.formatPrice(itemTotal)}</span>
                                     </div>
-
-                                    ${modifiersHtml}
-                                </div>
-
-                                <div class="flex items-center justify-between mt-2">
-                                    <!-- Qty Controls -->
-                                    <div class="flex items-center bg-slate-50 rounded-lg border border-slate-200 p-0.5">
-                                        <button data-product-id="${item.id}" class="remove-from-cart-btn w-6 h-6 flex items-center justify-center text-slate-500 hover:bg-white hover:text-red-500 hover:shadow-sm rounded-md transition-all">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-                                            </svg>
-                                        </button>
-                                        <span class="font-mono font-bold text-slate-700 text-[10px] w-8 text-center select-none">${item.quantity}</span>
-                                        <button onclick="posApp.addToCart({id: ${item.id}, name: '${(item.name || '').replace(/'/g, "\\'")}', price: ${item.price}, modifiers: []})" 
-                                                 class="w-6 h-6 flex items-center justify-center text-slate-500 hover:bg-white hover:text-green-600 hover:shadow-sm rounded-md transition-all">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                                            </svg>
-                                        </button>
-                                    </div>
-
-                                    <div class="text-right">
-                                        <span class="font-bold text-slate-900 text-[10px] block">${this.formatPrice(itemTotal)}</span>
-                                        <span class="text-[9px] text-slate-400 font-medium block">@ ${this.formatPrice(item.unitPrice || item.price)}/ea</span>
+                                    <div class="flex items-center justify-between mt-2">
+                                        <div class="flex items-center bg-slate-100 rounded-lg p-0.5">
+                                            <button data-cart-item-id="${item.cartItemId}" class="remove-from-cart-btn pos-btn-icon-responsive text-slate-500 hover:bg-white hover:text-red-500 hover:shadow-sm">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                                                </svg>
+                                            </button>
+                                            <span class="font-mono font-bold text-slate-700 pos-text-responsive-base w-6 text-center select-none">${item.quantity}</span>
+                                            <button onclick="posApp.addItemToCart({cartItemId: '${item.cartItemId}'})" class="pos-btn-icon-responsive text-slate-500 hover:bg-white hover:text-green-600 hover:shadow-sm">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <span class="pos-text-responsive-sm text-slate-400 font-medium">@ ${this.formatPrice(item.unitPrice || item.price)}/ea</span>
                                     </div>
                                 </div>
                             </div>
@@ -1393,8 +1434,8 @@
                         button.addEventListener('click', (event) => {
                             event.stopPropagation(); // Stop card click if tailored that way
                             const btn = event.target.closest('button');
-                            const productId = btn.dataset.productId;
-                            this.removeItemFromCart(productId);
+                            const cartItemId = btn.dataset.cartItemId;
+                            this.removeItemFromCart(cartItemId);
                         });
                     });
                 },
@@ -1680,12 +1721,12 @@
                                 const el = document.createElement('div');
                                 el.className = 'p-3 hover:bg-slate-50 rounded-lg cursor-pointer border border-transparent hover:border-slate-100 transition-colors flex justify-between items-center group';
                                 el.innerHTML = `
-                                    <div>
-                                        <p class="font-bold text-slate-800">${customer.name}</p>
-                                        <p class="text-[10px] text-slate-500">${customer.phone || 'No Phone'}</p>
-                                    </div>
-                                    <button class="text-{{ $theme }}-600 font-bold text-[10px] bg-{{ $theme }}-50 px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Select</button>
-                                `;
+                                                                                                                                                                                                                                                    <div>
+                                                                                                                                                                                                                                                        <p class="font-bold text-slate-800">${customer.name}</p>
+                                                                                                                                                                                                                                                        <p class="text-[10px] text-slate-500">${customer.phone || 'No Phone'}</p>
+                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                    <button class="text-{{ $theme }}-600 font-bold text-[10px] bg-{{ $theme }}-50 px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Select</button>
+                                                                                                                                                                                                                                                `;
                                 el.onclick = () => this.selectCustomer(customer);
                                 container.appendChild(el);
                             });

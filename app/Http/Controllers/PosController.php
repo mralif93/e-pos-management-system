@@ -130,13 +130,52 @@ class PosController extends Controller
     {
         $request->validate(['pin' => 'required|string']);
 
-        $manager = User::where('pin', $request->pin)->where('role', 'Super Admin')->first(); // Or 'Manager' role if exists
+        $manager = User::where('pin', $request->pin)
+            ->whereIn('role', ['Super Admin', 'Admin', 'Manager'])
+            ->first();
 
         if ($manager) {
             return response()->json(['valid' => true, 'manager_name' => $manager->name]);
         }
 
         return response()->json(['valid' => false], 401);
+    }
+
+    public function verifyCoupon(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string',
+            'amount' => 'required|numeric|min:0'
+        ]);
+
+        $coupon = \App\Models\Coupon::where('code', $request->code)->valid()->first();
+
+        if (!$coupon) {
+            return response()->json(['valid' => false, 'message' => 'Invalid or expired coupon.'], 404);
+        }
+
+        if (!$coupon->isValidForAmount($request->amount)) {
+            return response()->json(['valid' => false, 'message' => 'Minimum spend of ' . number_format($coupon->min_spend, 2) . ' required.'], 422);
+        }
+
+        // Calculate Discount
+        $discountAmount = 0;
+        if ($coupon->type === 'fixed') {
+            $discountAmount = $coupon->value;
+        } else {
+            $discountAmount = $request->amount * ($coupon->value / 100);
+        }
+
+        // Cap discount at total amount
+        $discountAmount = min($discountAmount, $request->amount);
+
+        return response()->json([
+            'valid' => true,
+            'coupon' => $coupon,
+            'discount_amount' => $discountAmount,
+            'type' => $coupon->type,
+            'value' => $coupon->value
+        ]);
     }
 
     public function processSale(Request $request)

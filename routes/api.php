@@ -23,6 +23,9 @@ Route::prefix('pos')->middleware(['auth:sanctum'])->group(function () {
     // POS Manager Auth
     Route::post('/verify-manager-pin', [PosController::class, 'verifyPin'])->name('api.pos.verify-manager-pin');
 
+    // POS Coupon
+    Route::post('/verify-coupon', [PosController::class, 'verifyCoupon'])->name('api.pos.verify-coupon');
+
     // POS Settings
     Route::get('/settings', [PosController::class, 'getSettings'])->name('api.pos.settings');
 });
