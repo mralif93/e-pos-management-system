@@ -283,103 +283,67 @@
         </main>
 
         <!-- History Modal -->
-        <div id="history-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
-            aria-modal="true">
-            <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" onclick="posApp.closeHistory()">
+
+        <!-- History Full Screen Overlay -->
+        <div id="history-modal"
+            class="fixed inset-0 z-50 bg-slate-50 transform transition-transform duration-300 translate-y-full flex flex-col hidden">
+            <!-- Header -->
+            <div
+                class="bg-white px-6 py-4 border-b border-slate-200 shadow-sm flex items-center justify-between flex-shrink-0">
+                <div class="flex items-center gap-4">
+                    <button onclick="posApp.closeHistory()"
+                        class="p-2 -ml-2 hover:bg-slate-100 rounded-full transition-colors text-slate-500 hover:text-slate-800">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                    </button>
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">Transaction History</h2>
+                        <p class="text-xs text-slate-500">View and manage past orders</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </span>
+                        <input type="text" id="history-search"
+                            class="pl-10 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500 w-64"
+                            placeholder="Search by Order ID...">
+                    </div>
+                </div>
             </div>
 
-            <div class="fixed inset-0 z-10 overflow-y-auto">
-                <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-                    <div
-                        class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-2xl border border-slate-100">
-
-                        <!-- Modal Header -->
-                        <div class="bg-white px-6 py-5 border-b border-slate-100 flex justify-between items-center">
-                            <div class="flex items-center gap-3">
-                                <div class="bg-{{ $theme }}-100 p-2 rounded-lg text-{{ $theme }}-600">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                        stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 class="text-lg font-bold text-slate-900" id="modal-title">Transaction History
-                                    </h3>
-                                    <p class="text-[10px] text-slate-500">View and manage recent sales</p>
-                                </div>
-                            </div>
-                            <button onclick="posApp.closeHistory()"
-                                class="text-slate-400 hover:text-slate-600 transition-colors bg-slate-50 hover:bg-slate-100 p-2 rounded-lg">
-                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </div>
-
-                        <!-- Modal Body -->
-                        <div class="bg-slate-50/50 px-6 py-6 h-[500px] flex flex-col">
-                            <!-- Search Bar -->
-                            <div class="mb-4">
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd"
-                                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                    <input type="text" id="history-search"
-                                        class="block w-full pl-10 pr-3 pos-input-responsive leading-5 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-{{ $theme }}-200 focus:border-{{ $theme }}-500 transition-all"
-                                        placeholder="Search by Order ID...">
-                                </div>
-                            </div>
-
-                            <!-- Table -->
-                            <div
-                                class="flex-grow overflow-hidden rounded-xl border border-slate-200 bg-white flex flex-col">
-                                <div class="overflow-y-auto custom-scrollbar flex-grow">
-                                    <table class="min-w-full divide-y divide-slate-100">
-                                        <thead class="bg-slate-50 sticky top-0 z-10">
-                                            <tr>
-                                                <th scope="col"
-                                                    class="px-6 py-3 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                                                    Order ID</th>
-                                                <th scope="col"
-                                                    class="px-6 py-3 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                                                    Time</th>
-                                                <th scope="col"
-                                                    class="px-6 py-3 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                                                    Total</th>
-                                                <th scope="col"
-                                                    class="px-6 py-3 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                                                    Status</th>
-                                                <th scope="col"
-                                                    class="px-6 py-3 text-right text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                                                    Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="history-list-body" class="bg-white divide-y divide-slate-100">
-                                            <!-- Populated via JS -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <!-- Pagination -->
-                                <div
-                                    class="bg-slate-50 px-6 py-3 border-t border-slate-100 flex items-center justify-between">
-                                    <span class="text-[10px] text-slate-500">Showing recent transactions</span>
-                                    <div class="flex gap-2">
-                                        <button id="prev-page-btn"
-                                            class="pos-btn-responsive bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 disabled:opacity-50">Previous</button>
-                                        <button id="next-page-btn"
-                                            class="pos-btn-responsive bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 disabled:opacity-50">Next</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Content -->
+            <div class="flex-grow overflow-auto p-6">
+                <div class="max-w-7xl mx-auto bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead
+                            class="bg-slate-50 text-[10px] uppercase tracking-wider text-slate-500 font-semibold border-b border-slate-200">
+                            <tr>
+                                <th class="px-6 py-4">Order ID</th>
+                                <th class="px-6 py-4">Time</th>
+                                <th class="px-6 py-4">Total</th>
+                                <th class="px-6 py-4">Status</th>
+                                <th class="px-6 py-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-list-body" class="divide-y divide-slate-100">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                    <!-- Pagination -->
+                    <div class="px-6 py-4 border-t border-slate-100 flex items-center justify-between bg-white">
+                        <button id="prev-page-btn"
+                            class="px-4 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Previous</button>
+                        <span class="text-xs text-slate-400 font-medium">Showing recent transactions</span>
+                        <button id="next-page-btn"
+                            class="px-4 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Next</button>
                     </div>
                 </div>
             </div>
@@ -666,29 +630,29 @@
                             const checked = false;
 
                             optionsHtml += `
-                                <label class="flex items-center justify-between p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
-                                    <div class="flex items-center">
-                                        <input type="${inputType}" name="${inputName}" value="${item.id}"
-                                            data-modifier-id="${mod.id}"
-                                            data-item-price="${item.price}"
-                                            data-item-name="${item.name}"
-                                            class="w-4 h-4 text-{{ $theme }}-600 border-gray-300 focus:ring-{{ $theme }}-500"
-                                            onchange="posApp.handleModifierChange(this, '${mod.type}')">
-                                        <span class="ml-3 font-medium text-slate-700">${item.name}</span>
-                                    </div>
-                                    <span class="text-[10px] text-slate-500">+${this.formatPrice(item.price)}</span>
-                                </label>
-                            `;
+                                                                            <label class="flex items-center justify-between p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+                                                                                <div class="flex items-center">
+                                                                                    <input type="${inputType}" name="${inputName}" value="${item.id}"
+                                                                                        data-modifier-id="${mod.id}"
+                                                                                        data-item-price="${item.price}"
+                                                                                        data-item-name="${item.name}"
+                                                                                        class="w-4 h-4 text-{{ $theme }}-600 border-gray-300 focus:ring-{{ $theme }}-500"
+                                                                                        onchange="posApp.handleModifierChange(this, '${mod.type}')">
+                                                                                    <span class="ml-3 font-medium text-slate-700">${item.name}</span>
+                                                                                </div>
+                                                                                <span class="text-[10px] text-slate-500">+${this.formatPrice(item.price)}</span>
+                                                                            </label>
+                                                                        `;
                         });
 
                         const html = `
-                            <div class="mb-4">
-                                <h4 class="font-bold text-slate-800 mb-2">${mod.name} <span class="text-[10px] font-normal text-slate-500">(${mod.type === 'multiple' ? 'Choose multiple' : 'Choose one'})</span></h4>
-                                <div class="space-y-2">
-                                    ${optionsHtml}
-                                </div>
-                            </div>
-                        `;
+                                                                        <div class="mb-4">
+                                                                            <h4 class="font-bold text-slate-800 mb-2">${mod.name} <span class="text-[10px] font-normal text-slate-500">(${mod.type === 'multiple' ? 'Choose multiple' : 'Choose one'})</span></h4>
+                                                                            <div class="space-y-2">
+                                                                                ${optionsHtml}
+                                                                            </div>
+                                                                        </div>
+                                                                    `;
                         container.innerHTML += html;
                     });
 
@@ -855,12 +819,12 @@
 
                     const renderTabs = (categories) => {
                         tabsContainer.innerHTML = `
-                            <button onclick="posApp.filterCategory('all')" 
-                                class="category-tab pos-btn-responsive !py-1 sm:!py-1.5 bg-{{ $theme }}-600 text-white shadow-md transform scale-105"
-                                data-category="all">
-                                All Items
-                            </button>
-                        `;
+                                                                        <button onclick="posApp.filterCategory('all')" 
+                                                                            class="category-tab pos-btn-responsive !py-1 sm:!py-1.5 bg-{{ $theme }}-600 text-white shadow-md transform scale-105"
+                                                                            data-category="all">
+                                                                            All Items
+                                                                        </button>
+                                                                    `;
                         categories.forEach(cat => {
                             const btn = document.createElement('button');
                             btn.className = `category-tab pos-btn-responsive !py-1 sm:!py-1.5 bg-white text-slate-500 hover:bg-slate-50 border border-slate-200`;
@@ -917,11 +881,11 @@
                     if (!productList) return;
 
                     productList.innerHTML = `
-                        <div class="col-span-full flex flex-col items-center justify-center h-64 text-slate-400">
-                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-current mb-2"></div>
-                            <p>Loading products...</p>
-                        </div>
-                    `;
+                                                                    <div class="col-span-full flex flex-col items-center justify-center h-64 text-slate-400">
+                                                                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-current mb-2"></div>
+                                                                        <p>Loading products...</p>
+                                                                    </div>
+                                                                `;
 
                     // Handle filter by category if selecting specific category
                     let url = '{{ route('api.pos.products') }}';
@@ -1001,11 +965,11 @@
 
                     if (this.products.length === 0) {
                         productList.innerHTML = `
-                            <div class="col-span-full flex flex-col items-center justify-center text-slate-400 py-20">
-                                <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                                <p class="text-lg font-medium">No products found</p>
-                                <p class="text-[10px]">Try searching for something else</p>
-                            </div>`;
+                                                                        <div class="col-span-full flex flex-col items-center justify-center text-slate-400 py-20">
+                                                                            <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                                                            <p class="text-lg font-medium">No products found</p>
+                                                                            <p class="text-[10px]">Try searching for something else</p>
+                                                                        </div>`;
                         return;
                     }
 
@@ -1026,33 +990,33 @@
                         }
 
                         html += `
-                            <div class="group bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-lg hover:border-{{ $theme }}-200 transition-all duration-300 cursor-pointer flex flex-col transform hover:-translate-y-1"
-                                data-product-id="${product.id}"
-                                data-product-name="${safeName}"
-                                data-product-price="${product.price}">
+                                                                        <div class="group bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-lg hover:border-{{ $theme }}-200 transition-all duration-300 cursor-pointer flex flex-col transform hover:-translate-y-1"
+                                                                            data-product-id="${product.id}"
+                                                                            data-product-name="${safeName}"
+                                                                            data-product-price="${product.price}">
 
-                            <!-- Image Area -->
-                            <div class="h-40 w-full bg-slate-100 relative overflow-hidden flex items-center justify-center flex-shrink-0 rounded-t-xl">
-                                ${imageHtml}
-                                <div class="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                            </div>
+                                                                        <!-- Image Area -->
+                                                                        <div class="h-40 w-full bg-slate-100 relative overflow-hidden flex items-center justify-center flex-shrink-0 rounded-t-xl">
+                                                                            ${imageHtml}
+                                                                            <div class="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                                                        </div>
 
-                            <!-- Content -->
-                            <div class="p-3 flex flex-col flex-grow">
-                                <h3 class="font-bold text-slate-800 text-xs sm:text-sm leading-tight mb-1 group-hover:text-{{ $theme }}-600 transition-colors line-clamp-2" title="${safeName}">${safeName}</h3>
-                                <p class="text-[10px] text-slate-500 line-clamp-2 mb-3 leading-relaxed">${safeDesc}</p>
+                                                                        <!-- Content -->
+                                                                        <div class="p-3 flex flex-col flex-grow">
+                                                                            <h3 class="font-bold text-slate-800 text-xs sm:text-sm leading-tight mb-1 group-hover:text-{{ $theme }}-600 transition-colors line-clamp-2" title="${safeName}">${safeName}</h3>
+                                                                            <p class="text-[10px] text-slate-500 line-clamp-2 mb-3 leading-relaxed">${safeDesc}</p>
 
-                                <div class="mt-auto pt-2 flex items-center justify-between border-t border-dashed border-slate-100">
-                                    <span class="font-extrabold text-slate-900 text-sm">${safePrice}</span>
-                                    <button class="add-to-cart-btn bg-{{ $theme }}-50 text-{{ $theme }}-700 hover:bg-{{ $theme }}-600 hover:text-white p-1.5 rounded-lg transition-all duration-200 shadow-sm border border-{{ $theme }}-100 group-hover:shadow-{{ $theme }}-100/50">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+                                                                            <div class="mt-auto pt-2 flex items-center justify-between border-t border-dashed border-slate-100">
+                                                                                <span class="font-extrabold text-slate-900 text-sm">${safePrice}</span>
+                                                                                <button class="add-to-cart-btn bg-{{ $theme }}-50 text-{{ $theme }}-700 hover:bg-{{ $theme }}-600 hover:text-white p-1.5 rounded-lg transition-all duration-200 shadow-sm border border-{{ $theme }}-100 group-hover:shadow-{{ $theme }}-100/50">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+                                                                                    </svg>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                `;
                     });
                     productList.innerHTML = html;
                     this.setupAddToCartButtons();
@@ -1141,20 +1105,20 @@
 
                     // Header - Clean & Minimalist
                     let invoiceHtml = `
-                        <div class="text-left w-full">
-                            <div class="flex justify-between items-end mb-3 pb-2 border-b border-dashed border-slate-200">
-                                <div>
-                                    <h3 class="text-slate-900 font-bold text-xl md:text-2xl">Order Summary</h3>
-                                    <p class="text-slate-500 text-[9px] md:text-[10px]">Order #${Math.floor(1000 + Math.random() * 9000)} • ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
-                                </div>
-                                <div class="text-right">
-                                <span class="block text-2xl md:text-3xl font-bold text-{{ $theme }}-600">${this.cart.reduce((acc, item) => acc + item.quantity, 0)}</span>
-                                <span class="text-[9px] md:text-[10px] text-slate-400 font-medium uppercase tracking-wider">Items</span>
-                            </div>
-                        </div>
+                                                                    <div class="text-left w-full">
+                                                                        <div class="flex justify-between items-end mb-3 pb-2 border-b border-dashed border-slate-200">
+                                                                            <div>
+                                                                                <h3 class="text-slate-900 font-bold text-xl md:text-2xl">Order Summary</h3>
+                                                                                <p class="text-slate-500 text-[9px] md:text-[10px]">Order #${Math.floor(1000 + Math.random() * 9000)} • ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
+                                                                            </div>
+                                                                            <div class="text-right">
+                                                                            <span class="block text-2xl md:text-3xl font-bold text-{{ $theme }}-600">${this.cart.reduce((acc, item) => acc + item.quantity, 0)}</span>
+                                                                            <span class="text-[9px] md:text-[10px] text-slate-400 font-medium uppercase tracking-wider">Items</span>
+                                                                        </div>
+                                                                    </div>
 
-                        <div class="max-h-[250px] md:max-h-[300px] overflow-y-auto overflow-x-hidden custom-scrollbar mb-4 md:mb-5 space-y-1.5 md:space-y-2">
-                    `;
+                                                                    <div class="max-h-[250px] md:max-h-[300px] overflow-y-auto overflow-x-hidden custom-scrollbar mb-4 md:mb-5 space-y-1.5 md:space-y-2">
+                                                                `;
 
                     this.cart.forEach(item => {
                         const itemTotal = (item.unitPrice || item.price) * item.quantity; // Use unitPrice which includes modifier costs
@@ -1171,51 +1135,51 @@
                         }
 
                         invoiceHtml += `
-                            <div class="p-1.5 md:p-2 mb-1.5 bg-slate-50 border border-slate-100 rounded-xl flex flex-col group transition-all duration-300 hover:shadow-sm hover:border-{{ $theme }}-200">
-                                <div class="flex justify-between items-start">
-                                    <div class="flex-grow">
-                                        <h4 class="font-bold text-slate-800 text-[9px] md:text-[10px] leading-tight">${item.quantity}× ${item.name}</h4>
-                                        <div class="text-[9px] md:text-[10px] text-slate-400 font-medium">@ ${this.formatPrice(item.unitPrice || item.price)}</div>
-                                        ${modifiersHtml}
-                                    </div>
-                                    <div class="text-right">
-                                        <span class="font-extrabold text-slate-800 text-[9px] md:text-[10px]">${this.formatPrice((item.unitPrice || item.price) * item.quantity)}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
+                                                                        <div class="p-1.5 md:p-2 mb-1.5 bg-slate-50 border border-slate-100 rounded-xl flex flex-col group transition-all duration-300 hover:shadow-sm hover:border-{{ $theme }}-200">
+                                                                            <div class="flex justify-between items-start">
+                                                                                <div class="flex-grow">
+                                                                                    <h4 class="font-bold text-slate-800 text-[9px] md:text-[10px] leading-tight">${item.quantity}× ${item.name}</h4>
+                                                                                    <div class="text-[9px] md:text-[10px] text-slate-400 font-medium">@ ${this.formatPrice(item.unitPrice || item.price)}</div>
+                                                                                    ${modifiersHtml}
+                                                                                </div>
+                                                                                <div class="text-right">
+                                                                                    <span class="font-extrabold text-slate-800 text-[9px] md:text-[10px]">${this.formatPrice((item.unitPrice || item.price) * item.quantity)}</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    `;
                     });
 
                     const taxAmount = subtotal * (this.taxRate / 100);
                     const total = subtotal + taxAmount;
 
                     invoiceHtml += `
-                        </div>
+                                                                    </div>
 
-                        <!-- Footer -->
-                        <div class="pt-2"> 
-                            <div class="space-y-1 md:space-y-1.5 mb-2 px-1">
-                                <div class="flex justify-between text-xs md:text-sm text-slate-500">
-                                    <span>Subtotal</span>
-                                    <span class="font-semibold text-slate-700">${this.formatPrice(subtotal)}</span>
-                                </div>
-                                <div class="flex justify-between text-xs md:text-sm text-slate-500">
-                                    <span>Service Tax (${this.taxRate}%)</span>
-                                    <span class="font-semibold text-slate-700">${this.formatPrice(taxAmount)}</span>
-                                </div>
-                            </div>
+                                                                    <!-- Footer -->
+                                                                    <div class="pt-2"> 
+                                                                        <div class="space-y-1 md:space-y-1.5 mb-2 px-1">
+                                                                            <div class="flex justify-between text-xs md:text-sm text-slate-500">
+                                                                                <span>Subtotal</span>
+                                                                                <span class="font-semibold text-slate-700">${this.formatPrice(subtotal)}</span>
+                                                                            </div>
+                                                                            <div class="flex justify-between text-xs md:text-sm text-slate-500">
+                                                                                <span>Service Tax (${this.taxRate}%)</span>
+                                                                                <span class="font-semibold text-slate-700">${this.formatPrice(taxAmount)}</span>
+                                                                            </div>
+                                                                        </div>
 
-                            <!-- Total Amount (Styled like Header) -->
-                            <div class="flex justify-between items-center mt-3 pt-3 border-t border-b border-dashed border-slate-200 pb-3 mb-3">
-                                <div>
-                                    <h3 class="text-slate-900 font-bold text-xl md:text-2xl">Total Amount</h3>
-                                </div>
-                                <div class="text-right">
-                                    <span class="block text-2xl md:text-3xl font-black text-{{ $theme }}-600">${this.formatPrice(total)}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+                                                                        <!-- Total Amount (Styled like Header) -->
+                                                                        <div class="flex justify-between items-center mt-3 pt-3 border-t border-b border-dashed border-slate-200 pb-3 mb-3">
+                                                                            <div>
+                                                                                <h3 class="text-slate-900 font-bold text-xl md:text-2xl">Total Amount</h3>
+                                                                            </div>
+                                                                            <div class="text-right">
+                                                                                <span class="block text-2xl md:text-3xl font-black text-{{ $theme }}-600">${this.formatPrice(total)}</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                `;
 
                     Swal.fire({
                         html: invoiceHtml,
@@ -1359,11 +1323,11 @@
 
                     if (this.cart.length === 0) {
                         cartItemsContainer.innerHTML = `
-                            <div class="h-full flex flex-col items-center justify-center text-slate-400 p-8 text-center opacity-60">
-                                <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                                <p class="text-[10px]">Your cart is currently empty.</p>
-                            </div>
-                        `;
+                                                                        <div class="h-full flex flex-col items-center justify-center text-slate-400 p-8 text-center opacity-60">
+                                                                            <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                                                                            <p class="text-[10px]">Your cart is currently empty.</p>
+                                                                        </div>
+                                                                    `;
 
                         // Reset totals
                         document.getElementById('cart-subtotal').innerText = this.formatPrice(0);
@@ -1388,34 +1352,34 @@
                         }
 
                         const cartItem = `
-                            <div class="group flex items-center justify-between pos-card-padding mb-2 bg-white rounded-xl border border-slate-100 shadow-sm hover:border-{{ $theme }}-200 transition-all animate-fade-in" style="animation-duration: 0.3s">
-                                <div class="flex-grow min-w-0">
-                                    <div class="flex justify-between items-start">
-                                        <div>
-                                            <p class="font-bold text-slate-800 pos-text-responsive-base truncate" title="${item.name}">${item.name}</p>
-                                            ${modifiersHtml}
-                                        </div>
-                                        <span class="font-bold text-slate-900 pos-text-responsive-lg">${this.formatPrice(itemTotal)}</span>
-                                    </div>
-                                    <div class="flex items-center justify-between mt-2">
-                                        <div class="flex items-center bg-slate-100 rounded-lg p-0.5">
-                                            <button data-cart-item-id="${item.cartItemId}" class="remove-from-cart-btn pos-btn-icon-responsive text-slate-500 hover:bg-white hover:text-red-500 hover:shadow-sm">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-                                                </svg>
-                                            </button>
-                                            <span class="font-mono font-bold text-slate-700 pos-text-responsive-base w-6 text-center select-none">${item.quantity}</span>
-                                            <button onclick="posApp.addItemToCart({cartItemId: '${item.cartItemId}'})" class="pos-btn-icon-responsive text-slate-500 hover:bg-white hover:text-green-600 hover:shadow-sm">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                        <span class="pos-text-responsive-sm text-slate-400 font-medium">@ ${this.formatPrice(item.unitPrice || item.price)}/ea</span>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
+                                                                        <div class="group flex items-center justify-between pos-card-padding mb-2 bg-white rounded-xl border border-slate-100 shadow-sm hover:border-{{ $theme }}-200 transition-all animate-fade-in" style="animation-duration: 0.3s">
+                                                                            <div class="flex-grow min-w-0">
+                                                                                <div class="flex justify-between items-start">
+                                                                                    <div>
+                                                                                        <p class="font-bold text-slate-800 pos-text-responsive-base truncate" title="${item.name}">${item.name}</p>
+                                                                                        ${modifiersHtml}
+                                                                                    </div>
+                                                                                    <span class="font-bold text-slate-900 pos-text-responsive-lg">${this.formatPrice(itemTotal)}</span>
+                                                                                </div>
+                                                                                <div class="flex items-center justify-between mt-2">
+                                                                                    <div class="flex items-center bg-slate-100 rounded-lg p-0.5">
+                                                                                        <button data-cart-item-id="${item.cartItemId}" class="remove-from-cart-btn pos-btn-icon-responsive text-slate-500 hover:bg-white hover:text-red-500 hover:shadow-sm">
+                                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                                                                                            </svg>
+                                                                                        </button>
+                                                                                        <span class="font-mono font-bold text-slate-700 pos-text-responsive-base w-6 text-center select-none">${item.quantity}</span>
+                                                                                        <button onclick="posApp.addItemToCart({cartItemId: '${item.cartItemId}'})" class="pos-btn-icon-responsive text-slate-500 hover:bg-white hover:text-green-600 hover:shadow-sm">
+                                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                                                                            </svg>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                    <span class="pos-text-responsive-sm text-slate-400 font-medium">@ ${this.formatPrice(item.unitPrice || item.price)}/ea</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    `;
                         cartItemsContainer.innerHTML += cartItem;
                     });
 
@@ -1489,7 +1453,13 @@
                 // --- History Features ---
 
                 openHistory() {
-                    document.getElementById('history-modal').classList.remove('hidden');
+                    const modal = document.getElementById('history-modal');
+                    modal.classList.remove('hidden');
+                    // Small delay to allow display change to render before adding transform class
+                    setTimeout(() => {
+                        modal.classList.remove('translate-y-full');
+                    }, 10);
+
                     this.fetchHistory();
 
                     // Setup search listener if not already
@@ -1514,7 +1484,11 @@
                 },
 
                 closeHistory() {
-                    document.getElementById('history-modal').classList.add('hidden');
+                    const modal = document.getElementById('history-modal');
+                    modal.classList.add('translate-y-full');
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                    }, 300);
                 },
 
                 fetchHistory(page = 1, search = '') {
@@ -1566,277 +1540,360 @@
                         const statusClass = statusColors[sale.status] || 'bg-slate-100 text-slate-700';
 
                         const row = `
-                            <tr class="hover:bg-slate-50 transition-colors group">
-                                <td class="px-6 py-4 whitespace-nowrap text-[10px] font-medium text-slate-900">#${sale.id}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-[10px] text-slate-500">${date}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-[10px] font-bold text-slate-800">${this.formatPrice(sale.total_amount)}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${statusClass} capitalize">
-                                        ${sale.status}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-[10px] font-medium">
-                                    <button class="text-slate-400 hover:text-{{ $theme }}-600 mr-3 hidden">View</button> 
-                                    ${sale.status !== 'void' ? `
-                                        <button onclick="posApp.voidSale(${sale.id})" class="text-slate-400 hover:text-red-600 transition-colors" title="Void Transaction">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                            </svg>
-                                        </button>
-                                    ` : ''}
-                                </td>
-                            </tr>
-                        `;
+                                                                        <tr class="hover:bg-slate-50 transition-colors group">
+                                                                            <td class="px-6 py-4 whitespace-nowrap text-[10px] font-medium text-slate-900">#${sale.id}</td>
+                                                                            <td class="px-6 py-4 whitespace-nowrap text-[10px] text-slate-500">${date}</td>
+                                                                            <td class="px-6 py-4 whitespace-nowrap text-[10px] font-bold text-slate-800">${this.formatPrice(sale.total_amount)}</td>
+                                                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${statusClass} capitalize">
+                                                                                    ${sale.status}
+                                                                                </span>
+                                                                            </td>
+                                                                            <td class="px-6 py-4 whitespace-nowrap text-right text-[10px] font-medium">
+                                                                                <button onclick="posApp.viewOrder(${sale.id})" class="text-slate-400 hover:text-{{ $theme }}-600 mr-2 transition-colors" title="View Details">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                                                    </svg>
+                                                                                </button>
+                                                                                ${sale.status !== 'void' ? `
+                                                                                    <button onclick="posApp.voidSale(${sale.id})" class="text-slate-400 hover:text-red-600 transition-colors" title="Void Transaction">
+                                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                                        </svg>
+                                                                                    </button>
+                                                                                ` : ''}
+                                                                            </td>
+                                                                        </tr>
+                                                                    `;
                         tbody.innerHTML += row;
                     });
+
+                    // Store sales data for referencing in viewOrder
+                    this.currentHistorySales = sales;
                 },
 
-                voidSale(saleId) {
-                    Swal.fire({
-                        title: 'Void Transaction?',
-                        text: "This requires supervisor approval.",
-                        icon: 'warning',
-                        input: 'password',
-                        inputPlaceholder: 'Enter Supervisor PIN',
-                        inputAttributes: {
-                            autocapitalize: 'off',
-                            autocorrect: 'off'
-                        },
-                        showCancelButton: true,
-                        confirmButtonText: 'Void Transaction',
-                        confirmButtonColor: '#ef4444',
-                        showLoaderOnConfirm: true,
-                        inputValidator: (value) => {
-                            if (!value) {
-                                return 'You need to enter the Supervisor PIN!'
-                            }
-                        },
-                        preConfirm: (pin) => {
-                            return fetch(`{{ url('/api/pos/sales') }}/${saleId}/void`, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Authorization': 'Bearer ' + this.apiToken,
-                                    'Accept': 'application/json'
-                                },
-                                body: JSON.stringify({ pin: pin })
-                            })
-                                .then(async response => {
-                                    if (!response.ok) {
-                                        const contentType = response.headers.get("content-type");
-                                        if (contentType && contentType.indexOf("application/json") !== -1) {
-                                            const data = await response.json();
-                                            throw new Error(data.message || 'Failed to void');
+                viewOrder(saleId) {
+                    const sale = this.currentHistorySales.find(s => s.id === saleId);
+                    if (!sale) return;
+
+                    const date = new Date(sale.created_at).toLocaleString('en-US', {
+                        weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                    });
+
+                    // Build Items HTML
+                    let itemsHtml = '<div class="w-full text-left mt-4 border-t border-dashed border-slate-200 pt-4">';
+                    // Check for sale_items (Eloquent) or items (generic)
+                    const items = sale.sale_items || sale.items;
+
+                    if (items && items.length > 0) {
+                        itemsHtml += '<table class="w-full text-sm">';
+                        itemsHtml += '<thead class="text-xs text-slate-500 border-b border-slate-100"><tr><th class="py-2 text-left">Item</th><th class="py-2 text-center">Qty</th><th class="py-2 text-right">Total</th></tr></thead><tbody>';
+                        items.forEach(item => {
+                                                itemsHtml += `
+                                                                            <tr class="border-b border-slate-50">
+                                                                                <td class="py-2">
+                                                                                    <div class="font-medium text-slate-800">${(item.product ? item.product.name : item.product_name) || 'Item'}</div>
+                                                                                    ${item.variants ? `<div class="text-xs text-slate-500">${item.variants}</div>` : ''}
+                                                                                </td>
+                                                                                <td class="py-2 text-center text-slate-600">x${item.quantity}</td>
+                                                                                <td class="py-2 text-right font-medium text-slate-800">${this.formatPrice(item.total_price || (item.price * item.quantity))}</td>
+                                                                            </tr>
+                                                                        `;
+                                            });
+                                            itemsHtml += '</tbody></table>';
                                         } else {
-                                            throw new Error("Server returned non-JSON error. Check networking/auth.");
+                                            itemsHtml += '<p class="text-center text-slate-400 py-4">No item details available</p>';
                                         }
+                                        itemsHtml += '</div>';
+
+                                        // Summary HTML
+                                        itemsHtml += `
+                                                                    <div class="mt-4 pt-4 border-t border-slate-200 flex flex-col space-y-1 text-sm">
+                                                                         <div class="flex justify-between text-slate-600"><span>Payment Method</span><span class="font-medium capitalize">${sale.payment_method || 'Cash'}</span></div>
+                                                                         <div class="flex justify-between text-slate-900 font-bold text-lg mt-2 pt-2 border-t border-dashed border-slate-200"><span>Total</span><span>${this.formatPrice(sale.total_amount)}</span></div>
+                                                                    </div>
+                                                                `;
+
+                                        Swal.fire({
+                                            title: `Order #${sale.id}`,
+                                            html: `
+                                                                        <div class="flex flex-col items-center">
+                                                                            <p class="text-sm text-slate-500 mb-1">${date}</p>
+                                                                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase ${sale.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-700'}">${sale.status}</span>
+                                                                            ${itemsHtml}
+                                                                        </div>
+                                                                    `,
+                                            width: '400px',
+                                            showCloseButton: true,
+                                            showConfirmButton: true,
+                                            confirmButtonText: 'Print Receipt',
+                                            showCancelButton: true,
+                                            cancelButtonText: 'Close',
+                                            customClass: {
+                                                popup: 'rounded-2xl',
+                                                confirmButton: 'bg-{{ $theme }}-600 text-white px-6 py-2 rounded-lg hover:bg-{{ $theme }}-700 shadow-sm',
+                                                cancelButton: 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-200 px-4 py-2 rounded-lg'
+                                            }
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                // Handle Print - repurpose checkout print logic or just notify for now
+                                                // Ideally redirect to print route or trigger same iframe print
+                                                const width = 400;
+                                                const height = 600;
+                                                const left = (screen.width - width) / 2;
+                                                const top = (screen.height - height) / 2;
+                                                window.open(`/pos/sales/${sale.id}/receipt`, 'Receipt', `width=${width},height=${height},top=${top},left=${left}`);
+                                            }
+                                        });
+                                    },
+
+                                    voidSale(saleId) {
+                                        Swal.fire({
+                                            title: 'Void Transaction?',
+                                            text: "This requires supervisor approval.",
+                                            icon: 'warning',
+                                            input: 'password',
+                                            inputPlaceholder: 'Enter Supervisor PIN',
+                                            inputAttributes: {
+                                                autocapitalize: 'off',
+                                                autocorrect: 'off'
+                                            },
+                                            showCancelButton: true,
+                                            confirmButtonText: 'Void Transaction',
+                                            confirmButtonColor: '#ef4444',
+                                            showLoaderOnConfirm: true,
+                                            inputValidator: (value) => {
+                                                if (!value) {
+                                                    return 'You need to enter the Supervisor PIN!'
+                                                }
+                                            },
+                                            preConfirm: (pin) => {
+                                                return fetch(`{{ url('/api/pos/sales') }}/${saleId}/void`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'Authorization': 'Bearer ' + this.apiToken,
+                                                        'Accept': 'application/json'
+                                                    },
+                                                    body: JSON.stringify({ pin: pin })
+                                                })
+                                                    .then(async response => {
+                                                        if (!response.ok) {
+                                                            const contentType = response.headers.get("content-type");
+                                                            if (contentType && contentType.indexOf("application/json") !== -1) {
+                                                                const data = await response.json();
+                                                                throw new Error(data.message || 'Failed to void');
+                                                            } else {
+                                                                throw new Error("Server returned non-JSON error. Check networking/auth.");
+                                                            }
+                                                        }
+                                                        return response.json()
+                                                    })
+                                                    .catch(error => {
+                                                        Swal.showValidationMessage(`${error.message}`)
+                                                    })
+                                            },
+                                            allowOutsideClick: () => !Swal.isLoading()
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                Swal.fire({
+                                                    title: 'Voided!',
+                                                    text: 'Values have been reverted.',
+                                                    icon: 'success'
+                                                });
+                                                this.fetchHistory(this.historyCurrentPage); // Refresh list
+                                            }
+                                        })
+                                    },
+
+                                    // --- Customer Features ---
+
+                                    openCustomerModal() {
+                                        document.getElementById('customer-modal').classList.remove('hidden');
+                                        document.getElementById('customer-search-input').focus();
+
+                                        // Setup search listener
+                                        const searchInput = document.getElementById('customer-search-input');
+                                        if (searchInput && !searchInput.dataset.listening) {
+                                            searchInput.addEventListener('input', (e) => {
+                                                clearTimeout(this.customerSearchTimeout);
+                                                this.customerSearchTimeout = setTimeout(() => {
+                                                    this.searchCustomers(e.target.value);
+                                                }, 300);
+                                            });
+                                            searchInput.dataset.listening = true;
+                                        }
+                                    },
+
+                                    closeCustomerModal() {
+                                        document.getElementById('customer-modal').classList.add('hidden');
+                                    },
+
+                                    switchCustomerTab(tab) {
+                                        const searchTab = document.getElementById('customer-tab-search');
+                                        const createTab = document.getElementById('customer-tab-create');
+                                        const searchBtn = document.getElementById('tab-search-btn');
+                                        const createBtn = document.getElementById('tab-create-btn');
+
+                                        if (tab === 'search') {
+                                            searchTab.classList.remove('hidden');
+                                            createTab.classList.add('hidden');
+                                            searchBtn.className = 'flex-1 py-3 text-[10px] font-bold text-{{ $theme }}-600 border-b-2 border-{{ $theme }}-600 bg-slate-50';
+                                            createBtn.className = 'flex-1 py-3 text-[10px] font-medium text-slate-500 hover:text-slate-700';
+                                            document.getElementById('customer-search-input').focus();
+                                        } else {
+                                            searchTab.classList.add('hidden');
+                                            createTab.classList.remove('hidden');
+                                            searchBtn.className = 'flex-1 py-3 text-[10px] font-medium text-slate-500 hover:text-slate-700';
+                                            createBtn.className = 'flex-1 py-3 text-[10px] font-bold text-{{ $theme }}-600 border-b-2 border-{{ $theme }}-600 bg-slate-50';
+                                            document.getElementById('new-customer-name').focus();
+                                        }
+                                    },
+
+                                    searchCustomers(query) {
+                                        const container = document.getElementById('customer-search-results');
+                                        container.innerHTML = '<p class="text-center text-slate-400 py-4 text-[10px]">Searching...</p>';
+
+                                        if (!query) {
+                                            container.innerHTML = '<p class="text-center text-slate-400 py-4 text-[10px]">Start typing to search...</p>';
+                                            return;
+                                        }
+
+                                        fetch(`{{ route('api.pos.customers.search') }}?query=${query}`, {
+                                            headers: {
+                                                'Accept': 'application/json',
+                                                'Authorization': 'Bearer ' + this.apiToken
+                                            }
+                                        })
+                                            .then(res => res.json())
+                                            .then(data => {
+                                                container.innerHTML = '';
+                                                if (data.length === 0) {
+                                                    container.innerHTML = '<p class="text-center text-slate-400 py-4 text-[10px]">No customers found.</p>';
+                                                    return;
+                                                }
+
+                                                data.forEach(customer => {
+                                                    const el = document.createElement('div');
+                                                    el.className = 'p-3 hover:bg-slate-50 rounded-lg cursor-pointer border border-transparent hover:border-slate-100 transition-colors flex justify-between items-center group';
+                                                    el.innerHTML = `
+                                                                                                                                                                                                                                                                                                <div>
+                                                                                                                                                                                                                                                                                                    <p class="font-bold text-slate-800">${customer.name}</p>
+                                                                                                                                                                                                                                                                                                    <p class="text-[10px] text-slate-500">${customer.phone || 'No Phone'}</p>
+                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                <button class="text-{{ $theme }}-600 font-bold text-[10px] bg-{{ $theme }}-50 px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Select</button>
+                                                                                                                                                                                                                                                                                            `;
+                                                    el.onclick = () => this.selectCustomer(customer);
+                                                    container.appendChild(el);
+                                                });
+                                            });
+                                    },
+
+                                    createCustomer() {
+                                        const name = document.getElementById('new-customer-name').value;
+                                        const phone = document.getElementById('new-customer-phone').value;
+                                        const email = document.getElementById('new-customer-email').value;
+
+                                        if (!name) {
+                                            Swal.fire({ title: 'Error', text: 'Name is required', icon: 'error', toast: true, position: 'top', showConfirmButton: false, timer: 3000 });
+                                            return;
+                                        }
+                                        if (!phone) {
+                                            Swal.fire({ title: 'Error', text: 'Phone number is required', icon: 'error', toast: true, position: 'top', showConfirmButton: false, timer: 3000 });
+                                            return;
+                                        }
+
+                                        fetch('{{ route('api.pos.customers.create') }}', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'Authorization': 'Bearer ' + this.apiToken,
+                                                'Accept': 'application/json'
+                                            },
+                                            body: JSON.stringify({ name, phone, email })
+                                        })
+                                            .then(async res => {
+                                                const data = await res.json();
+                                                if (!res.ok) {
+                                                    throw new Error(data.message || 'Failed to create customer');
+                                                }
+                                                return data;
+                                            })
+                                            .then(data => {
+                                                this.selectCustomer(data.customer);
+                                                // Reset form
+                                                document.getElementById('new-customer-name').value = '';
+                                                document.getElementById('new-customer-phone').value = '';
+                                                document.getElementById('new-customer-email').value = '';
+                                            })
+                                            .catch(err => {
+                                                Swal.fire({
+                                                    title: 'Error',
+                                                    text: err.message,
+                                                    icon: 'error',
+                                                    position: 'top',
+                                                    toast: true,
+                                                    timer: 4000
+                                                });
+                                            });
+                                    },
+
+                                    selectCustomer(customer) {
+                                        this.cartCustomer = customer;
+                                        localStorage.setItem('pos_customer', JSON.stringify(customer));
+
+                                        const nameDisplay = document.getElementById('cart-customer-name');
+                                        const removeBtn = document.getElementById('remove-customer-btn');
+
+                                        if (nameDisplay) {
+                                            nameDisplay.innerText = customer.name;
+                                            nameDisplay.classList.add('text-{{ $theme }}-600', 'font-bold');
+                                        }
+                                        if (removeBtn) removeBtn.classList.remove('hidden');
+
+                                        this.closeCustomerModal();
+
+                                        Swal.fire({
+                                            title: 'Customer Selected',
+                                            text: `Order linked to ${customer.name}`,
+                                            icon: 'success',
+                                            toast: true,
+                                            position: 'top',
+                                            showConfirmButton: false,
+                                            timer: 2000
+                                        });
+                                    },
+
+                                    removeCustomer() {
+                                        this.cartCustomer = null;
+                                        localStorage.removeItem('pos_customer');
+
+                                        const nameDisplay = document.getElementById('cart-customer-name');
+                                        const removeBtn = document.getElementById('remove-customer-btn');
+
+                                        if (nameDisplay) {
+                                            nameDisplay.innerText = 'Guest Customer';
+                                            nameDisplay.classList.remove('text-{{ $theme }}-600', 'font-bold');
+                                        }
+                                        if (removeBtn) removeBtn.classList.add('hidden');
+
+                                        Swal.fire({
+                                            title: 'Removed',
+                                            text: 'Customer unlinked from order',
+                                            icon: 'info',
+                                            toast: true,
+                                            position: 'top',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        });
                                     }
-                                    return response.json()
-                                })
-                                .catch(error => {
-                                    Swal.showValidationMessage(`${error.message}`)
-                                })
-                        },
-                        allowOutsideClick: () => !Swal.isLoading()
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            Swal.fire({
-                                title: 'Voided!',
-                                text: 'Values have been reverted.',
-                                icon: 'success'
-                            });
-                            this.fetchHistory(this.historyCurrentPage); // Refresh list
-                        }
-                    })
-                },
+                                };
 
-                // --- Customer Features ---
-
-                openCustomerModal() {
-                    document.getElementById('customer-modal').classList.remove('hidden');
-                    document.getElementById('customer-search-input').focus();
-
-                    // Setup search listener
-                    const searchInput = document.getElementById('customer-search-input');
-                    if (searchInput && !searchInput.dataset.listening) {
-                        searchInput.addEventListener('input', (e) => {
-                            clearTimeout(this.customerSearchTimeout);
-                            this.customerSearchTimeout = setTimeout(() => {
-                                this.searchCustomers(e.target.value);
-                            }, 300);
-                        });
-                        searchInput.dataset.listening = true;
-                    }
-                },
-
-                closeCustomerModal() {
-                    document.getElementById('customer-modal').classList.add('hidden');
-                },
-
-                switchCustomerTab(tab) {
-                    const searchTab = document.getElementById('customer-tab-search');
-                    const createTab = document.getElementById('customer-tab-create');
-                    const searchBtn = document.getElementById('tab-search-btn');
-                    const createBtn = document.getElementById('tab-create-btn');
-
-                    if (tab === 'search') {
-                        searchTab.classList.remove('hidden');
-                        createTab.classList.add('hidden');
-                        searchBtn.className = 'flex-1 py-3 text-[10px] font-bold text-{{ $theme }}-600 border-b-2 border-{{ $theme }}-600 bg-slate-50';
-                        createBtn.className = 'flex-1 py-3 text-[10px] font-medium text-slate-500 hover:text-slate-700';
-                        document.getElementById('customer-search-input').focus();
-                    } else {
-                        searchTab.classList.add('hidden');
-                        createTab.classList.remove('hidden');
-                        searchBtn.className = 'flex-1 py-3 text-[10px] font-medium text-slate-500 hover:text-slate-700';
-                        createBtn.className = 'flex-1 py-3 text-[10px] font-bold text-{{ $theme }}-600 border-b-2 border-{{ $theme }}-600 bg-slate-50';
-                        document.getElementById('new-customer-name').focus();
-                    }
-                },
-
-                searchCustomers(query) {
-                    const container = document.getElementById('customer-search-results');
-                    container.innerHTML = '<p class="text-center text-slate-400 py-4 text-[10px]">Searching...</p>';
-
-                    if (!query) {
-                        container.innerHTML = '<p class="text-center text-slate-400 py-4 text-[10px]">Start typing to search...</p>';
-                        return;
-                    }
-
-                    fetch(`{{ route('api.pos.customers.search') }}?query=${query}`, {
-                        headers: {
-                            'Accept': 'application/json',
-                            'Authorization': 'Bearer ' + this.apiToken
-                        }
-                    })
-                        .then(res => res.json())
-                        .then(data => {
-                            container.innerHTML = '';
-                            if (data.length === 0) {
-                                container.innerHTML = '<p class="text-center text-slate-400 py-4 text-[10px]">No customers found.</p>';
-                                return;
-                            }
-
-                            data.forEach(customer => {
-                                const el = document.createElement('div');
-                                el.className = 'p-3 hover:bg-slate-50 rounded-lg cursor-pointer border border-transparent hover:border-slate-100 transition-colors flex justify-between items-center group';
-                                el.innerHTML = `
-                                                                                                                                                                                                                                                    <div>
-                                                                                                                                                                                                                                                        <p class="font-bold text-slate-800">${customer.name}</p>
-                                                                                                                                                                                                                                                        <p class="text-[10px] text-slate-500">${customer.phone || 'No Phone'}</p>
-                                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                                    <button class="text-{{ $theme }}-600 font-bold text-[10px] bg-{{ $theme }}-50 px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Select</button>
-                                                                                                                                                                                                                                                `;
-                                el.onclick = () => this.selectCustomer(customer);
-                                container.appendChild(el);
-                            });
-                        });
-                },
-
-                createCustomer() {
-                    const name = document.getElementById('new-customer-name').value;
-                    const phone = document.getElementById('new-customer-phone').value;
-                    const email = document.getElementById('new-customer-email').value;
-
-                    if (!name) {
-                        Swal.fire({ title: 'Error', text: 'Name is required', icon: 'error', toast: true, position: 'top', showConfirmButton: false, timer: 3000 });
-                        return;
-                    }
-                    if (!phone) {
-                        Swal.fire({ title: 'Error', text: 'Phone number is required', icon: 'error', toast: true, position: 'top', showConfirmButton: false, timer: 3000 });
-                        return;
-                    }
-
-                    fetch('{{ route('api.pos.customers.create') }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + this.apiToken,
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({ name, phone, email })
-                    })
-                        .then(async res => {
-                            const data = await res.json();
-                            if (!res.ok) {
-                                throw new Error(data.message || 'Failed to create customer');
-                            }
-                            return data;
-                        })
-                        .then(data => {
-                            this.selectCustomer(data.customer);
-                            // Reset form
-                            document.getElementById('new-customer-name').value = '';
-                            document.getElementById('new-customer-phone').value = '';
-                            document.getElementById('new-customer-email').value = '';
-                        })
-                        .catch(err => {
-                            Swal.fire({
-                                title: 'Error',
-                                text: err.message,
-                                icon: 'error',
-                                position: 'top',
-                                toast: true,
-                                timer: 4000
-                            });
-                        });
-                },
-
-                selectCustomer(customer) {
-                    this.cartCustomer = customer;
-                    localStorage.setItem('pos_customer', JSON.stringify(customer));
-
-                    const nameDisplay = document.getElementById('cart-customer-name');
-                    const removeBtn = document.getElementById('remove-customer-btn');
-
-                    if (nameDisplay) {
-                        nameDisplay.innerText = customer.name;
-                        nameDisplay.classList.add('text-{{ $theme }}-600', 'font-bold');
-                    }
-                    if (removeBtn) removeBtn.classList.remove('hidden');
-
-                    this.closeCustomerModal();
-
-                    Swal.fire({
-                        title: 'Customer Selected',
-                        text: `Order linked to ${customer.name}`,
-                        icon: 'success',
-                        toast: true,
-                        position: 'top',
-                        showConfirmButton: false,
-                        timer: 2000
-                    });
-                },
-
-                removeCustomer() {
-                    this.cartCustomer = null;
-                    localStorage.removeItem('pos_customer');
-
-                    const nameDisplay = document.getElementById('cart-customer-name');
-                    const removeBtn = document.getElementById('remove-customer-btn');
-
-                    if (nameDisplay) {
-                        nameDisplay.innerText = 'Guest Customer';
-                        nameDisplay.classList.remove('text-{{ $theme }}-600', 'font-bold');
-                    }
-                    if (removeBtn) removeBtn.classList.add('hidden');
-
-                    Swal.fire({
-                        title: 'Removed',
-                        text: 'Customer unlinked from order',
-                        icon: 'info',
-                        toast: true,
-                        position: 'top',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                }
-            };
-
-            document.addEventListener('DOMContentLoaded', () => {
-                window.posApp = posApp; // Ensure global access for inline onclicks
-                posApp.init();
-            });
-        </script>
+                                document.addEventListener('DOMContentLoaded', () => {
+                                    window.posApp = posApp; // Ensure global access for inline onclicks
+                                    posApp.init();
+                                });
+                            </script>
     @endpush
 @endsection

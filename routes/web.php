@@ -44,5 +44,5 @@ Route::middleware(['auth:web', 'pos.lock.check'])->group(function () { // Use 'w
     Route::get('/pos/checkout', [PosController::class, 'checkout'])->name('pos.checkout')->middleware('can:access-pos');
     Route::get('/pos/lock', [PosController::class, 'lock'])->name('pos.lock')->middleware('can:access-pos');
     Route::post('/pos/verify-pin', [PosController::class, 'verifyPinEndpoint'])->name('pos.verify-pin')->middleware('can:access-pos');
-    Route::get('/pos/sales/{id}/receipt-pdf', [PosController::class, 'generateReceiptPdf'])->name('pos.sales.receipt-pdf')->middleware('can:access-pos');
+    Route::get('/pos/sales/{id}/receipt', [PosController::class, 'generateReceiptPdf'])->name('pos.sales.receipt')->middleware('can:access-pos');
 });
