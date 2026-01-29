@@ -19,67 +19,73 @@ class ProductSeeder extends Seeder
         $categories = Category::all();
         $outlets = Outlet::all();
 
-        $mainOutlet = $outlets->where('name', 'Main Outlet')->first();
-        $secondOutlet = $outlets->where('name', 'Second Outlet')->first();
-        if ($mainOutlet) {
-            $cafeItems = [
-                // Signature Coffee
+        // Define Product Data for each Outlet Name
+        $outletInventory = [
+            'Cafe Delight' => [
                 ['name' => 'Spanish Latte', 'cat' => 'Signature Coffee', 'price' => 13.90, 'cost' => 4.50],
                 ['name' => 'Salted Caramel Macchiato', 'cat' => 'Signature Coffee', 'price' => 14.50, 'cost' => 5.00],
-                ['name' => 'Hazelnut Mocha', 'cat' => 'Signature Coffee', 'price' => 14.50, 'cost' => 5.00],
                 ['name' => 'Rose Bandung Latte', 'cat' => 'Signature Coffee', 'price' => 12.90, 'cost' => 4.00],
-
-                // Espresso Bar
                 ['name' => 'Espresso', 'cat' => 'Espresso Bar', 'price' => 8.00, 'cost' => 2.00],
-                ['name' => 'Americano', 'cat' => 'Espresso Bar', 'price' => 9.00, 'cost' => 2.20],
-                ['name' => 'Cappuccino', 'cat' => 'Espresso Bar', 'price' => 11.00, 'cost' => 3.50],
                 ['name' => 'Cafe Latte', 'cat' => 'Espresso Bar', 'price' => 11.00, 'cost' => 3.50],
-                ['name' => 'Flat White', 'cat' => 'Espresso Bar', 'price' => 11.00, 'cost' => 3.50],
-
-                // Tea & Refreshers
                 ['name' => 'Matcha Latte', 'cat' => 'Tea & Refreshers', 'price' => 13.00, 'cost' => 4.50],
-                ['name' => 'Iced Peach Tea', 'cat' => 'Tea & Refreshers', 'price' => 9.90, 'cost' => 2.50],
-                ['name' => 'Lemon Earl Grey', 'cat' => 'Tea & Refreshers', 'price' => 9.90, 'cost' => 2.50],
-                ['name' => 'Chocolate Frappe', 'cat' => 'Tea & Refreshers', 'price' => 15.00, 'cost' => 5.00],
-
-                // Local Favorites
-                ['name' => 'Nasi Lemak Special', 'cat' => 'Local Favorites', 'price' => 15.90, 'cost' => 6.00],
-                ['name' => 'Mee Siam w/ Rendang', 'cat' => 'Local Favorites', 'price' => 16.90, 'cost' => 7.00],
-                ['name' => 'Hainanese Chicken Rice', 'cat' => 'Local Favorites', 'price' => 14.90, 'cost' => 6.00],
-                ['name' => 'Curry Laksa', 'cat' => 'Local Favorites', 'price' => 15.90, 'cost' => 6.50],
-
-                // Pastries & Desserts
                 ['name' => 'Butter Croissant', 'cat' => 'Pastries & Desserts', 'price' => 7.50, 'cost' => 3.00],
-                ['name' => 'Pain Au Chocolat', 'cat' => 'Pastries & Desserts', 'price' => 8.50, 'cost' => 3.50],
-                ['name' => 'Burnt Cheesecake Slice', 'cat' => 'Pastries & Desserts', 'price' => 16.00, 'cost' => 6.00],
-                ['name' => 'Cinnamon Roll', 'cat' => 'Pastries & Desserts', 'price' => 6.50, 'cost' => 2.50],
-
-                // Main Courses
                 ['name' => 'Grilled Chicken Chop', 'cat' => 'Main Courses', 'price' => 22.90, 'cost' => 9.00],
-                ['name' => 'Spaghetti Carbonara', 'cat' => 'Main Courses', 'price' => 19.90, 'cost' => 7.00],
-                ['name' => 'Fish & Chips', 'cat' => 'Main Courses', 'price' => 21.90, 'cost' => 8.50],
-                ['name' => 'Beef Bolognese', 'cat' => 'Main Courses', 'price' => 18.90, 'cost' => 7.00],
-            ];
+            ],
+            'Fashion Boutique' => [
+                ['name' => 'Classic White Shirt', 'cat' => 'Men\'s Wear', 'price' => 89.90, 'cost' => 30.00],
+                ['name' => 'Slim Fit Jeans', 'cat' => 'Men\'s Wear', 'price' => 129.90, 'cost' => 45.00],
+                ['name' => 'Summer Floral Dress', 'cat' => 'Women\'s Wear', 'price' => 159.90, 'cost' => 50.00],
+                ['name' => 'Leather Handbag', 'cat' => 'Accessories', 'price' => 299.90, 'cost' => 100.00],
+                ['name' => 'Canvas Sneakers', 'cat' => 'Footwear', 'price' => 99.90, 'cost' => 35.00],
+            ],
+            'Green Mart' => [
+                ['name' => 'Organic Avocados (Pack)', 'cat' => 'Fresh Produce', 'price' => 18.90, 'cost' => 10.00],
+                ['name' => 'Farm Fresh Milk 1L', 'cat' => 'Dairy & Eggs', 'price' => 8.50, 'cost' => 5.50],
+                ['name' => 'Potato Chips', 'cat' => 'Snacks & Beverages', 'price' => 4.50, 'cost' => 2.00],
+                ['name' => 'Laundry Detergent 3kg', 'cat' => 'Household Essentials', 'price' => 25.90, 'cost' => 15.00],
+            ],
+            'Tech Gadgets' => [
+                ['name' => 'Smartphone X Pro', 'cat' => 'Smartphones', 'price' => 3999.00, 'cost' => 2800.00],
+                ['name' => 'Ultra Slim Laptop', 'cat' => 'Laptops', 'price' => 4599.00, 'cost' => 3500.00],
+                ['name' => 'Wireless Earbuds', 'cat' => 'Accessories & Peripherals', 'price' => 299.00, 'cost' => 150.00],
+                ['name' => 'Smart Bulb Color', 'cat' => 'Smart Home', 'price' => 49.00, 'cost' => 20.00],
+            ],
+            'City Bookstore' => [
+                ['name' => 'The Great Novel', 'cat' => 'Fiction', 'price' => 45.90, 'cost' => 25.00],
+                ['name' => 'History of Time', 'cat' => 'Non-Fiction', 'price' => 55.90, 'cost' => 30.00],
+                ['name' => 'Learning ABCs', 'cat' => 'Children\'s Books', 'price' => 15.90, 'cost' => 8.00],
+                ['name' => 'Premium Notebook', 'cat' => 'Stationery', 'price' => 25.90, 'cost' => 10.00],
+            ]
+        ];
 
-            foreach ($cafeItems as $item) {
+        foreach ($outlets as $outlet) {
+            $items = $outletInventory[$outlet->name] ?? [];
+
+            foreach ($items as $item) {
                 $category = $categories->where('name', $item['cat'])->first();
                 if (!$category)
                     continue;
 
-                $prod = Product::create([
+                // Check if product exists globally (by name)
+                $product = Product::firstOrCreate([
+                    'name' => $item['name']
+                ], [
                     'category_id' => $category->id,
-                    'name' => $item['name'],
                     'slug' => Str::slug($item['name']),
-                    'description' => 'Freshly prepared ' . $item['name'],
-                    'price' => $item['price'],
+                    'sku' => Str::upper(Str::random(8)), // Unique SKU
+                    'barcode' => Str::random(12), // Dummy Barcode
+                    'description' => 'Description for ' . $item['name'],
+                    'price' => $item['price'], // Base price
                     'cost' => $item['cost'],
                     'stock_level' => 100,
                     'is_active' => true,
                     'has_variants' => false,
                 ]);
 
-                $prod->prices()->create([
-                    'outlet_id' => $mainOutlet->id,
+                // Assign outlet specific price
+                $product->prices()->updateOrCreate([
+                    'outlet_id' => $outlet->id
+                ], [
                     'price' => $item['price'],
                     'stock_level' => 100
                 ]);

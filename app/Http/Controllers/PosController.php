@@ -334,25 +334,60 @@ class PosController extends Controller
     }
     public function getCategories()
     {
-        $categories = Category::orderBy('sort_order', 'asc')->get();
+        $user = auth()->user();
+        $outletId = $user ? $user->outlet_id : null;
+
+        $categories = Category::query()
+            ->when($outletId, function ($query) use ($outletId) {
+                // Return categories that have at least one active product with a price for this outlet
+                $query->whereHas('products', function ($productQuery) use ($outletId) {
+                    $productQuery->where('is_active', true)
+                        ->whereHas('prices', function ($priceQuery) use ($outletId) {
+                            $priceQuery->where('outlet_id', $outletId);
+                        });
+                });
+            })
+            ->orderBy('sort_order', 'asc')
+            ->get();
+
         return response()->json($categories);
     }
 
     public function generateReceiptPdf($id)
     {
         $sale = Sale::with(['saleItems.product', 'payments', 'customer', 'user', 'outlet'])->findOrFail($id);
-        $outletSettings = $sale->outlet ? $sale->outlet->settings : []; // Or fetch from user session if outlet not on sale directly, but sale logic implies connection. Ideally Sale has outlet_id. Assuming User has outlet for now or fetching generic.
+        $outlet = $sale->outlet ?? auth()->user()->outlet;
 
-        // If sale doesn't have outlet relation loaded or present (based on implementation), fallback to auth user's outlet
-        if (!$sale->outlet) {
-            $user = auth()->user();
-            $outletSettings = $user->outlet ? $user->outlet->settings : [];
+        $outletSettings = $outlet ? $outlet->settings : [];
+        if ($outlet) {
+            $outletSettings['name'] = $outlet->name;
+            $outletSettings['address'] = $outlet->address;
+            $outletSettings['phone'] = $outlet->phone;
         }
 
         $pdf = Pdf::loadView('pos.receipt-pdf', [
             'sale' => $sale,
             'outletSettings' => $outletSettings
         ]);
+
+        // Calculate dynamic height based on content
+        // Base height (Header + Footer + Meta + Totals) approx 150mm
+        // Item row approx 10mm
+        $itemCount = $sale->saleItems->count();
+        $paymentCount = $sale->payments->count();
+        $baseHeight = 120; // mm
+        $itemHeight = 8; // mm per item
+        $paymentHeight = 6; // mm per payment
+
+        $totalHeight = $baseHeight + ($itemCount * $itemHeight) + ($paymentCount * $paymentHeight);
+
+        // Convert to points (1mm = 2.83465pt)
+        $msg = $outletSettings['receipt_footer'] ?? '';
+        if (strlen($msg) > 50)
+            $totalHeight += 10;
+
+        $customPaper = array(0, 0, 226.77, $totalHeight * 2.83465); // 80mm width
+        $pdf->setPaper($customPaper);
 
         return $pdf->stream('receipt-' . $sale->id . '.pdf');
     }

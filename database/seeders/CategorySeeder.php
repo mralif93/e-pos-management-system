@@ -14,34 +14,45 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
-        Category::create([
-            'name' => 'Signature Coffee',
-            'slug' => Str::slug('Signature Coffee'),
-        ]);
+        $categories = [
+            // Cafe Categories
+            'Signature Coffee',
+            'Espresso Bar',
+            'Tea & Refreshers',
+            'Pastries & Desserts',
+            'Main Courses',
 
-        Category::create([
-            'name' => 'Espresso Bar',
-            'slug' => Str::slug('Espresso Bar'),
-        ]);
+            // Fashion Categories
+            'Men\'s Wear',
+            'Women\'s Wear',
+            'Accessories',
+            'Footwear',
 
-        Category::create([
-            'name' => 'Tea & Refreshers',
-            'slug' => Str::slug('Tea & Refreshers'),
-        ]);
+            // Grocery Categories
+            'Fresh Produce',
+            'Dairy & Eggs',
+            'Snacks & Beverages',
+            'Household Essentials',
 
-        Category::create([
-            'name' => 'Local Favorites',
-            'slug' => Str::slug('Local Favorites'),
-        ]);
+            // Tech Categories
+            'Smartphones',
+            'Laptops',
+            'Accessories & Peripherals',
+            'Smart Home',
 
-        Category::create([
-            'name' => 'Pastries & Desserts',
-            'slug' => Str::slug('Pastries & Desserts'),
-        ]);
+            // Bookstore Categories
+            'Fiction',
+            'Non-Fiction',
+            'Children\'s Books',
+            'Stationery',
+        ];
 
-        Category::create([
-            'name' => 'Main Courses',
-            'slug' => Str::slug('Main Courses'),
-        ]);
+        foreach ($categories as $name) {
+            Category::firstOrCreate([
+                'name' => $name,
+            ], [
+                'slug' => Str::slug($name),
+            ]);
+        }
     }
 }

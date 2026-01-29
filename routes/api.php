@@ -13,7 +13,7 @@ Route::prefix('pos')->middleware(['auth:sanctum'])->group(function () {
     Route::post('/sales', [PosController::class, 'processSale'])->name('api.pos.sales');
     Route::get('/history', [PosController::class, 'history'])->name('api.pos.history');
 
-    Route::get('/sales/{id}/void', [PosController::class, 'voidSale'])->name('api.pos.void');
+    Route::post('/sales/{id}/void', [PosController::class, 'voidSale'])->name('api.pos.void');
     Route::get('/categories', [PosController::class, 'getCategories'])->name('api.pos.categories');
 
 

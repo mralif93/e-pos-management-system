@@ -7,8 +7,6 @@
     <style>
         @page {
             margin: 0;
-            size: 80mm 297mm;
-            /* Simulate roll paper width, A4 height fallback */
         }
 
         body {
@@ -180,22 +178,24 @@
             @endforeach
 
             @php 
-                                $totalPaid = $sale->payments->sum('amount');
+                                                $totalPaid = $sale->payments->sum('amount');
                 $change = $totalPaid - $sale->total_amount;
             @endphp
-            @if($change > 0)
-                <tr>
+          @if($change > 0)
+            <tr>
                     <td>Change</td>
                     <td class="text-right">{{ number_format($change, 2) }}</td>
                 </tr>
-            @endif
+        @endif
         </table>
     </div>
+
 
     <div class="footer">
         <p>THANK YOU</p>
        
- <p>Please come again!</p>
+ <p>Ple
+ase come again!</p>
         <p style="margin-top: 5px; font-size: 8px;">Powered by E-POS</p>
     </div>
 </body>

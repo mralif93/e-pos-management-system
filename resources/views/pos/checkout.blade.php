@@ -646,6 +646,13 @@
 
                 init() {
                     window.posApp = this;
+
+                    // Check for previous success flag (autoreload protection)
+                    if (localStorage.getItem('pos_payment_complete') === 'true') {
+                        window.location.href = '{{ route('pos.home') }}?status=payment_success';
+                        return;
+                    }
+
                     const storedCart = localStorage.getItem('pos_cart');
                     if (storedCart) {
                         this.cart = JSON.parse(storedCart);
@@ -891,8 +898,13 @@
                     const id = saleId || (this.lastSale ? this.lastSale.id : null);
                     if (!id) return;
 
-                    const url = `{{ url('/pos/sales') }}/${id}/receipt-pdf`;
-                    window.open(url, '_blank', 'width=400,height=600');
+                    const width = 400; // Standard receipt width roughly
+                    const height = 600;
+                    const left = (screen.width - width) / 2;
+                    const top = (screen.height - height) / 2;
+
+                    const url = `{{ url('/pos/sales') }}/${id}/receipt`;
+                    window.open(url, '_blank', `width=${width},height=${height},left=${left},top=${top}`);
                 },
 
                 processPayment() {
@@ -1003,6 +1015,9 @@
                         .then(data => {
                             // Store last sale for receipt
                             this.lastSale = data.sale;
+
+                            // Set success flag for auto-redirect on reload
+                            localStorage.setItem('pos_payment_complete', 'true');
 
                             // 2. Success State
                             Swal.fire({
