@@ -267,9 +267,11 @@ class PosController extends Controller
         // Filter by Order ID if provided
         if ($request->filled('search')) {
             $query->where('id', 'like', '%' . $request->search . '%');
-        } else {
-            // Default to today's sales if no search
-            $query->whereDate('created_at', today());
+        }
+
+        // Filter by Date if provided
+        if ($request->filled('date')) {
+            $query->whereDate('created_at', $request->date);
         }
 
         $sales = $query->paginate(20);

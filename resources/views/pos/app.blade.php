@@ -306,6 +306,10 @@
                 </div>
                 <div class="flex items-center gap-3">
                     <div class="relative">
+                        <input type="date" id="history-date"
+                            class="px-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500 text-slate-600">
+                    </div>
+                    <div class="relative">
                         <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -525,7 +529,6 @@
                         localStorage.removeItem('pos_customer');
                         localStorage.removeItem('pos_payment_complete');
                         this.cart = [];
-
                         // Show Success Message
                         Swal.fire({
                             toast: true, position: 'top', icon: 'success',
@@ -652,29 +655,29 @@
                             const checked = false;
 
                             optionsHtml += `
-                                                                                                    <label class="flex items-center justify-between p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
-                                                                                                        <div class="flex items-center">
-                                                                                                            <input type="${inputType}" name="${inputName}" value="${item.id}"
-                                                                                                                data-modifier-id="${mod.id}"
-                                                                                                                data-item-price="${item.price}"
-                                                                                                                data-item-name="${item.name}"
-                                                                                                                class="w-4 h-4 text-{{ $theme }}-600 border-gray-300 focus:ring-{{ $theme }}-500"
-                                                                                                                onchange="posApp.handleModifierChange(this, '${mod.type}')">
-                                                                                                            <span class="ml-3 font-medium text-slate-700">${item.name}</span>
-                                                                                                        </div>
-                                                                                                        <span class="text-[10px] text-slate-500">+${this.formatPrice(item.price)}</span>
-                                                                                                    </label>
-                                                                                                `;
+                                                                                                                                                                                <label class="flex items-center justify-between p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+                                                                                                                                                                                    <div class="flex items-center">
+                                                                                                                                                                                        <input type="${inputType}" name="${inputName}" value="${item.id}"
+                                                                                                                                                                                            data-modifier-id="${mod.id}"
+                                                                                                                                                                                            data-item-price="${item.price}"
+                                                                                                                                                                                            data-item-name="${item.name}"
+                                                                                                                                                                                            class="w-4 h-4 text-{{ $theme }}-600 border-gray-300 focus:ring-{{ $theme }}-500"
+                                                                                                                                                                                            onchange="posApp.handleModifierChange(this, '${mod.type}')">
+                                                                                                                                                                                        <span class="ml-3 font-medium text-slate-700">${item.name}</span>
+                                                                                                                                                                                    </div>
+                                                                                                                                                                                    <span class="text-[10px] text-slate-500">+${this.formatPrice(item.price)}</span>
+                                                                                                                                                                                </label>
+                                                                                                                                                                            `;
                         });
 
                         const html = `
-                                                                                                <div class="mb-4">
-                                                                                                    <h4 class="font-bold text-slate-800 mb-2">${mod.name} <span class="text-[10px] font-normal text-slate-500">(${mod.type === 'multiple' ? 'Choose multiple' : 'Choose one'})</span></h4>
-                                                                                                    <div class="space-y-2">
-                                                                                                        ${optionsHtml}
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            `;
+                                                                                                                                                                            <div class="mb-4">
+                                                                                                                                                                                <h4 class="font-bold text-slate-800 mb-2">${mod.name} <span class="text-[10px] font-normal text-slate-500">(${mod.type === 'multiple' ? 'Choose multiple' : 'Choose one'})</span></h4>
+                                                                                                                                                                                <div class="space-y-2">
+                                                                                                                                                                                    ${optionsHtml}
+                                                                                                                                                                                </div>
+                                                                                                                                                                            </div>
+                                                                                                                                                                        `;
                         container.innerHTML += html;
                     });
 
@@ -841,12 +844,12 @@
 
                     const renderTabs = (categories) => {
                         tabsContainer.innerHTML = `
-                                                                                                <button onclick="posApp.filterCategory('all')" 
-                                                                                                    class="category-tab pos-btn-responsive !py-1 sm:!py-1.5 bg-{{ $theme }}-600 text-white shadow-md transform scale-105"
-                                                                                                    data-category="all">
-                                                                                                    All Items
-                                                                                                </button>
-                                                                                            `;
+                                                                                                                                                                            <button onclick="posApp.filterCategory('all')" 
+                                                                                                                                                                                class="category-tab pos-btn-responsive !py-1 sm:!py-1.5 bg-{{ $theme }}-600 text-white shadow-md transform scale-105"
+                                                                                                                                                                                data-category="all">
+                                                                                                                                                                                All Items
+                                                                                                                                                                            </button>
+                                                                                                                                                                        `;
                         categories.forEach(cat => {
                             const btn = document.createElement('button');
                             btn.className = `category-tab pos-btn-responsive !py-1 sm:!py-1.5 bg-white text-slate-500 hover:bg-slate-50 border border-slate-200`;
@@ -903,11 +906,11 @@
                     if (!productList) return;
 
                     productList.innerHTML = `
-                                                                                            <div class="col-span-full flex flex-col items-center justify-center h-64 text-slate-400">
-                                                                                                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-current mb-2"></div>
-                                                                                                <p>Loading products...</p>
-                                                                                            </div>
-                                                                                        `;
+                                                                                                                                                                        <div class="col-span-full flex flex-col items-center justify-center h-64 text-slate-400">
+                                                                                                                                                                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-current mb-2"></div>
+                                                                                                                                                                            <p>Loading products...</p>
+                                                                                                                                                                        </div>
+                                                                                                                                                                    `;
 
                     // Handle filter by category if selecting specific category
                     let url = '{{ route('api.pos.products') }}';
@@ -987,11 +990,11 @@
 
                     if (this.products.length === 0) {
                         productList.innerHTML = `
-                                                                                                <div class="col-span-full flex flex-col items-center justify-center text-slate-400 py-20">
-                                                                                                    <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                                                                                                    <p class="text-lg font-medium">No products found</p>
-                                                                                                    <p class="text-[10px]">Try searching for something else</p>
-                                                                                                </div>`;
+                                                                                                                                                                            <div class="col-span-full flex flex-col items-center justify-center text-slate-400 py-20">
+                                                                                                                                                                                <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                                                                                                                                                                <p class="text-lg font-medium">No products found</p>
+                                                                                                                                                                                <p class="text-[10px]">Try searching for something else</p>
+                                                                                                                                                                            </div>`;
                         return;
                     }
 
@@ -1012,33 +1015,33 @@
                         }
 
                         html += `
-                                                                                                <div class="group bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-lg hover:border-{{ $theme }}-200 transition-all duration-300 cursor-pointer flex flex-col transform hover:-translate-y-1"
-                                                                                                    data-product-id="${product.id}"
-                                                                                                    data-product-name="${safeName}"
-                                                                                                    data-product-price="${product.price}">
+                                                                                                                                                                            <div class="group bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-lg hover:border-{{ $theme }}-200 transition-all duration-300 cursor-pointer flex flex-col transform hover:-translate-y-1"
+                                                                                                                                                                                data-product-id="${product.id}"
+                                                                                                                                                                                data-product-name="${safeName}"
+                                                                                                                                                                                data-product-price="${product.price}">
 
-                                                                                                <!-- Image Area -->
-                                                                                                <div class="h-40 w-full bg-slate-100 relative overflow-hidden flex items-center justify-center flex-shrink-0 rounded-t-xl">
-                                                                                                    ${imageHtml}
-                                                                                                    <div class="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                                                                                </div>
+                                                                                                                                                                            <!-- Image Area -->
+                                                                                                                                                                            <div class="h-40 w-full bg-slate-100 relative overflow-hidden flex items-center justify-center flex-shrink-0 rounded-t-xl">
+                                                                                                                                                                                ${imageHtml}
+                                                                                                                                                                                <div class="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                                                                                                                                                            </div>
 
-                                                                                                <!-- Content -->
-                                                                                                <div class="p-3 flex flex-col flex-grow">
-                                                                                                    <h3 class="font-bold text-slate-800 text-xs sm:text-sm leading-tight mb-1 group-hover:text-{{ $theme }}-600 transition-colors line-clamp-2" title="${safeName}">${safeName}</h3>
-                                                                                                    <p class="text-[10px] text-slate-500 line-clamp-2 mb-3 leading-relaxed">${safeDesc}</p>
+                                                                                                                                                                            <!-- Content -->
+                                                                                                                                                                            <div class="p-3 flex flex-col flex-grow">
+                                                                                                                                                                                <h3 class="font-bold text-slate-800 text-xs sm:text-sm leading-tight mb-1 group-hover:text-{{ $theme }}-600 transition-colors line-clamp-2" title="${safeName}">${safeName}</h3>
+                                                                                                                                                                                <p class="text-[10px] text-slate-500 line-clamp-2 mb-3 leading-relaxed">${safeDesc}</p>
 
-                                                                                                    <div class="mt-auto pt-2 flex items-center justify-between border-t border-dashed border-slate-100">
-                                                                                                        <span class="font-extrabold text-slate-900 text-sm">${safePrice}</span>
-                                                                                                        <button class="add-to-cart-btn bg-{{ $theme }}-50 text-{{ $theme }}-700 hover:bg-{{ $theme }}-600 hover:text-white p-1.5 rounded-lg transition-all duration-200 shadow-sm border border-{{ $theme }}-100 group-hover:shadow-{{ $theme }}-100/50">
-                                                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
-                                                                                                            </svg>
-                                                                                                        </button>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        `;
+                                                                                                                                                                                <div class="mt-auto pt-2 flex items-center justify-between border-t border-dashed border-slate-100">
+                                                                                                                                                                                    <span class="font-extrabold text-slate-900 text-sm">${safePrice}</span>
+                                                                                                                                                                                    <button class="add-to-cart-btn bg-{{ $theme }}-50 text-{{ $theme }}-700 hover:bg-{{ $theme }}-600 hover:text-white p-1.5 rounded-lg transition-all duration-200 shadow-sm border border-{{ $theme }}-100 group-hover:shadow-{{ $theme }}-100/50">
+                                                                                                                                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                                                                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+                                                                                                                                                                                        </svg>
+                                                                                                                                                                                    </button>
+                                                                                                                                                                                </div>
+                                                                                                                                                                            </div>
+                                                                                                                                                                        </div>
+                                                                                                                                                                    `;
                     });
                     productList.innerHTML = html;
                     this.setupAddToCartButtons();
@@ -1127,20 +1130,20 @@
 
                     // Header - Clean & Minimalist
                     let invoiceHtml = `
-                                                                                            <div class="text-left w-full">
-                                                                                                <div class="flex justify-between items-end mb-3 pb-2 border-b border-dashed border-slate-200">
-                                                                                                    <div>
-                                                                                                        <h3 class="text-slate-900 font-bold text-xl md:text-2xl">Order Summary</h3>
-                                                                                                        <p class="text-slate-500 text-[9px] md:text-[10px]">Order #${Math.floor(1000 + Math.random() * 9000)} • ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
-                                                                                                    </div>
-                                                                                                    <div class="text-right">
-                                                                                                    <span class="block text-2xl md:text-3xl font-bold text-{{ $theme }}-600">${this.cart.reduce((acc, item) => acc + item.quantity, 0)}</span>
-                                                                                                    <span class="text-[9px] md:text-[10px] text-slate-400 font-medium uppercase tracking-wider">Items</span>
-                                                                                                </div>
-                                                                                            </div>
+                                                                                                                                                                        <div class="text-left w-full">
+                                                                                                                                                                            <div class="flex justify-between items-end mb-3 pb-2 border-b border-dashed border-slate-200">
+                                                                                                                                                                                <div>
+                                                                                                                                                                                    <h3 class="text-slate-900 font-bold text-xl md:text-2xl">Order Summary</h3>
+                                                                                                                                                                                    <p class="text-slate-500 text-[9px] md:text-[10px]">Order #${Math.floor(1000 + Math.random() * 9000)} • ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
+                                                                                                                                                                                </div>
+                                                                                                                                                                                <div class="text-right">
+                                                                                                                                                                                <span class="block text-2xl md:text-3xl font-bold text-{{ $theme }}-600">${this.cart.reduce((acc, item) => acc + item.quantity, 0)}</span>
+                                                                                                                                                                                <span class="text-[9px] md:text-[10px] text-slate-400 font-medium uppercase tracking-wider">Items</span>
+                                                                                                                                                                            </div>
+                                                                                                                                                                        </div>
 
-                                                                                            <div class="max-h-[250px] md:max-h-[300px] overflow-y-auto overflow-x-hidden custom-scrollbar mb-4 md:mb-5 space-y-1.5 md:space-y-2">
-                                                                                        `;
+                                                                                                                                                                        <div class="max-h-[250px] md:max-h-[300px] overflow-y-auto overflow-x-hidden custom-scrollbar mb-4 md:mb-5 space-y-1.5 md:space-y-2">
+                                                                                                                                                                    `;
 
                     this.cart.forEach(item => {
                         const itemTotal = (item.unitPrice || item.price) * item.quantity; // Use unitPrice which includes modifier costs
@@ -1157,51 +1160,51 @@
                         }
 
                         invoiceHtml += `
-                                                                                                <div class="p-1.5 md:p-2 mb-1.5 bg-slate-50 border border-slate-100 rounded-xl flex flex-col group transition-all duration-300 hover:shadow-sm hover:border-{{ $theme }}-200">
-                                                                                                    <div class="flex justify-between items-start">
-                                                                                                        <div class="flex-grow">
-                                                                                                            <h4 class="font-bold text-slate-800 text-[9px] md:text-[10px] leading-tight">${item.quantity}× ${item.name}</h4>
-                                                                                                            <div class="text-[9px] md:text-[10px] text-slate-400 font-medium">@ ${this.formatPrice(item.unitPrice || item.price)}</div>
-                                                                                                            ${modifiersHtml}
-                                                                                                        </div>
-                                                                                                        <div class="text-right">
-                                                                                                            <span class="font-extrabold text-slate-800 text-[9px] md:text-[10px]">${this.formatPrice((item.unitPrice || item.price) * item.quantity)}</span>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            `;
+                                                                                                                                                                            <div class="p-1.5 md:p-2 mb-1.5 bg-slate-50 border border-slate-100 rounded-xl flex flex-col group transition-all duration-300 hover:shadow-sm hover:border-{{ $theme }}-200">
+                                                                                                                                                                                <div class="flex justify-between items-start">
+                                                                                                                                                                                    <div class="flex-grow">
+                                                                                                                                                                                        <h4 class="font-bold text-slate-800 text-[9px] md:text-[10px] leading-tight">${item.quantity}× ${item.name}</h4>
+                                                                                                                                                                                        <div class="text-[9px] md:text-[10px] text-slate-400 font-medium">@ ${this.formatPrice(item.unitPrice || item.price)}</div>
+                                                                                                                                                                                        ${modifiersHtml}
+                                                                                                                                                                                    </div>
+                                                                                                                                                                                    <div class="text-right">
+                                                                                                                                                                                        <span class="font-extrabold text-slate-800 text-[9px] md:text-[10px]">${this.formatPrice((item.unitPrice || item.price) * item.quantity)}</span>
+                                                                                                                                                                                    </div>
+                                                                                                                                                                                </div>
+                                                                                                                                                                            </div>
+                                                                                                                                                                        `;
                     });
 
                     const taxAmount = subtotal * (this.taxRate / 100);
                     const total = subtotal + taxAmount;
 
                     invoiceHtml += `
-                                                                                            </div>
+                                                                                                                                                                        </div>
 
-                                                                                            <!-- Footer -->
-                                                                                            <div class="pt-2"> 
-                                                                                                <div class="space-y-1 md:space-y-1.5 mb-2 px-1">
-                                                                                                    <div class="flex justify-between text-xs md:text-sm text-slate-500">
-                                                                                                        <span>Subtotal</span>
-                                                                                                        <span class="font-semibold text-slate-700">${this.formatPrice(subtotal)}</span>
-                                                                                                    </div>
-                                                                                                    <div class="flex justify-between text-xs md:text-sm text-slate-500">
-                                                                                                        <span>Service Tax (${this.taxRate}%)</span>
-                                                                                                        <span class="font-semibold text-slate-700">${this.formatPrice(taxAmount)}</span>
-                                                                                                    </div>
-                                                                                                </div>
+                                                                                                                                                                        <!-- Footer -->
+                                                                                                                                                                        <div class="pt-2"> 
+                                                                                                                                                                            <div class="space-y-1 md:space-y-1.5 mb-2 px-1">
+                                                                                                                                                                                <div class="flex justify-between text-xs md:text-sm text-slate-500">
+                                                                                                                                                                                    <span>Subtotal</span>
+                                                                                                                                                                                    <span class="font-semibold text-slate-700">${this.formatPrice(subtotal)}</span>
+                                                                                                                                                                                </div>
+                                                                                                                                                                                <div class="flex justify-between text-xs md:text-sm text-slate-500">
+                                                                                                                                                                                    <span>Service Tax (${this.taxRate}%)</span>
+                                                                                                                                                                                    <span class="font-semibold text-slate-700">${this.formatPrice(taxAmount)}</span>
+                                                                                                                                                                                </div>
+                                                                                                                                                                            </div>
 
-                                                                                                <!-- Total Amount (Styled like Header) -->
-                                                                                                <div class="flex justify-between items-center mt-3 pt-3 border-t border-b border-dashed border-slate-200 pb-3 mb-3">
-                                                                                                    <div>
-                                                                                                        <h3 class="text-slate-900 font-bold text-xl md:text-2xl">Total Amount</h3>
-                                                                                                    </div>
-                                                                                                    <div class="text-right">
-                                                                                                        <span class="block text-2xl md:text-3xl font-black text-{{ $theme }}-600">${this.formatPrice(total)}</span>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        `;
+                                                                                                                                                                            <!-- Total Amount (Styled like Header) -->
+                                                                                                                                                                            <div class="flex justify-between items-center mt-3 pt-3 border-t border-b border-dashed border-slate-200 pb-3 mb-3">
+                                                                                                                                                                                <div>
+                                                                                                                                                                                    <h3 class="text-slate-900 font-bold text-xl md:text-2xl">Total Amount</h3>
+                                                                                                                                                                                </div>
+                                                                                                                                                                                <div class="text-right">
+                                                                                                                                                                                    <span class="block text-2xl md:text-3xl font-black text-{{ $theme }}-600">${this.formatPrice(total)}</span>
+                                                                                                                                                                                </div>
+                                                                                                                                                                            </div>
+                                                                                                                                                                        </div>
+                                                                                                                                                                    `;
 
                     Swal.fire({
                         html: invoiceHtml,
@@ -1345,11 +1348,11 @@
 
                     if (this.cart.length === 0) {
                         cartItemsContainer.innerHTML = `
-                                                                                                <div class="h-full flex flex-col items-center justify-center text-slate-400 p-8 text-center opacity-60">
-                                                                                                    <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                                                                                                    <p class="text-[10px]">Your cart is currently empty.</p>
-                                                                                                </div>
-                                                                                            `;
+                                                                                                                                                                            <div class="h-full flex flex-col items-center justify-center text-slate-400 p-8 text-center opacity-60">
+                                                                                                                                                                                <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                                                                                                                                                                                <p class="text-[10px]">Your cart is currently empty.</p>
+                                                                                                                                                                            </div>
+                                                                                                                                                                        `;
 
                         // Reset totals
                         document.getElementById('cart-subtotal').innerText = this.formatPrice(0);
@@ -1374,34 +1377,34 @@
                         }
 
                         const cartItem = `
-                                                                                                <div class="group flex items-center justify-between pos-card-padding mb-2 bg-white rounded-xl border border-slate-100 shadow-sm hover:border-{{ $theme }}-200 transition-all animate-fade-in" style="animation-duration: 0.3s">
-                                                                                                    <div class="flex-grow min-w-0">
-                                                                                                        <div class="flex justify-between items-start">
-                                                                                                            <div>
-                                                                                                                <p class="font-bold text-slate-800 pos-text-responsive-base truncate" title="${item.name}">${item.name}</p>
-                                                                                                                ${modifiersHtml}
-                                                                                                            </div>
-                                                                                                            <span class="font-bold text-slate-900 pos-text-responsive-lg">${this.formatPrice(itemTotal)}</span>
-                                                                                                        </div>
-                                                                                                        <div class="flex items-center justify-between mt-2">
-                                                                                                            <div class="flex items-center bg-slate-100 rounded-lg p-0.5">
-                                                                                                                <button data-cart-item-id="${item.cartItemId}" class="remove-from-cart-btn pos-btn-icon-responsive text-slate-500 hover:bg-white hover:text-red-500 hover:shadow-sm">
-                                                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-                                                                                                                    </svg>
-                                                                                                                </button>
-                                                                                                                <span class="font-mono font-bold text-slate-700 pos-text-responsive-base w-6 text-center select-none">${item.quantity}</span>
-                                                                                                                <button onclick="posApp.addItemToCart({cartItemId: '${item.cartItemId}'})" class="pos-btn-icon-responsive text-slate-500 hover:bg-white hover:text-green-600 hover:shadow-sm">
-                                                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                                                                                                                    </svg>
-                                                                                                                </button>
-                                                                                                            </div>
-                                                                                                            <span class="pos-text-responsive-sm text-slate-400 font-medium">@ ${this.formatPrice(item.unitPrice || item.price)}/ea</span>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            `;
+                                                                                                                                                                            <div class="group flex items-center justify-between pos-card-padding mb-2 bg-white rounded-xl border border-slate-100 shadow-sm hover:border-{{ $theme }}-200 transition-all animate-fade-in" style="animation-duration: 0.3s">
+                                                                                                                                                                                <div class="flex-grow min-w-0">
+                                                                                                                                                                                    <div class="flex justify-between items-start">
+                                                                                                                                                                                        <div>
+                                                                                                                                                                                            <p class="font-bold text-slate-800 pos-text-responsive-base truncate" title="${item.name}">${item.name}</p>
+                                                                                                                                                                                            ${modifiersHtml}
+                                                                                                                                                                                        </div>
+                                                                                                                                                                                        <span class="font-bold text-slate-900 pos-text-responsive-lg">${this.formatPrice(itemTotal)}</span>
+                                                                                                                                                                                    </div>
+                                                                                                                                                                                    <div class="flex items-center justify-between mt-2">
+                                                                                                                                                                                        <div class="flex items-center bg-slate-100 rounded-lg p-0.5">
+                                                                                                                                                                                            <button data-cart-item-id="${item.cartItemId}" class="remove-from-cart-btn pos-btn-icon-responsive text-slate-500 hover:bg-white hover:text-red-500 hover:shadow-sm">
+                                                                                                                                                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                                                                                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                                                                                                                                                                                                </svg>
+                                                                                                                                                                                            </button>
+                                                                                                                                                                                            <span class="font-mono font-bold text-slate-700 pos-text-responsive-base w-6 text-center select-none">${item.quantity}</span>
+                                                                                                                                                                                            <button onclick="posApp.addItemToCart({cartItemId: '${item.cartItemId}'})" class="pos-btn-icon-responsive text-slate-500 hover:bg-white hover:text-green-600 hover:shadow-sm">
+                                                                                                                                                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                                                                                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                                                                                                                                                                                </svg>
+                                                                                                                                                                                            </button>
+                                                                                                                                                                                        </div>
+                                                                                                                                                                                        <span class="pos-text-responsive-sm text-slate-400 font-medium">@ ${this.formatPrice(item.unitPrice || item.price)}/ea</span>
+                                                                                                                                                                                    </div>
+                                                                                                                                                                                </div>
+                                                                                                                                                                            </div>
+                                                                                                                                                                        `;
                         cartItemsContainer.innerHTML += cartItem;
                     });
 
@@ -1496,420 +1499,501 @@
                         searchInput.dataset.listening = true;
                     }
 
-                    // Setup pagination
-                    document.getElementById('prev-page-btn').onclick = () => {
-                        if (this.historyCurrentPage > 1) this.fetchHistory(this.historyCurrentPage - 1);
-                    };
-                    document.getElementById('next-page-btn').onclick = () => {
-                        if (this.historyCurrentPage < this.historyLastPage) this.fetchHistory(this.historyCurrentPage + 1);
-                    };
-                },
+                    // Setup date listener
+                                const dateInput = document.getElementById('history-date');
+                                if (dateInput && !dateInput.dataset.listening) {
+                                    dateInput.addEventListener('change', (e) => {
+                                        this.fetchHistory(1, searchInput ? searchInput.value : '');
+                                    });
+                                    dateInput.dataset.listening = true;
+                                }
 
-                closeHistory() {
-                    const modal = document.getElementById('history-modal');
-                    modal.classList.add('translate-y-full');
-                    setTimeout(() => {
-                        modal.classList.add('hidden');
-                    }, 300);
-                },
+                                // Setup pagination
+                                document.getElementById('prev-page-btn').onclick = () => {
+                                    if (this.historyCurrentPage > 1) this.fetchHistory(this.historyCurrentPage - 1, searchInput.value);
+                                };
+                                document.getElementById('next-page-btn').onclick = () => {
+                                    if (this.historyCurrentPage < this.historyLastPage) this.fetchHistory(this.historyCurrentPage + 1, searchInput.value);
+                                };
+                            },
 
-                fetchHistory(page = 1, search = '') {
-                    const tbody = document.getElementById('history-list-body');
-                    tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-slate-400">Loading...</td></tr>';
+                            closeHistory() {
+                                const modal = document.getElementById('history-modal');
+                                modal.classList.add('translate-y-full');
+                                setTimeout(() => {
+                                    modal.classList.add('hidden');
+                                }, 300);
+                            },
 
-                    const searchParam = search ? `&search=${search}` : '';
+                            fetchHistory(page = 1, search = '') {
+                                const tbody = document.getElementById('history-list-body');
+                                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-slate-400">Loading...</td></tr>';
 
-                    fetch(`{{ route('api.pos.history') }}?page=${page}${searchParam}`, {
-                        headers: {
-                            'Accept': 'application/json',
-                            'Authorization': 'Bearer ' + this.apiToken
-                        }
-                    })
-                        .then(res => res.json())
-                        .then(data => {
-                            this.historyCurrentPage = data.current_page;
-                            this.historyLastPage = data.last_page;
-                            this.renderHistory(data.data);
+                                const searchParam = search ? `&search=${search}` : '';
+                                const dateParam = document.getElementById('history-date').value ? `&date=${document.getElementById('history-date').value}` : '';
 
-                            document.getElementById('prev-page-btn').disabled = data.current_page <= 1;
-                            document.getElementById('next-page-btn').disabled = data.current_page >= data.last_page;
-                        })
-                        .catch(err => {
-                            console.error(err);
-                            tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-400">Error loading history</td></tr>';
-                        });
-                },
-
-                renderHistory(sales) {
-                    const tbody = document.getElementById('history-list-body');
-                    tbody.innerHTML = '';
-
-                    if (sales.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-400">No transactions found</td></tr>';
-                        return;
-                    }
-
-                    sales.forEach(sale => {
-                        const date = new Date(sale.created_at).toLocaleString('en-US', {
-                            month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                        });
-
-                        const statusColors = {
-                            'completed': 'bg-green-100 text-green-700',
-                            'void': 'bg-red-100 text-red-700',
-                            'pending': 'bg-yellow-100 text-yellow-700'
-                        };
-                        const statusClass = statusColors[sale.status] || 'bg-slate-100 text-slate-700';
-
-                        const row = `
-                                            <tr onclick="posApp.viewOrder(${sale.id})" class="hover:bg-slate-50 transition-colors group cursor-pointer">
-                                                <td class="px-6 py-4 whitespace-nowrap text-[10px] font-medium text-slate-900">#${sale.id}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-[10px] text-slate-500">${date}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-[10px] font-bold text-slate-800">${this.formatPrice(sale.total_amount)}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${statusClass} capitalize">
-                                                        ${sale.status}
-                                                    </span>
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-right text-[10px] font-medium">
-                                                    ${sale.status !== 'void' ? `
-                                                        <button onclick="event.stopPropagation(); posApp.voidSale(${sale.id})" class="text-slate-400 hover:text-red-600 transition-colors" title="Void Transaction">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                            </svg>
-                                                        </button>
-                                                    ` : ''}
-                                                </td>
-                                            </tr>
-                                        `;
-                        tbody.innerHTML += row;
-                    });
-
-                    // Store sales data for referencing in viewOrder
-                    this.currentHistorySales = sales;
-                },
-
-                viewOrder(saleId) {
-                    const sale = this.currentHistorySales.find(s => s.id === saleId);
-                    if (!sale) return;
-
-                    const date = new Date(sale.created_at).toLocaleString('en-US', {
-                        weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                    });
-
-                    // Build Items HTML
-                    let itemsHtml = '<div class="w-full text-left mt-4 border-t border-dashed border-slate-200 pt-4">';
-                    // Check for sale_items (Eloquent) or items (generic)
-                    const items = sale.sale_items || sale.items;
-
-                    if (items && items.length > 0) {
-                        itemsHtml += '<table class="w-full text-sm">';
-                        itemsHtml += '<thead class="text-xs text-slate-500 border-b border-slate-100"><tr><th class="py-2 text-left">Item</th><th class="py-2 text-center">Qty</th><th class="py-2 text-right">Total</th></tr></thead><tbody>';
-                        items.forEach(item => {
-                            itemsHtml += `
-                                                                                                    <tr class="border-b border-slate-50">
-                                                                                                        <td class="py-2">
-                                                                                                            <div class="font-medium text-slate-800">${(item.product ? item.product.name : item.product_name) || 'Item'}</div>
-                                                                                                            ${item.variants ? `<div class="text-xs text-slate-500">${item.variants}</div>` : ''}
-                                                                                                        </td>
-                                                                                                        <td class="py-2 text-center text-slate-600">x${item.quantity}</td>
-                                                                                                        <td class="py-2 text-right font-medium text-slate-800">${this.formatPrice(item.total_price || (item.price * item.quantity))}</td>
-                                                                                                    </tr>
-                                                                                                `;
-                        });
-                        itemsHtml += '</tbody></table>';
-                    } else {
-                        itemsHtml += '<p class="text-center text-slate-400 py-4">No item details available</p>';
-                    }
-                    itemsHtml += '</div>';
-
-                    // Summary HTML
-                    itemsHtml += `
-                                                                                            <div class="mt-4 pt-4 border-t border-slate-200 flex flex-col space-y-1 text-sm">
-                                                                                                 <div class="flex justify-between text-slate-600"><span>Payment Method</span><span class="font-medium capitalize">${sale.payment_method || 'Cash'}</span></div>
-                                                                                                 <div class="flex justify-between text-slate-900 font-bold text-lg mt-2 pt-2 border-t border-dashed border-slate-200"><span>Total</span><span>${this.formatPrice(sale.total_amount)}</span></div>
-                                                                                            </div>
-                                                                                        `;
-
-                    Swal.fire({
-                        title: `Order #${sale.id}`,
-                        html: `
-                                                                                                <div class="flex flex-col items-center">
-                                                                                                    <p class="text-sm text-slate-500 mb-1">${date}</p>
-                                                                                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase ${sale.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-700'}">${sale.status}</span>
-                                                                                                    ${itemsHtml}
-                                                                                                </div>
-                                                                                            `,
-                        width: '400px',
-                        showCloseButton: true,
-                        showConfirmButton: true,
-                        confirmButtonText: 'Print Receipt',
-                        showCancelButton: true,
-                        cancelButtonText: 'Close',
-                        customClass: {
-                            popup: 'rounded-2xl',
-                            confirmButton: 'bg-{{ $theme }}-600 text-white px-6 py-2 rounded-lg hover:bg-{{ $theme }}-700 shadow-sm',
-                            cancelButton: 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-200 px-4 py-2 rounded-lg'
-                        }
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            // Handle Print - repurpose checkout print logic or just notify for now
-                            // Ideally redirect to print route or trigger same iframe print
-                            const width = 400;
-                            const height = 600;
-                            const left = (screen.width - width) / 2;
-                            const top = (screen.height - height) / 2;
-                            window.open(`/pos/sales/${sale.id}/receipt`, 'Receipt', `width=${width},height=${height},top=${top},left=${left}`);
-                        }
-                    });
-                },
-
-                voidSale(saleId) {
-                    Swal.fire({
-                        title: 'Void Transaction?',
-                        text: "This requires supervisor approval.",
-                        icon: 'warning',
-                        input: 'password',
-                        inputPlaceholder: 'Enter Supervisor PIN',
-                        inputAttributes: {
-                            autocapitalize: 'off',
-                            autocorrect: 'off'
-                        },
-                        showCancelButton: true,
-                        confirmButtonText: 'Void Transaction',
-                        confirmButtonColor: '#ef4444',
-                        showLoaderOnConfirm: true,
-                        inputValidator: (value) => {
-                            if (!value) {
-                                return 'You need to enter the Supervisor PIN!'
-                            }
-                        },
-                        preConfirm: (pin) => {
-                            return fetch(`{{ url('/api/pos/sales') }}/${saleId}/void`, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Authorization': 'Bearer ' + this.apiToken,
-                                    'Accept': 'application/json'
-                                },
-                                body: JSON.stringify({ pin: pin })
-                            })
-                                .then(async response => {
-                                    if (!response.ok) {
-                                        const contentType = response.headers.get("content-type");
-                                        if (contentType && contentType.indexOf("application/json") !== -1) {
-                                            const data = await response.json();
-                                            throw new Error(data.message || 'Failed to void');
-                                        } else {
-                                            throw new Error("Server returned non-JSON error. Check networking/auth.");
-                                        }
+                                fetch(`{{ route('api.pos.history') }}?page=${page}${searchParam}${dateParam}`, {
+                                    headers: {
+                                        'Accept': 'application/json',
+                                        'Authorization': 'Bearer ' + this.apiToken
                                     }
-                                    return response.json()
                                 })
-                                .catch(error => {
-                                    Swal.showValidationMessage(`${error.message}`)
-                                })
-                        },
-                        allowOutsideClick: () => !Swal.isLoading()
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            Swal.fire({
-                                title: 'Voided!',
-                                text: 'Values have been reverted.',
-                                icon: 'success'
-                            });
-                            this.fetchHistory(this.historyCurrentPage); // Refresh list
-                        }
-                    })
-                },
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        this.historyCurrentPage = data.current_page;
+                                        this.historyLastPage = data.last_page;
+                                        this.renderHistory(data.data);
 
-                // --- Customer Features ---
+                                        document.getElementById('prev-page-btn').disabled = data.current_page <= 1;
+                                        document.getElementById('next-page-btn').disabled = data.current_page >= data.last_page;
+                                    })
+                                    .catch(err => {
+                                        console.error(err);
+                                        tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-400">Error loading history</td></tr>';
+                                    });
+                            },
 
-                openCustomerModal() {
-                    document.getElementById('customer-modal').classList.remove('hidden');
-                    document.getElementById('customer-search-input').focus();
+                            renderHistory(sales) {
+                                const tbody = document.getElementById('history-list-body');
+                                tbody.innerHTML = '';
 
-                    // Setup search listener
-                    const searchInput = document.getElementById('customer-search-input');
-                    if (searchInput && !searchInput.dataset.listening) {
-                        searchInput.addEventListener('input', (e) => {
-                            clearTimeout(this.customerSearchTimeout);
-                            this.customerSearchTimeout = setTimeout(() => {
-                                this.searchCustomers(e.target.value);
-                            }, 300);
-                        });
-                        searchInput.dataset.listening = true;
-                    }
-                },
+                                if (sales.length === 0) {
+                                    tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-400">No transactions found</td></tr>';
+                                    return;
+                                }
 
-                closeCustomerModal() {
-                    document.getElementById('customer-modal').classList.add('hidden');
-                },
+                                sales.forEach(sale => {
+                                    const date = new Date(sale.created_at).toLocaleString('en-US', {
+                                        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                                    });
 
-                switchCustomerTab(tab) {
-                    const searchTab = document.getElementById('customer-tab-search');
-                    const createTab = document.getElementById('customer-tab-create');
-                    const searchBtn = document.getElementById('tab-search-btn');
-                    const createBtn = document.getElementById('tab-create-btn');
+                                    const statusColors = {
+                                        'completed': 'bg-green-100 text-green-700',
+                                        'void': 'bg-red-100 text-red-700',
+                                        'pending': 'bg-yellow-100 text-yellow-700'
+                                    };
+                                    const statusClass = statusColors[sale.status] || 'bg-slate-100 text-slate-700';
 
-                    if (tab === 'search') {
-                        searchTab.classList.remove('hidden');
-                        createTab.classList.add('hidden');
-                        searchBtn.className = 'flex-1 py-3 text-[10px] font-bold text-{{ $theme }}-600 border-b-2 border-{{ $theme }}-600 bg-slate-50';
-                        createBtn.className = 'flex-1 py-3 text-[10px] font-medium text-slate-500 hover:text-slate-700';
-                        document.getElementById('customer-search-input').focus();
-                    } else {
-                        searchTab.classList.add('hidden');
-                        createTab.classList.remove('hidden');
-                        searchBtn.className = 'flex-1 py-3 text-[10px] font-medium text-slate-500 hover:text-slate-700';
-                        createBtn.className = 'flex-1 py-3 text-[10px] font-bold text-{{ $theme }}-600 border-b-2 border-{{ $theme }}-600 bg-slate-50';
-                        document.getElementById('new-customer-name').focus();
-                    }
-                },
+                                    const row = `
+                                                                                                                        <tr onclick="posApp.viewOrder(${sale.id})" class="hover:bg-slate-50 transition-colors group cursor-pointer">
+                                                                                                                            <td class="px-6 py-4 whitespace-nowrap text-[10px] font-medium text-slate-900">#${sale.id}</td>
+                                                                                                                            <td class="px-6 py-4 whitespace-nowrap text-[10px] text-slate-500">${date}</td>
+                                                                                                                            <td class="px-6 py-4 whitespace-nowrap text-[10px] font-bold text-slate-800">${this.formatPrice(sale.total_amount)}</td>
+                                                                                                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                                                                                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${statusClass} capitalize">
+                                                                                                                                    ${sale.status}
+                                                                                                                                </span>
+                                                                                                                            </td>
+                                                                                                                            <td class="px-6 py-4 whitespace-nowrap text-right text-[10px] font-medium">
+                                                                                                                                ${sale.status !== 'void' ? `
+                                                                                                                                    <button onclick="event.stopPropagation(); posApp.voidSale(${sale.id})" class="text-slate-400 hover:text-red-600 transition-colors" title="Void Transaction">
+                                                                                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                                                                                        </svg>
+                                                                                                                                    </button>
+                                                                                                                                ` : ''}
+                                                                                                                            </td>
+                                                                                                                        </tr>
+                                                                                                                    `;
+                                    tbody.innerHTML += row;
+                                });
 
-                searchCustomers(query) {
-                    const container = document.getElementById('customer-search-results');
-                    container.innerHTML = '<p class="text-center text-slate-400 py-4 text-[10px]">Searching...</p>';
+                                // Store sales data for referencing in viewOrder
+                                this.currentHistorySales = sales;
+                            },
 
-                    if (!query) {
-                        container.innerHTML = '<p class="text-center text-slate-400 py-4 text-[10px]">Start typing to search...</p>';
-                        return;
-                    }
+                            viewOrder(saleId) {
+                                const sale = this.currentHistorySales.find(s => s.id === saleId);
+                                if (!sale) return;
 
-                    fetch(`{{ route('api.pos.customers.search') }}?query=${query}`, {
-                        headers: {
-                            'Accept': 'application/json',
-                            'Authorization': 'Bearer ' + this.apiToken
-                        }
-                    })
-                        .then(res => res.json())
-                        .then(data => {
-                            container.innerHTML = '';
-                            if (data.length === 0) {
-                                container.innerHTML = '<p class="text-center text-slate-400 py-4 text-[10px]">No customers found.</p>';
-                                return;
-                            }
+                                const date = new Date(sale.created_at).toLocaleString('en-US', {
+                                    weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                                });
 
-                            data.forEach(customer => {
-                                const el = document.createElement('div');
-                                el.className = 'p-3 hover:bg-slate-50 rounded-lg cursor-pointer border border-transparent hover:border-slate-100 transition-colors flex justify-between items-center group';
-                                el.innerHTML = `
-                                                                                                                                                                                                                                                                                                                        <div>
-                                                                                                                                                                                                                                                                                                                            <p class="font-bold text-slate-800">${customer.name}</p>
-                                                                                                                                                                                                                                                                                                                            <p class="text-[10px] text-slate-500">${customer.phone || 'No Phone'}</p>
-                                                                                                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                                                                                                        <button class="text-{{ $theme }}-600 font-bold text-[10px] bg-{{ $theme }}-50 px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Select</button>
-                                                                                                                                                                                                                                                                                                                    `;
-                                el.onclick = () => this.selectCustomer(customer);
-                                container.appendChild(el);
-                            });
-                        });
-                },
+                                // Check for sale_items (Eloquent) or items (generic)
+                                const items = sale.sale_items || sale.items || [];
 
-                createCustomer() {
-                    const name = document.getElementById('new-customer-name').value;
-                    const phone = document.getElementById('new-customer-phone').value;
-                    const email = document.getElementById('new-customer-email').value;
+                                let itemsHtml = '';
+                                if (items.length > 0) {
+                                    itemsHtml = `
+                                                                                                        <div class="max-h-[300px] overflow-y-auto custom-scrollbar border border-slate-100 rounded-xl mb-4">
+                                                                                                            <table class="w-full text-left border-collapse">
+                                                                                                                <thead class="bg-slate-50 sticky top-0 z-10">
+                                                                                                                    <tr>
+                                                                                                                        <th class="py-3 px-4 text-[10px] uppercase tracking-wider font-bold text-slate-500">Item</th>
+                                                                                                                        <th class="py-3 px-4 text-[10px] uppercase tracking-wider font-bold text-slate-500 text-center">Qty</th>
+                                                                                                                        <th class="py-3 px-4 text-[10px] uppercase tracking-wider font-bold text-slate-500 text-right">Price</th>
+                                                                                                                    </tr>
+                                                                                                                </thead>
+                                                                                                                <tbody class="divide-y divide-slate-100">
+                                                                                                                    ${items.map(item => `
+                                                                                                                        <tr class="group hover:bg-slate-50 transition-colors">
+                                                                                                                            <td class="py-3 px-4">
+                                                                                                                                <div class="font-semibold text-sm text-slate-800">${(item.product ? item.product.name : item.product_name) || 'Unknown Item'}</div>
+                                                                                                                                ${item.variants ? `<div class="text-xs text-slate-500 mt-0.5">${item.variants}</div>` : ''}
+                                                                                                                            </td>
+                                                                                                                            <td class="py-3 px-4 text-center">
+                                                                                                                                <span class="inline-flex items-center justify-center bg-slate-100 text-slate-600 text-xs font-bold rounded-md h-6 w-8">
+                                                                                                                                    ${item.quantity}
+                                                                                                                                </span>
+                                                                                                                            </td>
+                                                                                                                            <td class="py-3 px-4 text-right font-bold text-slate-700">
+                                                                                                                                ${this.formatPrice(item.total_price || (item.price * item.quantity))}
+                                                                                                                            </td>
+                                                                                                                        </tr>
+                                                                                                                    `).join('')}
+                                                                                                                </tbody>
+                                                                                                            </table>
+                                                                                                        </div>
+                                                                                                    `;
+                                } else {
+                                    itemsHtml = `
+                                                                                                        <div class="py-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200 mb-4">
+                                                                                                            <p class="text-xs text-slate-400">No items found for this order.</p>
+                                                                                                        </div>
+                                                                                                    `;
+                                }
 
-                    if (!name) {
-                        Swal.fire({ title: 'Error', text: 'Name is required', icon: 'error', toast: true, position: 'top', showConfirmButton: false, timer: 3000 });
-                        return;
-                    }
-                    if (!phone) {
-                        Swal.fire({ title: 'Error', text: 'Phone number is required', icon: 'error', toast: true, position: 'top', showConfirmButton: false, timer: 3000 });
-                        return;
-                    }
+                                // Calculate Subtotal & Tax if needed (simplified for now based on total)
+                                const statusColors = {
+                                    'completed': 'bg-emerald-100 text-emerald-700 border-emerald-200',
+                                    'void': 'bg-red-100 text-red-700 border-red-200',
+                                    'pending': 'bg-amber-100 text-amber-700 border-amber-200'
+                                };
+                                const statusClass = statusColors[sale.status] || 'bg-slate-100 text-slate-700 border-slate-200';
 
-                    fetch('{{ route('api.pos.customers.create') }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + this.apiToken,
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({ name, phone, email })
-                    })
-                        .then(async res => {
-                            const data = await res.json();
-                            if (!res.ok) {
-                                throw new Error(data.message || 'Failed to create customer');
-                            }
-                            return data;
-                        })
-                        .then(data => {
-                            this.selectCustomer(data.customer);
-                            // Reset form
-                            document.getElementById('new-customer-name').value = '';
-                            document.getElementById('new-customer-phone').value = '';
-                            document.getElementById('new-customer-email').value = '';
-                        })
-                        .catch(err => {
-                            Swal.fire({
-                                title: 'Error',
-                                text: err.message,
-                                icon: 'error',
-                                position: 'top',
-                                toast: true,
-                                timer: 4000
-                            });
-                        });
-                },
+                                Swal.fire({
+                                    html: `
+                                                                <div class="text-left font-inter">
+                                                                    <!-- Header -->
+                                                                    <div class="flex justify-between items-start mb-6 pb-4 border-b border-slate-100">
+                                                                        <div>
+                                                                            <div class="flex items-center gap-3">
+                                                                                <h2 class="text-xl font-black text-slate-800">Order #${sale.id}</h2>
+                                                                                <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border ${statusClass}">
+                                                                                    ${sale.status}
+                                                                                </span>
+                                                                            </div>
+                                                                            <p class="text-xs text-slate-500 font-medium mt-1 flex items-center gap-1">
+                                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                                                                ${date}
+                                                                            </p>
+                                                                        </div>
+                                                                        <button onclick="Swal.close()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                                        </button>
+                                                                    </div>
 
-                selectCustomer(customer) {
-                    this.cartCustomer = customer;
-                    localStorage.setItem('pos_customer', JSON.stringify(customer));
+                                                                    <!-- Items List -->
+                                                                    ${itemsHtml}
 
-                    const nameDisplay = document.getElementById('cart-customer-name');
-                    const removeBtn = document.getElementById('remove-customer-btn');
+                                                                    <!-- Summary -->
+                                                                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 space-y-3">
+                                                                        <div class="flex justify-between items-center text-xs text-slate-500">
+                                                                            <span>Payment Method</span>
+                                                                            <div class="flex items-center gap-2">
+                                                                                <span class="font-bold text-slate-700 capitalize">${sale.payment_method || 'Cash'}</span>
+                                                                            </div>
+                                                                        </div>
 
-                    if (nameDisplay) {
-                        nameDisplay.innerText = customer.name;
-                        nameDisplay.classList.add('text-{{ $theme }}-600', 'font-bold');
-                    }
-                    if (removeBtn) removeBtn.classList.remove('hidden');
+                                                                        ${sale.tax_amount > 0 ? `
+                                                                            <div class="flex justify-between items-center text-xs text-slate-500">
+                                                                                <span>Tax</span>
+                                                                                <span class="font-medium text-slate-700">${this.formatPrice(sale.tax_amount)}</span>
+                                                                            </div>
+                                                                        ` : ''}
 
-                    this.closeCustomerModal();
+                                                                        ${sale.discount_amount > 0 ? `
+                                                                            <div class="flex justify-between items-center text-xs text-emerald-600 font-medium">
+                                                                                <span>Discount</span>
+                                                                                <span>-${this.formatPrice(sale.discount_amount)}</span>
+                                                                            </div>
+                                                                        ` : ''}
 
-                    Swal.fire({
-                        title: 'Customer Selected',
-                        text: `Order linked to ${customer.name}`,
-                        icon: 'success',
-                        toast: true,
-                        position: 'top',
-                        showConfirmButton: false,
-                        timer: 2000
-                    });
-                },
+                                                                        <div class="flex justify-between items-center pt-3 border-t border-slate-200">
+                                                                            <span class="text-base font-bold text-slate-800">Total Amount</span>
+                                                                            <span class="text-2xl font-black text-{{ $theme }}-600">${this.formatPrice(sale.total_amount)}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            `,
+                                    width: '450px',
+                                    showCloseButton: false,
+                                    showConfirmButton: true,
+                                    confirmButtonText: `
+                                                                <div class="flex items-center justify-center gap-2">
+                                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2-4h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6a2 2 0 012-2zm9-2V4a2 2 0 00-2-2h-5l-5 5v3m9-3h-2M9 13H5a2 2 0 00-2 2v4a2 2 0 002 2h4a2 2 0 002-2v-4a2 2 0 00-2-2z"></path></svg>
+                                                                    <span>Print Receipt</span>
+                                                                </div>
+                                                            `,
+                                    showCancelButton: false,
+                                    padding: '1.5rem',
+                                    customClass: {
+                                        popup: 'rounded-[24px] shadow-2xl overflow-hidden',
+                                        actions: '!w-full !flex !flex-col !items-stretch !justify-center !pb-6 !m-0',
+                                                confirmButton: '!w-full bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-{{ $theme }}-200 flex items-center justify-center !m-0',
+                                            },
+                                            buttonsStyling: false
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                const width = 400;
+                                                const height = 600;
+                                                const left = (screen.width - width) / 2;
+                                                const top = (screen.height - height) / 2;
+                                                window.open(`/pos/sales/${sale.id}/receipt`, 'Receipt', `width=${width},height=${height},top=${top},left=${left}`);
+                                            }
+                                        });
+                                    },
 
-                removeCustomer() {
-                    this.cartCustomer = null;
-                    localStorage.removeItem('pos_customer');
+                                    voidSale(saleId) {
+                                        Swal.fire({
+                                            title: 'Void Transaction?',
+                                            text: "This requires supervisor approval.",
+                                            icon: 'warning',
+                                            input: 'password',
+                                            inputPlaceholder: 'Enter Supervisor PIN',
+                                            inputAttributes: {
+                                                autocapitalize: 'off',
+                                                autocorrect: 'off'
+                                            },
+                                            customClass: {
+                                                input: 'text-center tracking-widest'
+                                            },
+                                            showCancelButton: true,
+                                            confirmButtonText: 'Void Transaction',
+                                            confirmButtonColor: '#ef4444',
+                                            showLoaderOnConfirm: true,
+                                            inputValidator: (value) => {
+                                                if (!value) {
+                                                    return 'You need to enter the Supervisor PIN!'
+                                                }
+                                            },
+                                            preConfirm: (pin) => {
+                                                return fetch(`{{ url('/api/pos/sales') }}/${saleId}/void`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'Authorization': 'Bearer ' + this.apiToken,
+                                                        'Accept': 'application/json'
+                                                    },
+                                                    body: JSON.stringify({ pin: pin })
+                                                })
+                                                    .then(async response => {
+                                                        if (!response.ok) {
+                                                            const contentType = response.headers.get("content-type");
+                                                            if (contentType && contentType.indexOf("application/json") !== -1) {
+                                                                const data = await response.json();
+                                                                throw new Error(data.message || 'Failed to void');
+                                                            } else {
+                                                                throw new Error("Server returned non-JSON error. Check networking/auth.");
+                                                            }
+                                                        }
+                                                        return response.json()
+                                                    })
+                                                    .catch(error => {
+                                                        Swal.showValidationMessage(`${error.message}`)
+                                                    })
+                                            },
+                                            allowOutsideClick: () => !Swal.isLoading()
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                Swal.fire({
+                                                    title: 'Voided!',
+                                                    text: 'Values have been reverted.',
+                                                    icon: 'success'
+                                                });
+                                                this.fetchHistory(this.historyCurrentPage); // Refresh list
+                                            }
+                                        })
+                                    },
 
-                    const nameDisplay = document.getElementById('cart-customer-name');
-                    const removeBtn = document.getElementById('remove-customer-btn');
+                                    // --- Customer Features ---
 
-                    if (nameDisplay) {
-                        nameDisplay.innerText = 'Guest Customer';
-                        nameDisplay.classList.remove('text-{{ $theme }}-600', 'font-bold');
-                    }
-                    if (removeBtn) removeBtn.classList.add('hidden');
+                                    openCustomerModal() {
+                                        document.getElementById('customer-modal').classList.remove('hidden');
+                                        document.getElementById('customer-search-input').focus();
 
-                    Swal.fire({
-                        title: 'Removed',
-                        text: 'Customer unlinked from order',
-                        icon: 'info',
-                        toast: true,
-                        position: 'top',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                }
-            };
+                                        // Setup search listener
+                                        const searchInput = document.getElementById('customer-search-input');
+                                        if (searchInput && !searchInput.dataset.listening) {
+                                            searchInput.addEventListener('input', (e) => {
+                                                clearTimeout(this.customerSearchTimeout);
+                                                this.customerSearchTimeout = setTimeout(() => {
+                                                    this.searchCustomers(e.target.value);
+                                                }, 300);
+                                            });
+                                            searchInput.dataset.listening = true;
+                                        }
+                                    },
 
-            document.addEventListener('DOMContentLoaded', () => {
-                window.posApp = posApp; // Ensure global access for inline onclicks
-                posApp.init();
-            });
-        </script>
+                                    closeCustomerModal() {
+                                        document.getElementById('customer-modal').classList.add('hidden');
+                                    },
+
+                                    switchCustomerTab(tab) {
+                                        const searchTab = document.getElementById('customer-tab-search');
+                                        const createTab = document.getElementById('customer-tab-create');
+                                        const searchBtn = document.getElementById('tab-search-btn');
+                                        const createBtn = document.getElementById('tab-create-btn');
+
+                                        if (tab === 'search') {
+                                            searchTab.classList.remove('hidden');
+                                            createTab.classList.add('hidden');
+                                            searchBtn.className = 'flex-1 py-3 text-[10px] font-bold text-{{ $theme }}-600 border-b-2 border-{{ $theme }}-600 bg-slate-50';
+                                            createBtn.className = 'flex-1 py-3 text-[10px] font-medium text-slate-500 hover:text-slate-700';
+                                            document.getElementById('customer-search-input').focus();
+                                        } else {
+                                            searchTab.classList.add('hidden');
+                                            createTab.classList.remove('hidden');
+                                            searchBtn.className = 'flex-1 py-3 text-[10px] font-medium text-slate-500 hover:text-slate-700';
+                                            createBtn.className = 'flex-1 py-3 text-[10px] font-bold text-{{ $theme }}-600 border-b-2 border-{{ $theme }}-600 bg-slate-50';
+                                            document.getElementById('new-customer-name').focus();
+                                        }
+                                    },
+
+                                    searchCustomers(query) {
+                                        const container = document.getElementById('customer-search-results');
+                                        container.innerHTML = '<p class="text-center text-slate-400 py-4 text-[10px]">Searching...</p>';
+
+                                        if (!query) {
+                                            container.innerHTML = '<p class="text-center text-slate-400 py-4 text-[10px]">Start typing to search...</p>';
+                                            return;
+                                        }
+
+                                        fetch(`{{ route('api.pos.customers.search') }}?query=${query}`, {
+                                            headers: {
+                                                'Accept': 'application/json',
+                                                'Authorization': 'Bearer ' + this.apiToken
+                                            }
+                                        })
+                                            .then(res => res.json())
+                                            .then(data => {
+                                                container.innerHTML = '';
+                                                if (data.length === 0) {
+                                                    container.innerHTML = '<p class="text-center text-slate-400 py-4 text-[10px]">No customers found.</p>';
+                                                    return;
+                                                }
+
+                                                data.forEach(customer => {
+                                                    const el = document.createElement('div');
+                                                    el.className = 'p-3 hover:bg-slate-50 rounded-lg cursor-pointer border border-transparent hover:border-slate-100 transition-colors flex justify-between items-center group';
+                                                    el.innerHTML = `
+                                                                                                                                                                                                                                                                                                                                                                                                    <div>
+                                                                                                                                                                                                                                                                                                                                                                                                        <p class="font-bold text-slate-800">${customer.name}</p>
+                                                                                                                                                                                                                                                                                                                                                                                                        <p class="text-[10px] text-slate-500">${customer.phone || 'No Phone'}</p>
+                                                                                                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                                                                    <button class="text-{{ $theme }}-600 font-bold text-[10px] bg-{{ $theme }}-50 px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Select</button>
+                                                                                                                                                                                                                                                                                                                                                                                                `;
+                                                    el.onclick = () => this.selectCustomer(customer);
+                                                    container.appendChild(el);
+                                                });
+                                            });
+                                    },
+
+                                    createCustomer() {
+                                        const name = document.getElementById('new-customer-name').value;
+                                        const phone = document.getElementById('new-customer-phone').value;
+                                        const email = document.getElementById('new-customer-email').value;
+
+                                        if (!name) {
+                                            Swal.fire({ title: 'Error', text: 'Name is required', icon: 'error', toast: true, position: 'top', showConfirmButton: false, timer: 3000 });
+                                            return;
+                                        }
+                                        if (!phone) {
+                                            Swal.fire({ title: 'Error', text: 'Phone number is required', icon: 'error', toast: true, position: 'top', showConfirmButton: false, timer: 3000 });
+                                            return;
+                                        }
+
+                                        fetch('{{ route('api.pos.customers.create') }}', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'Authorization': 'Bearer ' + this.apiToken,
+                                                'Accept': 'application/json'
+                                            },
+                                            body: JSON.stringify({ name, phone, email })
+                                        })
+                                            .then(async res => {
+                                                const data = await res.json();
+                                                if (!res.ok) {
+                                                    throw new Error(data.message || 'Failed to create customer');
+                                                }
+                                                return data;
+                                            })
+                                            .then(data => {
+                                                this.selectCustomer(data.customer);
+                                                // Reset form
+                                                document.getElementById('new-customer-name').value = '';
+                                                document.getElementById('new-customer-phone').value = '';
+                                                document.getElementById('new-customer-email').value = '';
+                                            })
+                                            .catch(err => {
+                                                Swal.fire({
+                                                    title: 'Error',
+                                                    text: err.message,
+                                                    icon: 'error',
+                                                    position: 'top',
+                                                    toast: true,
+                                                    timer: 4000
+                                                });
+                                            });
+                                    },
+
+                                    selectCustomer(customer) {
+                                        this.cartCustomer = customer;
+                                        localStorage.setItem('pos_customer', JSON.stringify(customer));
+
+                                        const nameDisplay = document.getElementById('cart-customer-name');
+                                        const removeBtn = document.getElementById('remove-customer-btn');
+
+                                        if (nameDisplay) {
+                                            nameDisplay.innerText = customer.name;
+                                            nameDisplay.classList.add('text-{{ $theme }}-600', 'font-bold');
+                                        }
+                                        if (removeBtn) removeBtn.classList.remove('hidden');
+
+                                        this.closeCustomerModal();
+
+                                        Swal.fire({
+                                            title: 'Customer Selected',
+                                            text: `Order linked to ${customer.name}`,
+                                            icon: 'success',
+                                            toast: true,
+                                            position: 'top',
+                                            showConfirmButton: false,
+                                            timer: 2000
+                                        });
+                                    },
+
+                                    removeCustomer() {
+                                        this.cartCustomer = null;
+                                        localStorage.removeItem('pos_customer');
+
+                                        const nameDisplay = document.getElementById('cart-customer-name');
+                                        const removeBtn = document.getElementById('remove-customer-btn');
+
+                                        if (nameDisplay) {
+                                            nameDisplay.innerText = 'Guest Customer';
+                                            nameDisplay.classList.remove('text-{{ $theme }}-600', 'font-bold');
+                                        }
+                                        if (removeBtn) removeBtn.classList.add('hidden');
+
+                                        Swal.fire({
+                                            title: 'Removed',
+                                            text: 'Customer unlinked from order',
+                                            icon: 'info',
+                                            toast: true,
+                                            position: 'top',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        });
+                                    }
+                                };
+
+                                document.addEventListener('DOMContentLoaded', () => {
+                                    window.posApp = posApp; // Ensure global access for inline onclicks
+                                    posApp.init();
+                                });
+                            </script>
     @endpush
 @endsection
