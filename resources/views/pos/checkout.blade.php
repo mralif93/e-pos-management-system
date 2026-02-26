@@ -4,10 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POS Payment - {{ config('app.name', 'Laravel') }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Checkout - E-POS</title>
+    <!-- Tailwind CSS (Vite) -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="{{ asset('assets/js/sweetalert2.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('assets/fonts/inter.css') }}" />
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -35,7 +36,7 @@
         }
     </style>
     <!-- Alpine.js -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="{{ asset('assets/js/alpine.min.js') }}"></script>
 </head>
 
 <body class="bg-slate-50 min-h-screen overflow-hidden flex flex-col font-inter antialiased">
@@ -209,12 +210,49 @@
                     <!-- Payment Methods Tabs -->
                     <div class="bg-white p-1 rounded-xl border border-slate-200 flex shadow-sm">
                         <template x-for="method in ['cash', 'card', 'qr']">
-                            <button @click="paymentMethod = method"
+                            <button @click="selectPaymentMethod(method)"
                                 :class="paymentMethod === method ? 'bg-{{ $theme }}-600 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50'"
                                 class="flex-1 py-2 rounded-lg text-xs font-bold uppercase tracking-wide transition-all duration-200"
                                 x-text="method.replace('qr', 'QR Pay')">
                             </button>
                         </template>
+                    </div>
+
+                    <!-- QR Code Display (shown when QR payment selected) -->
+                    <div x-show="paymentMethod === 'qr'" x-cloak
+                        class="bg-white border-2 rounded-xl p-6 text-center shadow-sm">
+                        <div class="mb-4">
+                            <h3 class="text-sm font-bold text-slate-700 mb-1">Scan to Pay</h3>
+                            <p class="text-xs text-slate-500">Amount: <span x-text="formatPrice(remainingDue)"></span>
+                            </p>
+                        </div>
+
+                        <!-- QR Code Display Area -->
+                        <div id="qr-code-display" class="bg-white p-4 rounded-lg inline-block mb-4">
+                            <template x-if="!qrCodeData">
+                                <div class="w-48 h-48 flex items-center justify-center bg-slate-100 rounded-lg">
+                                    <p class="text-xs text-slate-400">Click to generate QR</p>
+                                </div>
+                            </template>
+                            <template x-if="qrCodeData">
+                                <div class="w-48 h-48 flex items-center justify-center">
+                                    <img :src="qrCodeData" alt="Payment QR Code" class="max-w-full max-h-full" />
+                                </div>
+                            </template>
+                        </div>
+
+                        <button @click="generateQRCode()" :disabled="qrLoading"
+                            class="w-full py-2 px-4 bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white rounded-lg text-xs font-bold shadow-md transition-all disabled:opacity-50">
+                            <span x-show="!qrLoading">Generate QR Code</span>
+                            <span x-show="qrLoading">Generating...</span>
+                        </button>
+
+                        <p x-show="qrExpiry" class="text-[10px] text-slate-500 mt-2">Expires: <span
+                                x-text="qrExpiry"></span></p>
+
+                        <div x-show="qrVerified" class="mt-4 p-3 bg-green-100 rounded-lg">
+                            <p class="text-sm font-bold text-green-700">Payment Received!</p>
+                        </div>
                     </div>
 
                     <!-- Amount Display -->
@@ -623,6 +661,13 @@
                 tenderAmountDisplay: '',
                 payments: [],
 
+                // QR Payment State
+                qrCodeData: null,
+                qrLoading: false,
+                qrExpiry: null,
+                qrVerified: false,
+                qrPollingInterval: null,
+
                 // Customer State
                 cartCustomer: null,
 
@@ -869,6 +914,123 @@
                     this.payments.splice(index, 1);
                     if (this.payments.length === 0) {
                         this.setExact();
+                    }
+                },
+
+                // QR Payment Methods
+                selectPaymentMethod(method) {
+                    this.paymentMethod = method;
+
+                    if (method === 'qr' && this.remainingDue > 0 && !this.qrCodeData) {
+                        // Auto generate QR when switching to QR tab
+                        this.generateQRCode();
+                    }
+                },
+
+                async generateQRCode() {
+                    if (this.remainingDue <= 0) {
+                        Swal.fire({ icon: 'warning', title: 'No amount due', text: 'Please add items to cart first' });
+                        return;
+                    }
+
+                    this.qrLoading = true;
+                    this.qrVerified = false;
+
+                    try {
+                        const response = await fetch('{{ route('pos.payment.duitnow-qr') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + this.apiToken,
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                amount: this.remainingDue,
+                                order_id: 'ORD-' + this.orderId
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (response.ok && data.qr_data) {
+                            this.qrCodeData = data.qr_data.qr_url;
+                            this.qrExpiry = new Date(data.qr_data.expiry_time).toLocaleTimeString();
+
+                            // Start polling for payment verification
+                            this.startQRPolling();
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'QR Generation Failed',
+                                text: data.message || 'Unable to generate QR code. Service may not be configured.'
+                            });
+                        }
+                    } catch (e) {
+                        console.error('QR generation error:', e);
+                        Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to generate QR code' });
+                    } finally {
+                        this.qrLoading = false;
+                    }
+                },
+
+                startQRPolling() {
+                    // Clear any existing interval
+                    if (this.qrPollingInterval) {
+                        clearInterval(this.qrPollingInterval);
+                    }
+
+                    // Poll every 3 seconds for payment verification
+                    this.qrPollingInterval = setInterval(() => {
+                        this.checkQRPayment();
+                    }, 3000);
+
+                    // Auto stop after 5 minutes
+                    setTimeout(() => {
+                        if (this.qrPollingInterval) {
+                            clearInterval(this.qrPollingInterval);
+                            this.qrPollingInterval = null;
+                        }
+                    }, 300000);
+                },
+
+                async checkQRPayment() {
+                    if (this.qrVerified) return;
+
+                    try {
+                        const response = await fetch('{{ route('pos.payment.duitnow-verify') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + this.apiToken,
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                order_id: 'ORD-' + this.orderId,
+                                amount: this.remainingDue
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.status === 'paid' || data.status === 'success') {
+                            this.qrVerified = true;
+                            clearInterval(this.qrPollingInterval);
+
+                            // Auto-add payment
+                            this.payments.push({
+                                method: 'qr',
+                                amount: this.remainingDue
+                            });
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Payment Received!',
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+                        }
+                    } catch (e) {
+                        console.error('QR verification error:', e);
                     }
                 },
 

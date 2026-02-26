@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\ProcessSaleRequest;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Sale;
@@ -10,11 +11,24 @@ use App\Models\SaleItem;
 use App\Models\Payment;
 use App\Models\Customer;
 use App\Models\User;
+use App\Models\Shift;
+use App\Models\InventoryTransfer;
+use App\Models\InventoryTransferItem;
+use App\Models\Outlet;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Http\Controllers\Traits\PosOutletSettings;
+use App\Services\LoyaltyService;
+use App\Services\OfflineSaleService;
+use App\Services\ShiftService;
+use App\Services\DuitNowQRService;
+use App\Services\SSMCompanyLookupService;
 
 class PosController extends Controller
 {
+    use PosOutletSettings;
+
     public function verifyPinEndpoint(Request $request)
     {
         $request->validate(['pin' => 'required|string']);
@@ -36,14 +50,8 @@ class PosController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $apiToken = null;
-        if ($user) {
-            // Check if user has an existing token, or create a new one
-            // For simplicity, we'll create a new one with a short expiration
-            $apiToken = $user->createToken('pos-token', ['*'], now()->addMinutes(10))->plainTextToken;
-        }
-
-        $outletSettings = $user->outlet ? $user->outlet->settings : [];
+        $apiToken = $this->createPosToken($user, 10);
+        $outletSettings = $this->getOutletSettings($user);
 
         return view('pos.app', ['apiToken' => $apiToken, 'outletSettings' => $outletSettings]);
     }
@@ -51,11 +59,8 @@ class PosController extends Controller
     public function checkout()
     {
         $user = auth()->user();
-        $apiToken = null;
-        if ($user) {
-            $apiToken = $user->createToken('pos-token', ['*'], now()->addMinutes(30))->plainTextToken; // Increased to 30 mins for checkout
-        }
-        $outletSettings = $user->outlet ? $user->outlet->settings : [];
+        $apiToken = $this->createPosToken($user, 30);
+        $outletSettings = $this->getOutletSettings($user);
 
         return view('pos.checkout', ['apiToken' => $apiToken, 'outletSettings' => $outletSettings]);
     }
@@ -63,11 +68,8 @@ class PosController extends Controller
     public function lock()
     {
         $user = auth()->user();
-        $apiToken = null;
-        if ($user) {
-            $apiToken = $user->createToken('pos-token', ['*'], now()->addMinutes(120))->plainTextToken;
-        }
-        $outletSettings = $user->outlet ? $user->outlet->settings : [];
+        $apiToken = $this->createPosToken($user, 120);
+        $outletSettings = $this->getOutletSettings($user);
 
         session(['pos_locked' => true]);
 
@@ -178,40 +180,38 @@ class PosController extends Controller
         ]);
     }
 
-    public function processSale(Request $request)
+    public function processSale(ProcessSaleRequest $request)
     {
         $userOutletId = auth()->user()->outlet_id;
-
-        $request->validate([
-            'outlet_id' => 'required|exists:outlets,id',
-            'user_id' => 'required|exists:users,id',
-            'customer_id' => 'nullable|exists:customers,id',
-            'total_amount' => 'required|numeric|min:0',
-            'tax_amount' => 'required|numeric|min:0',
-            'status' => 'required|string',
-            'discount_amount' => 'nullable|numeric|min:0',
-            'discount_reason' => 'nullable|string',
-            'items' => 'required|array',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|integer|min:1',
-            'items.*.price' => 'required|numeric|min:0',
-            'payments' => 'required|array',
-            'payments.*.amount' => 'required|numeric|min:0',
-            'payments.*.payment_method' => 'required|string',
-        ]);
 
         if ($request->outlet_id != $userOutletId) {
             return response()->json(['message' => 'Unauthorized access to outlet.'], 403);
         }
 
-        $discount = $request->discount_amount ?? 0;
-        $finalTotal = $request->total_amount; // Total usually includes tax, depends on logic. Assuming frontend sends breakdown.
+        $stockErrors = [];
+        foreach ($request->items as $item) {
+            $product = Product::find($item['product_id']);
+            $outletPrice = $product->prices()->where('outlet_id', $userOutletId)->first();
+            $availableStock = $outletPrice ? $outletPrice->stock_level : $product->stock_level;
+            
+            if ($availableStock !== null && $availableStock < $item['quantity']) {
+                $stockErrors[] = "Insufficient stock for {$product->name}. Available: {$availableStock}";
+            }
+        }
 
-        // Validate Total Payment
+        if (!empty($stockErrors)) {
+            return response()->json(['message' => 'Stock validation failed', 'errors' => $stockErrors], 422);
+        }
+
+        $discount = $request->discount_amount ?? 0;
+        $finalTotal = $request->total_amount;
+
         $totalPayment = collect($request->payments)->sum('amount');
-        if ($totalPayment < $finalTotal - 0.01) { // Float tolerance
+        if ($totalPayment < $finalTotal - 0.01) {
             return response()->json(['message' => 'Insufficient payment amount.'], 422);
         }
+
+        $pointsToRedeem = $request->points_to_redeem ?? 0;
 
         DB::beginTransaction();
 
@@ -242,6 +242,19 @@ class PosController extends Controller
                     'amount' => $payment['amount'],
                     'payment_method' => $payment['payment_method'],
                 ]);
+            }
+
+            if ($request->customer_id) {
+                $loyaltyService = new LoyaltyService();
+                $pointsResult = $loyaltyService->processSalePoints($sale, $pointsToRedeem);
+                
+                $sale->update([
+                    'points_earned' => $pointsResult['points_earned'],
+                    'points_redeemed' => $pointsResult['points_redeemed'],
+                    'discount_from_points' => $pointsResult['discount_from_points'],
+                ]);
+                
+                $sale->refresh();
             }
 
             DB::commit();
@@ -282,12 +295,15 @@ class PosController extends Controller
     public function voidSale(Request $request, $id)
     {
         $request->validate([
-            'pin' => 'required|string', // Supervisor PIN
+            'pin' => 'required|string',
         ]);
 
-        // Placeholder PIN check
-        if ($request->pin !== '1234') { // Simple hardcoded PIN for now
-            return response()->json(['message' => 'Invalid Supervisor PIN'], 403);
+        $manager = User::where('pin', $request->pin)
+            ->whereIn('role', ['Super Admin', 'Admin', 'Manager'])
+            ->first();
+
+        if (!$manager) {
+            return response()->json(['message' => 'Invalid Manager PIN'], 403);
         }
 
         $sale = Sale::where('id', $id)->where('outlet_id', auth()->user()->outlet_id)->firstOrFail();
@@ -296,9 +312,14 @@ class PosController extends Controller
             return response()->json(['message' => 'Sale is already voided'], 400);
         }
 
-        $sale->update(['status' => 'void']);
-
-        // Optional: Restore stock levels here if needed
+        DB::beginTransaction();
+        try {
+            $sale->update(['status' => 'void']);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error voiding sale', 'error' => $e->getMessage()], 500);
+        }
 
         return response()->json(['message' => 'Sale voided successfully', 'sale' => $sale]);
     }
@@ -355,6 +376,60 @@ class PosController extends Controller
         return response()->json($categories);
     }
 
+    public function getOutlets()
+    {
+        $outlets = Outlet::where('is_active', true)->get(['id', 'name', 'outlet_code', 'address', 'phone']);
+        
+        return response()->json(['outlets' => $outlets]);
+    }
+
+    public function getCustomerPoints(Request $request)
+    {
+        $customerId = $request->customer_id;
+        
+        if (!$customerId) {
+            return response()->json(['message' => 'Customer ID required'], 400);
+        }
+
+        $customer = Customer::findOrFail($customerId);
+
+        return response()->json([
+            'customer' => [
+                'id' => $customer->id,
+                'name' => $customer->name,
+                'phone' => $customer->phone,
+                'loyalty_points' => $customer->loyalty_points,
+                'total_points_earned' => $customer->total_points_earned,
+                'loyalty_tier' => $customer->loyalty_tier,
+                'points_value' => $customer->getPointsValue(),
+            ]
+        ]);
+    }
+
+    public function calculatePointsRedemption(Request $request)
+    {
+        $request->validate([
+            'customer_id' => 'required|exists:customers,id',
+            'subtotal' => 'required|numeric|min:0',
+            'points_to_redeem' => 'required|integer|min:0',
+        ]);
+
+        $customer = Customer::findOrFail($request->customer_id);
+        $loyaltyService = new LoyaltyService();
+
+        $maxRedeemable = $loyaltyService->calculateMaxRedeemablePoints($customer, $request->subtotal);
+        $requestedPoints = min($request->points_to_redeem, $maxRedeemable);
+        $discount = $loyaltyService->calculateDiscountFromPoints($requestedPoints, $customer->loyalty_tier);
+
+        return response()->json([
+            'requested_points' => $request->points_to_redeem,
+            'redeemable_points' => $requestedPoints,
+            'max_redeemable_points' => $maxRedeemable,
+            'discount_amount' => $discount,
+            'remaining_points' => $customer->loyalty_points - $requestedPoints,
+        ]);
+    }
+
     public function generateReceiptPdf($id)
     {
         $sale = Sale::with(['saleItems.product', 'payments', 'customer', 'user', 'outlet'])->findOrFail($id);
@@ -392,5 +467,439 @@ class PosController extends Controller
         $pdf->setPaper($customPaper);
 
         return $pdf->stream('receipt-' . $sale->id . '.pdf');
+    }
+
+    public function saveOfflineDraft(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'outlet_id' => 'required|exists:outlets,id',
+            'customer_id' => 'nullable|exists:customers,id',
+            'cart_data' => 'required|array',
+            'total_amount' => 'required|numeric|min:0',
+            'tax_amount' => 'nullable|numeric|min:0',
+            'discount_amount' => 'nullable|numeric|min:0',
+            'discount_reason' => 'nullable|string',
+            'payments' => 'required|array',
+            'payments.*.amount' => 'required|numeric|min:0',
+            'payments.*.payment_method' => 'required|string',
+        ]);
+
+        $offlineService = new OfflineSaleService();
+        $draft = $offlineService->saveDraft($request->all());
+
+        return response()->json([
+            'message' => 'Draft saved offline',
+            'draft_id' => $draft->id,
+            'local_created_at' => $draft->local_created_at,
+        ], 201);
+    }
+
+    public function syncOfflineDrafts()
+    {
+        $offlineService = new OfflineSaleService();
+        $results = $offlineService->syncAllPendingDrafts();
+
+        return response()->json([
+            'message' => 'Sync completed',
+            'results' => $results,
+            'pending_count' => $offlineService->getPendingCount(),
+        ]);
+    }
+
+    public function getOfflineDrafts()
+    {
+        $offlineService = new OfflineSaleService();
+        $drafts = $offlineService->getPendingDrafts();
+
+        return response()->json([
+            'pending_count' => $drafts->count(),
+            'drafts' => $drafts,
+        ]);
+    }
+
+    public function checkPendingOfflineSales()
+    {
+        $offlineService = new OfflineSaleService();
+        
+        return response()->json([
+            'has_pending' => $offlineService->getPendingCount() > 0,
+            'pending_count' => $offlineService->getPendingCount(),
+        ]);
+    }
+
+    public function openShift(Request $request)
+    {
+        $request->validate([
+            'opening_cash' => 'required|numeric|min:0',
+        ]);
+
+        $user = auth()->user();
+
+        if (!$user->outlet_id) {
+            return response()->json(['message' => 'User has no outlet assigned'], 400);
+        }
+
+        $shiftService = new ShiftService();
+
+        try {
+            $shift = $shiftService->openShift($user->outlet_id, $user->id, $request->opening_cash);
+            return response()->json(['message' => 'Shift opened successfully', 'shift' => $shift], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+    }
+
+    public function closeShift(Request $request, $id)
+    {
+        $request->validate([
+            'closing_cash' => 'required|numeric',
+            'notes' => 'nullable|string',
+        ]);
+
+        $shift = Shift::findOrFail($id);
+        $shiftService = new ShiftService();
+
+        $data = [
+            'closing_cash' => $request->closing_cash,
+            'notes' => $request->notes,
+        ];
+
+        $shift = $shiftService->closeShift($shift, $data);
+        
+        return response()->json(['message' => 'Shift closed successfully', 'shift' => $shift]);
+    }
+
+    public function getCurrentShift()
+    {
+        $user = auth()->user();
+        
+        if (!$user->outlet_id) {
+            return response()->json(['message' => 'User has no outlet assigned', 'shift' => null], 400);
+        }
+        
+        $shiftService = new ShiftService();
+        
+        $shift = $shiftService->getCurrentShift($user->outlet_id, $user->id);
+
+        if (!$shift) {
+            return response()->json(['message' => 'No open shift found', 'shift' => null]);
+        }
+
+        $salesSummary = $shiftService->getShiftSalesSummary($shift);
+
+        return response()->json([
+            'shift' => $shift,
+            'sales_summary' => $salesSummary,
+        ]);
+    }
+
+    public function getShiftHistory(Request $request)
+    {
+        $user = auth()->user();
+        $shiftService = new ShiftService();
+        
+        $startDate = $request->filled('start_date') ? Carbon::parse($request->start_date) : null;
+        $endDate = $request->filled('end_date') ? Carbon::parse($request->end_date) : null;
+
+        $shifts = $shiftService->getShiftHistory($user->outlet_id, $startDate, $endDate);
+
+        return response()->json(['shifts' => $shifts]);
+    }
+
+    public function generateDuitNowQR(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:1',
+            'order_id' => 'nullable|string',
+        ]);
+
+        $duitNowService = new DuitNowQRService();
+
+        if (!$duitNowService->isConfigured()) {
+            return response()->json([
+                'message' => 'DuitNow QR is not configured. Please contact administrator.',
+                'configured' => false,
+            ], 503);
+        }
+
+        $orderId = $request->order_id ?? DuitNowQRService::generateMerchantOrderId();
+        $customerName = $request->filled('customer_name') ? $request->customer_name : null;
+
+        $qrData = $duitNowService->generateDynamicQR(
+            (float) $request->amount,
+            $orderId,
+            $customerName
+        );
+
+        return response()->json([
+            'qr_data' => $qrData,
+            'configured' => true,
+        ]);
+    }
+
+    public function generateStaticDuitNowQR(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:1',
+        ]);
+
+        $duitNowService = new DuitNowQRService();
+
+        if (!$duitNowService->isConfigured()) {
+            return response()->json([
+                'message' => 'DuitNow QR is not configured. Please contact administrator.',
+                'configured' => false,
+            ], 503);
+        }
+
+        $qrData = $duitNowService->generateStaticQR((float) $request->amount);
+
+        return response()->json([
+            'qr_data' => $qrData,
+            'configured' => true,
+        ]);
+    }
+
+    public function verifyDuitNowPayment(Request $request)
+    {
+        $request->validate([
+            'order_id' => 'required|string',
+            'amount' => 'required|numeric',
+        ]);
+
+        $duitNowService = new DuitNowQRService();
+        $result = $duitNowService->verifyPayment(
+            $request->order_id,
+            (float) $request->amount
+        );
+
+        return response()->json($result);
+    }
+
+    public function searchCompany(Request $request)
+    {
+        $request->validate([
+            'query' => 'required|string|min:3',
+        ]);
+
+        $ssmService = new SSMCompanyLookupService();
+
+        if (!$ssmService->isConfigured()) {
+            return response()->json([
+                'message' => 'SSM lookup is not configured. Using mock data.',
+                'configured' => false,
+                'results' => [],
+            ], 503);
+        }
+
+        $results = $ssmService->searchByCompanyName($request->query);
+
+        return response()->json($results);
+    }
+
+    public function getCompanyDetails(Request $request)
+    {
+        $request->validate([
+            'registration_number' => 'required|string|min:12',
+        ]);
+
+        $ssmService = new SSMCompanyLookupService();
+
+        if (!$ssmService->isConfigured()) {
+            $mockData = $ssmService->getMockCompanyData($request->registration_number);
+            return response()->json(array_merge(['configured' => false], $mockData));
+        }
+
+        $result = $ssmService->searchByRegistrationNumber($request->registration_number);
+
+        return response()->json(array_merge(['configured' => true], $result));
+    }
+
+    public function getCompanyOfficers(Request $request)
+    {
+        $request->validate([
+            'registration_number' => 'required|string|min:12',
+        ]);
+
+        $ssmService = new SSMCompanyLookupService();
+
+        if (!$ssmService->isConfigured()) {
+            return response()->json([
+                'message' => 'SSM lookup is not configured.',
+                'configured' => false,
+            ], 503);
+        }
+
+        $result = $ssmService->getCompanyOfficers($request->registration_number);
+
+        return response()->json(array_merge(['configured' => true], $result));
+    }
+
+    public function createTransfer(Request $request)
+    {
+        $request->validate([
+            'to_outlet_id' => 'required|exists:outlets,id',
+            'items' => 'required|array|min:1',
+            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.quantity' => 'required|integer|min:1',
+            'notes' => 'nullable|string',
+        ]);
+
+        $user = auth()->user();
+
+        if (!$user->outlet_id) {
+            return response()->json(['message' => 'User has no outlet assigned'], 400);
+        }
+
+        if ($request->to_outlet_id == $user->outlet_id) {
+            return response()->json(['message' => 'Cannot transfer to the same outlet'], 422);
+        }
+
+        $transfer = InventoryTransfer::create([
+            'from_outlet_id' => $user->outlet_id,
+            'to_outlet_id' => $request->to_outlet_id,
+            'requested_by' => $user->id,
+            'notes' => $request->notes,
+            'status' => 'pending',
+        ]);
+
+        foreach ($request->items as $item) {
+            InventoryTransferItem::create([
+                'inventory_transfer_id' => $transfer->id,
+                'product_id' => $item['product_id'],
+                'quantity_requested' => $item['quantity'],
+            ]);
+        }
+
+        $transfer->load('items.product');
+
+        return response()->json(['message' => 'Transfer request created', 'transfer' => $transfer], 201);
+    }
+
+    public function getPendingTransfers(Request $request)
+    {
+        $user = auth()->user();
+        
+        if (!$user->outlet_id) {
+            return response()->json(['message' => 'User has no outlet assigned', 'transfers' => []], 400);
+        }
+        
+        $type = $request->get('type', 'incoming');
+
+        $query = InventoryTransfer::with(['fromOutlet', 'toOutlet', 'items.product', 'requestedBy']);
+
+        if ($type === 'incoming') {
+            $query->where('to_outlet_id', $user->outlet_id);
+        } else {
+            $query->where('from_outlet_id', $user->outlet_id);
+        }
+
+        $transfers = $query->whereIn('status', ['pending', 'approved', 'in_transit'])
+            ->orderBy('requested_at', 'desc')
+            ->get();
+
+        return response()->json(['transfers' => $transfers]);
+    }
+
+    public function approveTransfer($id)
+    {
+        $transfer = InventoryTransfer::findOrFail($id);
+        $user = auth()->user();
+
+        if ($transfer->to_outlet_id != $user->outlet_id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if ($transfer->status != 'pending') {
+            return response()->json(['message' => 'Transfer is not pending'], 400);
+        }
+
+        $transfer->approve($user->id);
+
+        return response()->json(['message' => 'Transfer approved', 'transfer' => $transfer]);
+    }
+
+    public function rejectTransfer(Request $request, $id)
+    {
+        $request->validate([
+            'reason' => 'required|string',
+        ]);
+
+        $transfer = InventoryTransfer::findOrFail($id);
+        $user = auth()->user();
+
+        if ($transfer->to_outlet_id != $user->outlet_id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $transfer->reject($request->reason, $user->id);
+
+        return response()->json(['message' => 'Transfer rejected', 'transfer' => $transfer]);
+    }
+
+    public function markInTransit($id)
+    {
+        $transfer = InventoryTransfer::findOrFail($id);
+        $user = auth()->user();
+
+        if ($transfer->from_outlet_id != $user->outlet_id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if ($transfer->status != 'approved') {
+            return response()->json(['message' => 'Transfer must be approved first'], 400);
+        }
+
+        $transfer->markInTransit($user->id);
+
+        return response()->json(['message' => 'Transfer marked as in transit', 'transfer' => $transfer]);
+    }
+
+    public function receiveTransfer(Request $request, $id)
+    {
+        $request->validate([
+            'items' => 'required|array',
+            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.quantity_received' => 'required|integer|min:0',
+        ]);
+
+        $transfer = InventoryTransfer::findOrFail($id);
+        $user = auth()->user();
+
+        if ($transfer->to_outlet_id != $user->outlet_id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if ($transfer->status != 'in_transit') {
+            return response()->json(['message' => 'Transfer must be in transit'], 400);
+        }
+
+        foreach ($request->items as $item) {
+            $transferItem = InventoryTransferItem::where('inventory_transfer_id', $transfer->id)
+                ->where('product_id', $item['product_id'])
+                ->first();
+            
+            if ($transferItem) {
+                $transferItem->update(['quantity_received' => $item['quantity_received']]);
+            }
+        }
+
+        $transfer->receive($user->id);
+
+        return response()->json(['message' => 'Transfer received', 'transfer' => $transfer->fresh('items')]);
+    }
+
+    public function getTransferHistory(Request $request)
+    {
+        $user = auth()->user();
+        
+        $transfers = InventoryTransfer::where('from_outlet_id', $user->outlet_id)
+            ->orWhere('to_outlet_id', $user->outlet_id)
+            ->with(['fromOutlet', 'toOutlet', 'items.product', 'requestedBy', 'approvedBy', 'receivedBy'])
+            ->orderBy('requested_at', 'desc')
+            ->paginate(20);
+
+        return response()->json($transfers);
     }
 }

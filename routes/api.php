@@ -28,4 +28,7 @@ Route::prefix('pos')->middleware(['auth:sanctum'])->group(function () {
 
     // POS Settings
     Route::get('/settings', [PosController::class, 'getSettings'])->name('api.pos.settings');
+    
+    // Outlets
+    Route::get('/outlets', [PosController::class, 'getOutlets'])->name('api.outlets');
 });

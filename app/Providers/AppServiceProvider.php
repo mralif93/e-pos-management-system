@@ -4,7 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
-use App\Models\User; // Assuming User model is used for authentication
+use Illuminate\Pagination\Paginator;
+use App\Models\User;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,6 +22,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Paginator::defaultView('vendor.pagination.tailwind');
+
         Gate::define('access-pos', function (User $user) {
             return in_array($user->role, ['Cashier', 'Manager', 'Admin', 'Super Admin']);
         });

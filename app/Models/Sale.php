@@ -18,6 +18,15 @@ class Sale extends Model
         'status',
         'discount_amount',
         'discount_reason',
+        'points_earned',
+        'points_redeemed',
+        'discount_from_points',
+    ];
+
+    protected $casts = [
+        'points_earned' => 'integer',
+        'points_redeemed' => 'integer',
+        'discount_from_points' => 'decimal:2',
     ];
 
     public function outlet()

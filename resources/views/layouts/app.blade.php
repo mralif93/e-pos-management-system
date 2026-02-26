@@ -9,15 +9,14 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ asset('assets/fonts/figtree.css') }}" />
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @livewireStyles
+
     <!-- SweetAlert2 CSS -->
     <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="{{ asset('assets/css/sweetalert2.min.css') }}">
 
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json">
@@ -41,9 +40,9 @@
         @endisset
     </div>
 
-    @livewireScripts
+
     <!-- SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/dist/sweetalert2.all.min.js"></script>
+    <script src="{{ asset('assets/js/sweetalert2.js') }}"></script>
     <script>
         function confirmLogout() {
             Swal.fire({
@@ -62,7 +61,8 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById('pos-logout-form').submit();
+                    const form = document.getElementById('pos-logout-form');
+                    if (form) form.submit();
                 }
             })
         }

@@ -88,6 +88,54 @@
                         </svg>
                         <span class="font-bold text-[10px] md:text-[10px]">History</span>
                     </button>
+
+                    <!-- Shift Button -->
+                    <button onclick="posApp.openShiftModal()"
+                        class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-full text-slate-500 hover:bg-slate-50 hover:text-{{ $theme }}-600 hover:border-{{ $theme }}-200 transition-all shadow-sm hover:shadow-md active:scale-95 group">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span class="font-bold text-[10px] md:text-[10px]">Shift</span>
+                    </button>
+                    <button onclick="posApp.openShiftModal()"
+                        class="md:hidden pos-btn-icon-responsive bg-white border border-slate-200 rounded-full text-slate-500 hover:text-{{ $theme }}-600 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </button>
+
+                    <!-- Low Stock Alert Button -->
+                    <button onclick="posApp.openLowStockModal()"
+                        class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-full text-slate-500 hover:bg-slate-50 hover:text-red-600 hover:border-red-200 transition-all shadow-sm hover:shadow-md active:scale-95 group">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <span class="font-bold text-[10px] md:text-[10px]">Stock</span>
+                        <span id="lowstock-badge" class="hidden bg-red-500 text-white text-[8px] font-bold px-1.5 rounded-full">0</span>
+                    </button>
+                    <button onclick="posApp.openLowStockModal()"
+                        class="md:hidden pos-btn-icon-responsive bg-white border border-slate-200 rounded-full text-slate-500 hover:text-red-600 shadow-sm relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <span id="lowstock-badge-mobile" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-bold px-1 rounded-full">0</span>
+                    </button>
+
+                    <!-- Transfer Button -->
+                    <button onclick="posApp.openTransferModal()"
+                        class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-full text-slate-500 hover:bg-slate-50 hover:text-{{ $theme }}-600 hover:border-{{ $theme }}-200 transition-all shadow-sm hover:shadow-md active:scale-95 group">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                        <span class="font-bold text-[10px] md:text-[10px]">Transfer</span>
+                    </button>
+                    <button onclick="posApp.openTransferModal()"
+                        class="md:hidden pos-btn-icon-responsive bg-white border border-slate-200 rounded-full text-slate-500 hover:text-{{ $theme }}-600 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                    </button>
+
                     <!-- Mobile History Icon Only -->
                     <button onclick="posApp.openHistory()"
                         class="md:hidden pos-btn-icon-responsive bg-white border border-slate-200 rounded-full text-slate-500 hover:text-{{ $theme }}-600 shadow-sm">
@@ -128,7 +176,7 @@
                             </svg>
                         </button>
 
-                        <form method="POST" action="{{ route('pos.logout') }}">
+                        <form id="pos-logout-form" method="POST" action="{{ route('pos.logout') }}">
                             @csrf
                             <button type="button" onclick="confirmLogout()"
                                 class="pos-btn-icon-responsive text-slate-400 hover:bg-rose-50 hover:text-rose-500"
@@ -463,6 +511,206 @@
                                     class="w-full pos-btn-responsive bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white shadow-md shadow-{{ $theme }}-200 transition-all">
                                     Create & Select Customer
                                 </button>
+                            </div>
+                        </div>
+
+                        <!-- Loyalty Points Info (shown when customer selected) -->
+                        <div id="customer-loyalty-info" class="hidden px-6 pb-4 border-t border-slate-100 mt-2">
+                            <div class="flex items-center justify-between bg-{{ $theme }}-50 rounded-lg p-3 mt-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-{{ $theme }}-100 rounded-full flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-{{ $theme }}-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-bold text-slate-700">Loyalty Points</p>
+                                        <p class="text-lg font-black text-{{ $theme }}-600"><span id="loyalty-points-display">0</span> pts</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span id="loyalty-tier-badge" class="inline-block px-2 py-1 bg-amber-100 text-amber-700 text-[10px] font-bold rounded-full uppercase">Bronze</span>
+                                    <p class="text-[10px] text-slate-500 mt-1">Worth: <span id="loyalty-points-value">RM0.00</span></p>
+                                </div>
+                            </div>
+                            <button onclick="posApp.openPointsRedemption()" class="w-full mt-2 text-xs font-bold text-{{ $theme }}-600 hover:underline">
+                                + Redeem Points
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loyalty Points Redemption Modal -->
+            <div id="points-redemption-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" onclick="posApp.closePointsRedemptionModal()"></div>
+                <div class="fixed inset-0 z-10 overflow-y-auto">
+                    <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                        <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-slate-100">
+                            <div class="bg-white px-6 py-5 border-b border-slate-100 flex justify-between items-center">
+                                <h3 class="text-lg font-bold text-slate-900">Redeem Loyalty Points</h3>
+                                <button onclick="posApp.closePointsRedemptionModal()" class="text-slate-400 hover:text-slate-600">
+                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="p-6">
+                                <div class="bg-slate-50 rounded-lg p-4 mb-4">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs text-slate-500">Available Points</span>
+                                        <span id="available-points" class="text-lg font-black text-{{ $theme }}-600">0</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-xs text-slate-500">Tier</span>
+                                        <span id="redemption-tier" class="text-xs font-bold text-amber-600">Bronze</span>
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-[10px] font-medium text-slate-700 mb-1">Points to Redeem</label>
+                                    <input type="number" id="points-to-redeem" class="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500" placeholder="Enter points" min="0">
+                                    <p class="text-[10px] text-slate-500 mt-1">Max redeemable: <span id="max-redeemable-points">0</span> points</p>
+                                </div>
+                                <div class="bg-green-50 rounded-lg p-3 mb-4">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-xs text-green-700 font-medium">Discount Value</span>
+                                        <span id="points-discount-display" class="text-lg font-black text-green-600">RM0.00</span>
+                                    </div>
+                                </div>
+                                <button onclick="posApp.applyPointsRedemption()" class="w-full pos-btn-responsive bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white shadow-md transition-all">
+                                    Apply Discount
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shift Management Modal -->
+            <div id="shift-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" onclick="posApp.closeShiftModal()"></div>
+                <div class="fixed inset-0 z-10 overflow-y-auto">
+                    <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                        <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-slate-100">
+                            <div class="bg-white px-6 py-5 border-b border-slate-100 flex justify-between items-center">
+                                <h3 class="text-lg font-bold text-slate-900">Shift Management</h3>
+                                <button onclick="posApp.closeShiftModal()" class="text-slate-400 hover:text-slate-600">
+                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="p-6">
+                                <!-- Open Shift Form -->
+                                <div id="shift-open-form">
+                                    <div class="mb-4">
+                                        <label class="block text-[10px] font-medium text-slate-700 mb-1">Opening Cash Amount</label>
+                                        <input type="number" id="opening-cash" class="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500" placeholder="0.00" step="0.01">
+                                    </div>
+                                    <button onclick="posApp.openShift()" class="w-full pos-btn-responsive bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white shadow-md transition-all">
+                                        Open Shift
+                                    </button>
+                                </div>
+                                <!-- Current Shift Info -->
+                                <div id="shift-current-info" class="hidden">
+                                    <div class="bg-{{ $theme }}-50 rounded-lg p-4 mb-4">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                            <span class="text-xs font-bold text-{{ $theme }}-700">Shift Active</span>
+                                        </div>
+                                        <p class="text-xs text-slate-500">Shift #<span id="current-shift-number">-</span></p>
+                                        <p class="text-xs text-slate-500">Opened at: <span id="current-shift-time">-</span></p>
+                                        <p class="text-xs text-slate-500">Opening Cash: <span id="current-shift-opening">-</span></p>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="block text-[10px] font-medium text-slate-700 mb-1">Closing Cash Amount</label>
+                                        <input type="number" id="closing-cash" class="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500" placeholder="0.00" step="0.01">
+                                    </div>
+                                    <button onclick="posApp.closeShift()" class="w-full pos-btn-responsive bg-red-600 hover:bg-red-700 text-white shadow-md transition-all">
+                                        Close Shift
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Transfer Modal -->
+            <div id="transfer-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" onclick="posApp.closeTransferModal()"></div>
+                <div class="fixed inset-0 z-10 overflow-y-auto">
+                    <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                        <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-100 max-h-[80vh] flex flex-col">
+                            <div class="bg-white px-6 py-5 border-b border-slate-100 flex justify-between items-center flex-shrink-0">
+                                <h3 class="text-lg font-bold text-slate-900">Inventory Transfer</h3>
+                                <button onclick="posApp.closeTransferModal()" class="text-slate-400 hover:text-slate-600">
+                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="p-6 overflow-y-auto flex-1">
+                                <!-- Tabs -->
+                                <div class="flex border-b border-slate-200 mb-4">
+                                    <button onclick="posApp.switchTransferTab('new')" id="transfer-tab-new" class="flex-1 py-2 text-xs font-bold text-{{ $theme }}-600 border-b-2 border-{{ $theme }}-600">New Transfer</button>
+                                    <button onclick="posApp.switchTransferTab('pending')" id="transfer-tab-pending" class="flex-1 py-2 text-xs font-bold text-slate-500 hover:text-slate-700">Pending</button>
+                                </div>
+                                <!-- New Transfer Form -->
+                                <div id="transfer-form-new">
+                                    <div class="mb-4">
+                                        <label class="block text-[10px] font-medium text-slate-700 mb-1">To Outlet</label>
+                                        <select id="transfer-outlet" class="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500">
+                                            <option value="">Select Outlet</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="block text-[10px] font-medium text-slate-700 mb-1">Select Products</label>
+                                        <div id="transfer-products" class="max-h-40 overflow-y-auto border border-slate-200 rounded-lg p-2 space-y-2">
+                                            <p class="text-xs text-slate-400 text-center py-2">Loading products...</p>
+                                        </div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="block text-[10px] font-medium text-slate-700 mb-1">Notes (Optional)</label>
+                                        <textarea id="transfer-notes" class="block w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500" rows="2" placeholder="Transfer notes..."></textarea>
+                                    </div>
+                                    <button onclick="posApp.createTransfer()" class="w-full pos-btn-responsive bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white shadow-md transition-all">
+                                        Request Transfer
+                                    </button>
+                                </div>
+                                <!-- Pending Transfers List -->
+                                <div id="transfer-list-pending" class="hidden space-y-3">
+                                    <div id="pending-transfers-list">
+                                        <p class="text-xs text-slate-400 text-center py-4">No pending transfers</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Low Stock Alerts Modal -->
+            <div id="lowstock-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" onclick="posApp.closeLowStockModal()"></div>
+                <div class="fixed inset-0 z-10 overflow-y-auto">
+                    <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                        <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-100 max-h-[80vh] flex flex-col">
+                            <div class="bg-white px-6 py-5 border-b border-slate-100 flex justify-between items-center flex-shrink-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
+                                    <h3 class="text-lg font-bold text-slate-900">Low Stock Alerts</h3>
+                                </div>
+                                <button onclick="posApp.closeLowStockModal()" class="text-slate-400 hover:text-slate-600">
+                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="p-6 overflow-y-auto flex-1">
+                                <div id="lowstock-alerts-list" class="space-y-3">
+                                    <p class="text-xs text-slate-400 text-center py-4">No low stock alerts</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -823,6 +1071,480 @@
                     window.location.href = '{{ route('pos.lock') }}';
                 },
                 // --- End Lock Screen Logic ---
+
+                // --- Loyalty Points Functions ---
+                currentCustomerPoints: 0,
+                currentCustomerTier: 'bronze',
+                pointsRedemptionDiscount: 0,
+
+                async fetchCustomerPoints(customerId) {
+                    if (!customerId) return null;
+                    
+                    try {
+                        const response = await fetch('{{ route('pos.customer.points') }}?customer_id=' + customerId, {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': 'Bearer ' + this.apiToken,
+                                'Accept': 'application/json'
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            return data.customer;
+                        }
+                    } catch (e) {
+                        console.error('Error fetching customer points:', e);
+                    }
+                    return null;
+                },
+
+                showCustomerLoyaltyInfo(customer) {
+                    const loyaltyInfo = document.getElementById('customer-loyalty-info');
+                    if (!customer || !customer.loyalty_points) {
+                        if (loyaltyInfo) loyaltyInfo.classList.add('hidden');
+                        return;
+                    }
+
+                    if (loyaltyInfo) {
+                        document.getElementById('loyalty-points-display').innerText = customer.loyalty_points;
+                        document.getElementById('loyalty-points-value').innerText = this.formatPrice(customer.points_value || 0);
+                        
+                        const tierBadge = document.getElementById('loyalty-tier-badge');
+                        const tier = customer.loyalty_tier || 'bronze';
+                        tierBadge.innerText = tier.charAt(0).toUpperCase() + tier.slice(1);
+                        
+                        const tierColors = {
+                            'bronze': 'bg-amber-100 text-amber-700',
+                            'silver': 'bg-slate-200 text-slate-600',
+                            'gold': 'bg-yellow-100 text-yellow-700',
+                            'platinum': 'bg-purple-100 text-purple-700'
+                        };
+                        tierBadge.className = 'inline-block px-2 py-1 text-[10px] font-bold rounded-full uppercase ' + (tierColors[tier] || tierColors.bronze);
+                        
+                        loyaltyInfo.classList.remove('hidden');
+                    }
+
+                    this.currentCustomerPoints = customer.loyalty_points || 0;
+                    this.currentCustomerTier = customer.loyalty_tier || 'bronze';
+                },
+
+                openPointsRedemptionModal() {
+                    if (!this.cartCustomer) return;
+                    document.getElementById('points-redemption-modal').classList.remove('hidden');
+                    document.getElementById('available-points').innerText = this.currentCustomerPoints;
+                    document.getElementById('redemption-tier').innerText = this.currentCustomerTier.charAt(0).toUpperCase() + this.currentCustomerTier.slice(1);
+                    
+                    // Calculate max redeemable
+                    const subtotal = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                    const maxPoints = Math.min(this.currentCustomerPoints, Math.floor(subtotal * 2)); // Simple calculation
+                    document.getElementById('max-redeemable-points').innerText = maxPoints;
+                    document.getElementById('points-to-redeem').value = '';
+                    document.getElementById('points-discount-display').innerText = 'RM0.00';
+                },
+
+                closePointsRedemptionModal() {
+                    document.getElementById('points-redemption-modal').classList.add('hidden');
+                },
+
+                async calculatePointsRedemption() {
+                    const points = parseInt(document.getElementById('points-to-redeem').value) || 0;
+                    const maxPoints = parseInt(document.getElementById('max-redeemable-points').innerText) || 0;
+                    
+                    if (points > maxPoints) {
+                        Swal.fire({ icon: 'error', title: 'Too many points', text: 'Maximum redeemable: ' + maxPoints });
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch('{{ route('pos.points.calculate') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + this.apiToken,
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                customer_id: this.cartCustomer.id,
+                                subtotal: this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                                points_to_redeem: points
+                            })
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            document.getElementById('points-discount-display').innerText = this.formatPrice(data.discount_amount);
+                            this.pointsRedemptionDiscount = data.discount_amount;
+                        }
+                    } catch (e) {
+                        console.error('Error calculating redemption:', e);
+                    }
+                },
+
+                applyPointsRedemption() {
+                    const discount = this.pointsRedemptionDiscount;
+                    if (discount > 0) {
+                        this.discountAmount = (this.discountAmount || 0) + discount;
+                        this.discountReason = (this.discountReason || '') + ' + Points Redemption';
+                        this.renderCart();
+                        this.saveCart();
+                    }
+                    this.closePointsRedemptionModal();
+                },
+                // --- End Loyalty Points Functions ---
+
+                // --- Shift Management Functions ---
+                currentShift: null,
+
+                async openShiftModal() {
+                    const modal = document.getElementById('shift-modal');
+                    modal.classList.remove('hidden');
+                    
+                    // Check current shift
+                    try {
+                        const response = await fetch('{{ route('pos.shift.current') }}', {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': 'Bearer ' + this.apiToken,
+                                'Accept': 'application/json'
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.shift) {
+                                this.currentShift = data.shift;
+                                document.getElementById('shift-open-form').classList.add('hidden');
+                                document.getElementById('shift-current-info').classList.remove('hidden');
+                                document.getElementById('current-shift-number').innerText = data.shift.shift_number;
+                                document.getElementById('current-shift-time').innerText = new Date(data.shift.opened_at).toLocaleTimeString();
+                                document.getElementById('current-shift-opening').innerText = this.formatPrice(data.shift.opening_cash);
+                            } else {
+                                this.currentShift = null;
+                                document.getElementById('shift-open-form').classList.remove('hidden');
+                                document.getElementById('shift-current-info').classList.add('hidden');
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Error fetching shift:', e);
+                    }
+                },
+
+                closeShiftModal() {
+                    document.getElementById('shift-modal').classList.add('hidden');
+                },
+
+                async openShift() {
+                    const openingCash = parseFloat(document.getElementById('opening-cash').value) || 0;
+                    
+                    try {
+                        const response = await fetch('{{ route('pos.shift.open') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + this.apiToken,
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({ opening_cash: openingCash })
+                        });
+                        
+                        if (response.ok) {
+                            Swal.fire({ icon: 'success', title: 'Shift Opened', timer: 1500, showConfirmButton: false });
+                            this.openShiftModal(); // Refresh
+                        } else {
+                            const data = await response.json();
+                            Swal.fire({ icon: 'error', title: 'Error', text: data.message || 'Failed to open shift' });
+                        }
+                    } catch (e) {
+                        Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to open shift' });
+                    }
+                },
+
+                async closeShift() {
+                    const closingCash = parseFloat(document.getElementById('closing-cash').value) || 0;
+                    
+                    try {
+                        const response = await fetch('/pos/shift/' + this.currentShift.id + '/close', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + this.apiToken,
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({ closing_cash: closingCash })
+                        });
+                        
+                        if (response.ok) {
+                            Swal.fire({ icon: 'success', title: 'Shift Closed', timer: 1500, showConfirmButton: false });
+                            this.currentShift = null;
+                            this.closeShiftModal();
+                        } else {
+                            const data = await response.json();
+                            Swal.fire({ icon: 'error', title: 'Error', text: data.message || 'Failed to close shift' });
+                        }
+                    } catch (e) {
+                        Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to close shift' });
+                    }
+                },
+                // --- End Shift Management Functions ---
+
+                // --- Inventory Transfer Functions ---
+                transferOutlets: [],
+
+                async openTransferModal() {
+                    const modal = document.getElementById('transfer-modal');
+                    modal.classList.remove('hidden');
+                    
+                    // Load outlets
+                    try {
+                        const response = await fetch('{{ route('api.outlets') }}', {
+                            headers: {
+                                'Authorization': 'Bearer ' + this.apiToken,
+                                'Accept': 'application/json'
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            const currentOutletId = {{ auth()->user()->outlet_id ?? 0 }};
+                            this.transferOutlets = data.outlets ? data.outlets.filter(o => o.id !== currentOutletId) : [];
+                            
+                            const select = document.getElementById('transfer-outlet');
+                            select.innerHTML = '<option value="">Select Outlet</option>';
+                            this.transferOutlets.forEach(outlet => {
+                                select.innerHTML += `<option value="${outlet.id}">${outlet.name}</option>`;
+                            });
+
+                            // Load products for transfer
+                            this.loadTransferProducts();
+                        }
+                    } catch (e) {
+                        console.error('Error loading outlets:', e);
+                    }
+                    
+                    // Load pending transfers
+                    this.loadPendingTransfers();
+                },
+
+                async loadTransferProducts() {
+                    try {
+                        const response = await fetch('{{ route('api.pos.products') }}?all=true', {
+                            headers: {
+                                'Authorization': 'Bearer ' + this.apiToken,
+                                'Accept': 'application/json'
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            const container = document.getElementById('transfer-products');
+                            
+                            if (data.products && data.products.length > 0) {
+                                container.innerHTML = data.products.slice(0, 10).map(p => `
+                                    <div class="flex items-center justify-between p-2 border border-slate-200 rounded-lg">
+                                        <div class="flex items-center gap-2">
+                                            <input type="checkbox" class="transfer-product-checkbox w-4 h-4 text-{{ $theme }}-600" value="${p.id}" data-quantity="1">
+                                            <span class="text-xs font-medium">${p.name}</span>
+                                        </div>
+                                        <input type="number" class="transfer-product-qty w-16 px-2 py-1 text-xs border border-slate-200 rounded" placeholder="Qty" min="1" value="1" data-product-id="${p.id}">
+                                    </div>
+                                `).join('');
+                            } else {
+                                container.innerHTML = '<p class="text-xs text-slate-400 text-center py-2">No products available</p>';
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Error loading products:', e);
+                    }
+                },
+
+                closeTransferModal() {
+                    document.getElementById('transfer-modal').classList.add('hidden');
+                },
+
+                switchTransferTab(tab) {
+                    document.getElementById('transfer-tab-new').className = tab === 'new' 
+                        ? 'flex-1 py-2 text-xs font-bold text-{{ $theme }}-600 border-b-2 border-{{ $theme }}-600' 
+                        : 'flex-1 py-2 text-xs font-bold text-slate-500 hover:text-slate-700';
+                    document.getElementById('transfer-tab-pending').className = tab === 'pending'
+                        ? 'flex-1 py-2 text-xs font-bold text-{{ $theme }}-600 border-b-2 border-{{ $theme }}-600'
+                        : 'flex-1 py-2 text-xs font-bold text-slate-500 hover:text-slate-700';
+                    
+                    document.getElementById('transfer-form-new').classList.toggle('hidden', tab !== 'new');
+                    document.getElementById('transfer-list-pending').classList.toggle('hidden', tab !== 'pending');
+                    
+                    if (tab === 'pending') this.loadPendingTransfers();
+                },
+
+                async loadPendingTransfers() {
+                    try {
+                        const response = await fetch('{{ route('pos.transfer.pending') }}?type=incoming', {
+                            headers: {
+                                'Authorization': 'Bearer ' + this.apiToken,
+                                'Accept': 'application/json'
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            const container = document.getElementById('pending-transfers-list');
+                            
+                            if (data.transfers && data.transfers.length > 0) {
+                                container.innerHTML = data.transfers.map(t => `
+                                    <div class="bg-slate-50 rounded-lg p-3">
+                                        <div class="flex justify-between items-start">
+                                            <div>
+                                                <p class="text-xs font-bold">${t.transfer_number}</p>
+                                                <p class="text-[10px] text-slate-500">From: ${t.from_outlet?.name || 'N/A'}</p>
+                                                <p class="text-[10px] text-slate-500">${t.items?.length || 0} items</p>
+                                            </div>
+                                            <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-[10px] font-bold rounded">${t.status}</span>
+                                        </div>
+                                        <div class="flex gap-2 mt-2">
+                                            <button onclick="posApp.approveTransfer(${t.id})" class="flex-1 py-1 bg-green-600 text-white text-[10px] font-bold rounded">Approve</button>
+                                            <button onclick="posApp.rejectTransfer(${t.id})" class="flex-1 py-1 bg-red-600 text-white text-[10px] font-bold rounded">Reject</button>
+                                        </div>
+                                    </div>
+                                `).join('');
+                            } else {
+                                container.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">No pending transfers</p>';
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Error loading transfers:', e);
+                    }
+                },
+
+                async createTransfer() {
+                    const outletId = document.getElementById('transfer-outlet').value;
+                    if (!outletId) {
+                        Swal.fire({ icon: 'error', title: 'Error', text: 'Please select an outlet' });
+                        return;
+                    }
+
+                    // Get selected products from the transfer form
+                    const productCheckboxes = document.querySelectorAll('.transfer-product-checkbox:checked');
+                    const items = Array.from(productCheckboxes).map(cb => {
+                        const qtyInput = document.querySelector(`.transfer-product-qty[data-product-id="${cb.value}"]`);
+                        return {
+                            product_id: parseInt(cb.value),
+                            quantity: parseInt(qtyInput?.value) || 1
+                        };
+                    });
+
+                    if (items.length === 0) {
+                        Swal.fire({ icon: 'error', title: 'Error', text: 'Please select at least one product to transfer' });
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch('{{ route('pos.transfer.create') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + this.apiToken,
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                to_outlet_id: outletId,
+                                items: items,
+                                notes: document.getElementById('transfer-notes').value
+                            })
+                        });
+                        
+                        if (response.ok) {
+                            Swal.fire({ icon: 'success', title: 'Transfer Request Created', timer: 1500, showConfirmButton: false });
+                            this.closeTransferModal();
+                        } else {
+                            const data = await response.json();
+                            Swal.fire({ icon: 'error', title: 'Error', text: data.message || 'Failed to create transfer' });
+                        }
+                    } catch (e) {
+                        Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create transfer' });
+                    }
+                },
+
+                async approveTransfer(id) {
+                    try {
+                        const response = await fetch(`/pos/transfer/${id}/approve`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + this.apiToken,
+                                'Accept': 'application/json'
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            Swal.fire({ icon: 'success', title: 'Transfer Approved', timer: 1500, showConfirmButton: false });
+                            this.loadPendingTransfers();
+                        }
+                    } catch (e) {
+                        Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to approve transfer' });
+                    }
+                },
+
+                async rejectTransfer(id) {
+                    const { value: reason } = await Swal.fire({
+                        input: 'textarea',
+                        title: 'Reject Transfer',
+                        placeholder: 'Reason for rejection...',
+                        showCancelButton: true
+                    });
+                    
+                    if (reason) {
+                        try {
+                            const response = await fetch(`/pos/transfer/${id}/reject`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': 'Bearer ' + this.apiToken,
+                                    'Accept': 'application/json'
+                                },
+                                body: JSON.stringify({ reason: reason })
+                            });
+                            
+                            if (response.ok) {
+                                Swal.fire({ icon: 'success', title: 'Transfer Rejected', timer: 1500, showConfirmButton: false });
+                                this.loadPendingTransfers();
+                            }
+                        } catch (e) {
+                            Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to reject transfer' });
+                        }
+                    }
+                },
+                // --- End Inventory Transfer Functions ---
+
+                // --- Low Stock Alerts Functions ---
+                async openLowStockModal() {
+                    const modal = document.getElementById('lowstock-modal');
+                    modal.classList.remove('hidden');
+                    
+                    // Load alerts (would need backend endpoint)
+                    // For now show placeholder
+                    const container = document.getElementById('lowstock-alerts-list');
+                    container.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">Loading alerts...</p>';
+                    
+                    // Try to fetch from API if available
+                    try {
+                        // Placeholder - would need endpoint
+                        container.innerHTML = `
+                            <div class="bg-red-50 border border-red-100 rounded-lg p-4 text-center">
+                                <svg class="w-8 h-8 text-red-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                <p class="text-sm font-bold text-red-700">No Low Stock Alerts</p>
+                                <p class="text-xs text-red-500">All products are well stocked</p>
+                            </div>
+                        `;
+                    } catch (e) {
+                        console.error('Error loading low stock:', e);
+                    }
+                },
+
+                closeLowStockModal() {
+                    document.getElementById('lowstock-modal').classList.add('hidden');
+                },
+                // --- End Low Stock Alerts Functions ---
 
                 getApiToken() {
                     return '{{ $apiToken }}';

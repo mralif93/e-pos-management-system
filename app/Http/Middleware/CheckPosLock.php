@@ -16,12 +16,14 @@ class CheckPosLock
     public function handle(Request $request, Closure $next): Response
     {
         if (session('pos_locked', false)) {
-            // Allow access to lock page, login, logout, and verify-pin routes
+            // Allow access to lock page, login, logout, verify-pin, and admin routes
             if (
                 !$request->routeIs('pos.lock') &&
                 !$request->routeIs('pos.login') &&
                 !$request->routeIs('pos.logout') &&
-                !$request->routeIs('pos.verify-pin')
+                !$request->routeIs('pos.verify-pin') &&
+                !$request->is('admin/*') &&
+                !$request->is('admin')
             ) {
                 return redirect()->route('pos.lock');
             }

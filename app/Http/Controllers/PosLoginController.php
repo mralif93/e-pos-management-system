@@ -44,7 +44,12 @@ class PosLoginController extends Controller
                 return back()->with('error_popup', 'POS Access is temporarily disabled for this outlet. Please contact your administrator.');
             }
 
-            return redirect()->intended(route('pos.home'));
+            // Role-based redirect
+            if ($user->role === 'Cashier') {
+                return redirect()->intended('/pos');
+            }
+
+            return redirect()->intended('/admin/dashboard');
         }
 
         throw ValidationException::withMessages([
@@ -60,6 +65,6 @@ class PosLoginController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/pos/login');
+        return redirect('/login');
     }
 }
