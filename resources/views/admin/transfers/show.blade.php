@@ -64,7 +64,7 @@
             <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                     <i class="hgi-stroke hgi-time-01 text-[20px] text-indigo-600"></i>
-                    <h3 class="font-semibold text-gray-800">Timeline</h3>
+                    <h3 class="text-md font-semibold text-gray-800">Timeline</h3>
                 </div>
                 <div class="p-6 space-y-4">
                     <div class="flex gap-3">
@@ -108,7 +108,7 @@
             <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                     <i class="hgi-stroke hgi-note-01 text-[20px] text-indigo-600"></i>
-                    <h3 class="font-semibold text-gray-800">Notes</h3>
+                    <h3 class="text-md font-semibold text-gray-800">Notes</h3>
                 </div>
                 <div class="p-6">
                     <p class="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg">{{ $transfer->notes }}</p>
@@ -131,7 +131,7 @@
             <div class="bg-white rounded-xl border border-gray-100 shadow-sm">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                     <i class="hgi-stroke hgi-package text-[20px] text-indigo-600"></i>
-                    <h3 class="font-semibold text-gray-800">Transfer Items</h3>
+                    <h3 class="text-md font-semibold text-gray-800">Transfer Items</h3>
                 </div>
                 @if($transfer->items->isEmpty())
                     <p class="px-6 py-10 text-center text-sm text-gray-400">No items in this transfer</p>

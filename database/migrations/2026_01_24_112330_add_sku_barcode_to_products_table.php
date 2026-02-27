@@ -22,6 +22,12 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('products', function (Blueprint $table) {
+            $table->dropUnique(['sku']);
+        });
+        Schema::table('products', function (Blueprint $table) {
+            $table->dropIndex(['barcode']);
+        });
+        Schema::table('products', function (Blueprint $table) {
             $table->dropColumn(['sku', 'barcode']);
         });
     }

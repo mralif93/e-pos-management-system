@@ -8,7 +8,7 @@
     <div class="bg-white rounded-xl border border-gray-100 shadow-sm mb-6">
         <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
             <i class="hgi-stroke text-[20px] hgi-settings-02 text-indigo-600"></i>
-            <h3 class="font-semibold text-gray-800">Search & Filter</h3>
+            <h3 class="text-md font-semibold text-gray-800">Search & Filter</h3>
         </div>
         <form method="GET">
             <div class="p-6">
@@ -104,10 +104,10 @@
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
-                                    <span class="text-indigo-600 font-bold">{{ substr($customer->name, 0, 1) }}</span>
+                                <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center shrink-0">
+                                    <span class="text-indigo-600 font-bold text-sm">{{ substr($customer->name, 0, 1) }}</span>
                                 </div>
-                                <span class="font-medium text-gray-800">{{ $customer->name }}</span>
+                                <span class="text-sm font-medium text-gray-900">{{ $customer->name }}</span>
                             </div>
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-600">{{ $customer->phone ?? '-' }}</td>
@@ -118,10 +118,10 @@
                         <td class="px-6 py-4">
                             <span
                                 class="px-2 py-1 text-xs font-medium rounded-full 
-                                                                                                                                                    @if($customer->loyalty_tier === 'platinum') bg-purple-100 text-purple-700
-                                                                                                                                                    @elseif($customer->loyalty_tier === 'gold') bg-yellow-100 text-yellow-700
-                                                                                                                                                    @elseif($customer->loyalty_tier === 'silver') bg-gray-100 text-gray-700
-                                                                                                                                                    @else bg-orange-100 text-orange-700 @endif">
+                                                                                                                                                                    @if($customer->loyalty_tier === 'platinum') bg-purple-100 text-purple-700
+                                                                                                                                                                    @elseif($customer->loyalty_tier === 'gold') bg-yellow-100 text-yellow-700
+                                                                                                                                                                    @elseif($customer->loyalty_tier === 'silver') bg-gray-100 text-gray-700
+                                                                                                                                                                    @else bg-orange-100 text-orange-700 @endif">
                                 {{ ucfirst($customer->loyalty_tier ?? 'bronze') }}
                             </span>
                         </td>

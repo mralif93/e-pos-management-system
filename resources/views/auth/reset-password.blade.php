@@ -47,7 +47,7 @@
             <div class="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <i class="hgi-stroke text-[20px] hgi-lock-password text-white text-4xl"></i>
             </div>
-            <h1 class="text-2xl font-bold text-white">Reset Password</h1>
+            <h1 class="text-xl font-bold text-white">Reset Password</h1>
             <p class="text-indigo-100 mt-1">Create your new password</p>
         </div>
 

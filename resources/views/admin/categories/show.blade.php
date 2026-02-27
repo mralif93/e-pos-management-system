@@ -54,7 +54,7 @@
             <div class="bg-white rounded-xl border border-gray-100 shadow-sm">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                     <i class="hgi-stroke hgi-package text-[20px] text-indigo-600"></i>
-                    <h3 class="font-semibold text-gray-800">Products in this Category</h3>
+                    <h3 class="text-md font-semibold text-gray-800">Products in this Category</h3>
                 </div>
                 @if($category->products->isEmpty())
                     <p class="px-6 py-10 text-center text-sm text-gray-400">No products in this category</p>

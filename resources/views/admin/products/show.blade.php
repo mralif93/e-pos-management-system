@@ -71,7 +71,7 @@
                 <div class="bg-white rounded-xl border border-gray-100 shadow-sm">
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                         <i class="hgi-stroke hgi-tag-01 text-[20px] text-indigo-600"></i>
-                        <h3 class="font-semibold text-gray-800">Outlet Pricing</h3>
+                        <h3 class="text-md font-semibold text-gray-800">Outlet Pricing</h3>
                     </div>
                     <table class="w-full">
                         <thead class="bg-gray-50">
@@ -99,7 +99,7 @@
             <div class="bg-white rounded-xl border border-gray-100 shadow-sm">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                     <i class="hgi-stroke hgi-invoice-01 text-[20px] text-indigo-600"></i>
-                    <h3 class="font-semibold text-gray-800">Recent Sales</h3>
+                    <h3 class="text-md font-semibold text-gray-800">Recent Sales</h3>
                 </div>
                 @if($recentSales->isEmpty())
                     <p class="px-6 py-8 text-center text-sm text-gray-400">No sales recorded yet</p>
@@ -135,7 +135,7 @@
             <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                     <i class="hgi-stroke hgi-warehouse text-[20px] text-indigo-600"></i>
-                    <h3 class="font-semibold text-gray-800">Stock Overview</h3>
+                    <h3 class="text-md font-semibold text-gray-800">Stock Overview</h3>
                 </div>
                 <div class="p-6 space-y-4">
                     <div class="flex justify-between items-center py-2 border-b border-gray-50">
@@ -149,7 +149,7 @@
                     </div>
                     <div class="flex justify-between items-center py-2">
                         <span class="text-sm text-gray-500">Has Variants</span>
-                        <span class="font-medium text-gray-800">{{ $product->has_variants ? 'Yes' : 'No' }}</span>
+                        <span class="text-sm font-medium text-gray-900">{{ $product->has_variants ? 'Yes' : 'No' }}</span>
                     </div>
                 </div>
             </div>
@@ -158,7 +158,7 @@
                 <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                         <i class="hgi-stroke hgi-layers-01 text-[20px] text-indigo-600"></i>
-                        <h3 class="font-semibold text-gray-800">Variants</h3>
+                        <h3 class="text-md font-semibold text-gray-800">Variants</h3>
                     </div>
                     <div class="p-6 space-y-2">
                         @foreach($product->variants as $variant)
@@ -174,7 +174,7 @@
             <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                     <i class="hgi-stroke hgi-information-circle text-[20px] text-indigo-600"></i>
-                    <h3 class="font-semibold text-gray-800">Details</h3>
+                    <h3 class="text-md font-semibold text-gray-800">Details</h3>
                 </div>
                 <div class="p-6 space-y-3">
                     <div class="flex justify-between text-sm">

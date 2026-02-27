@@ -35,9 +35,9 @@
         <div
             class="bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex items-start justify-between group hover:border-green-200 hover:shadow-md transition-all">
             <div>
-                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Today's Sales</p>
-                <p class="text-2xl font-bold text-gray-800 mt-1">RM {{ number_format($todaySales, 2) }}</p>
-                <p class="text-xs text-gray-400 mt-1.5 flex items-center gap-1">
+                <p class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Today's Sales</p>
+                <p class="text-xl font-bold text-gray-800 mt-1">RM {{ number_format($todaySales, 2) }}</p>
+                <p class="text-sm text-gray-400 mt-1.5 flex items-center gap-1">
                     <i class="hgi-stroke text-[14px] hgi-invoice-01"></i>
                     {{ $todayTransactions }} transactions
                 </p>
@@ -52,9 +52,9 @@
         <div
             class="bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex items-start justify-between group hover:border-indigo-200 hover:shadow-md transition-all">
             <div>
-                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">This Month</p>
-                <p class="text-2xl font-bold text-gray-800 mt-1">RM {{ number_format($monthSales, 2) }}</p>
-                <p class="text-xs text-gray-400 mt-1.5 flex items-center gap-1">
+                <p class="text-sm font-semibold text-gray-400 uppercase tracking-wide">This Month</p>
+                <p class="text-xl font-bold text-gray-800 mt-1">RM {{ number_format($monthSales, 2) }}</p>
+                <p class="text-sm text-gray-400 mt-1.5 flex items-center gap-1">
                     <i class="hgi-stroke text-[14px] hgi-invoice-01"></i>
                     {{ $monthTransactions }} transactions
                 </p>
@@ -69,9 +69,9 @@
         <div
             class="bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex items-start justify-between group hover:border-blue-200 hover:shadow-md transition-all">
             <div>
-                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">This Year</p>
-                <p class="text-2xl font-bold text-gray-800 mt-1">RM {{ number_format($yearSales, 2) }}</p>
-                <p class="text-xs text-gray-400 mt-1.5 flex items-center gap-1">
+                <p class="text-sm font-semibold text-gray-400 uppercase tracking-wide">This Year</p>
+                <p class="text-xl font-bold text-gray-800 mt-1">RM {{ number_format($yearSales, 2) }}</p>
+                <p class="text-sm text-gray-400 mt-1.5 flex items-center gap-1">
                     <i class="hgi-stroke text-[14px] hgi-chart-increase"></i>
                     Cumulative revenue
                 </p>
@@ -86,9 +86,9 @@
         <div
             class="bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex items-start justify-between group hover:border-red-200 hover:shadow-md transition-all">
             <div>
-                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Pending Alerts</p>
-                <p class="text-2xl font-bold text-gray-800 mt-1">{{ $lowStockCount + $pendingTransfers }}</p>
-                <p class="text-xs text-gray-400 mt-1.5">
+                <p class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Pending Alerts</p>
+                <p class="text-xl font-bold text-gray-800 mt-1">{{ $lowStockCount + $pendingTransfers }}</p>
+                <p class="text-sm text-gray-400 mt-1.5">
                     <span class="{{ $lowStockCount > 0 ? 'text-red-500 font-medium' : '' }}">{{ $lowStockCount }} low
                         stock</span>
                     &bull;
@@ -114,7 +114,7 @@
                 <i class="hgi-stroke text-[20px] hgi-store-01 text-amber-600"></i>
             </div>
             <div>
-                <p class="text-xs text-gray-400">Outlets</p>
+                <p class="text-sm text-gray-400">Outlets</p>
                 <p class="text-xl font-bold text-gray-800">{{ $outletsCount }}</p>
             </div>
         </a>
@@ -126,7 +126,7 @@
                 <i class="hgi-stroke text-[20px] hgi-package text-purple-600"></i>
             </div>
             <div>
-                <p class="text-xs text-gray-400">Products</p>
+                <p class="text-sm text-gray-400">Products</p>
                 <p class="text-xl font-bold text-gray-800">{{ $productsCount }}</p>
             </div>
         </a>
@@ -138,7 +138,7 @@
                 <i class="hgi-stroke text-[20px] hgi-user-multiple-02 text-pink-600"></i>
             </div>
             <div>
-                <p class="text-xs text-gray-400">Customers</p>
+                <p class="text-sm text-gray-400">Customers</p>
                 <p class="text-xl font-bold text-gray-800">{{ $customersCount }}</p>
             </div>
         </a>
@@ -150,7 +150,7 @@
                 <i class="hgi-stroke text-[20px] hgi-time-02 text-teal-600"></i>
             </div>
             <div>
-                <p class="text-xs text-gray-400">Open Shifts</p>
+                <p class="text-sm text-gray-400">Open Shifts</p>
                 <p class="text-xl font-bold {{ $openShifts > 0 ? 'text-teal-600' : 'text-gray-800' }}">{{ $openShifts }}</p>
             </div>
         </a>
@@ -166,8 +166,8 @@
                 <div class="flex items-center gap-2">
                     <i class="hgi-stroke text-[20px] hgi-star text-indigo-600"></i>
                     <div>
-                        <h3 class="font-semibold text-gray-800">Top Products</h3>
-                        <p class="text-xs text-gray-400">Best sellers today</p>
+                        <h3 class="text-md font-semibold text-gray-800">Top Products</h3>
+                        <p class="text-sm text-gray-400">Best sellers today</p>
                     </div>
                 </div>
                 <a href="{{ route('admin.products.index') }}"
@@ -182,7 +182,7 @@
                             <div class="flex items-center gap-4">
                                 <span
                                     class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0
-                                                {{ $index === 0 ? 'bg-yellow-100 text-yellow-700' : ($index === 1 ? 'bg-gray-100 text-gray-600' : ($index === 2 ? 'bg-amber-100 text-amber-700' : 'bg-gray-50 text-gray-400')) }}">
+                                                            {{ $index === 0 ? 'bg-yellow-100 text-yellow-700' : ($index === 1 ? 'bg-gray-100 text-gray-600' : ($index === 2 ? 'bg-amber-100 text-amber-700' : 'bg-gray-50 text-gray-400')) }}">
                                     {{ $index + 1 }}
                                 </span>
                                 <div class="flex-1 min-w-0">
@@ -198,7 +198,7 @@
                                 <div class="text-right shrink-0">
                                     <p class="text-sm font-bold text-gray-800">RM {{ number_format($product->total_revenue, 2) }}
                                     </p>
-                                    <p class="text-xs text-gray-400">{{ $product->total_qty }} sold</p>
+                                    <p class="text-sm text-gray-400">{{ $product->total_qty }} sold</p>
                                 </div>
                             </div>
                         @endforeach
@@ -218,8 +218,8 @@
                 <div class="flex items-center gap-2">
                     <i class="hgi-stroke text-[20px] hgi-invoice-01 text-indigo-600"></i>
                     <div>
-                        <h3 class="font-semibold text-gray-800">Recent Transactions</h3>
-                        <p class="text-xs text-gray-400">Latest 5 sales</p>
+                        <h3 class="text-md font-semibold text-gray-800">Recent Transactions</h3>
+                        <p class="text-sm text-gray-400">Latest 5 sales</p>
                     </div>
                 </div>
                 <a href="{{ route('admin.reports.sales') }}"
@@ -237,8 +237,9 @@
                                 </div>
                                 <div>
                                     <p class="text-sm font-semibold text-gray-800">#{{ $sale->id }}</p>
-                                    <p class="text-xs text-gray-400">{{ $sale->created_at->format('H:i') }} &bull;
-                                        {{ $sale->user->name ?? 'N/A' }}</p>
+                                    <p class="text-sm text-gray-400">{{ $sale->created_at->format('H:i') }} &bull;
+                                        {{ $sale->user->name ?? 'N/A' }}
+                                    </p>
                                 </div>
                             </div>
                             <div class="text-right">

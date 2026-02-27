@@ -26,11 +26,12 @@
             <!-- Logo -->
             <div class="h-16 flex items-center px-5 border-b border-gray-100 shrink-0">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5 group">
-                    <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center shadow-md shadow-indigo-200 group-hover:scale-105 transition-transform">
+                    <div
+                        class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center shadow-md shadow-indigo-200 group-hover:scale-105 transition-transform">
                         <i class="hgi-stroke hgi-store-01 text-white text-sm"></i>
                     </div>
                     <div>
-                        <span class="font-bold text-gray-800 text-sm leading-none block">E-POS</span>
+                        <span class="font-bold text-gray-800 text-md leading-none block">E-POS</span>
                         <span class="text-[10px] text-gray-400 font-medium">Admin Panel</span>
                     </div>
                 </a>
@@ -121,29 +122,16 @@
                 </a>
             </nav>
 
-            <!-- Sidebar Footer: User profile link -->
-            <div class="p-3 border-t border-gray-100 shrink-0">
-                <a href="{{ route('admin.profile') }}"
-                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('admin.profile') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800' }}">
-                    <div class="w-7 h-7 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-lg flex items-center justify-center shrink-0">
-                        <span class="text-white font-bold text-xs">{{ substr(Auth::user()->name, 0, 1) }}</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-xs font-semibold leading-tight truncate">{{ Auth::user()->name }}</p>
-                        <p class="text-[10px] text-gray-400 capitalize">{{ Auth::user()->role ?? 'Admin' }}</p>
-                    </div>
-                    <i class="hgi-stroke hgi-arrow-right-01 text-xs text-gray-400 shrink-0"></i>
-                </a>
-            </div>
         </aside>
 
         <!-- Main Content -->
         <main class="flex-1 flex flex-col overflow-hidden">
             <!-- Header -->
-            <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 shadow-sm shrink-0">
+            <header
+                class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 shadow-sm shrink-0">
                 <div class="flex items-center gap-3">
                     <div class="w-1 h-6 bg-gradient-to-b from-indigo-500 to-violet-500 rounded-full"></div>
-                    <h1 class="text-base font-bold text-gray-800">@yield('header', 'Dashboard')</h1>
+                    <h1 class="text-md font-bold text-gray-800">@yield('header', 'Dashboard')</h1>
                 </div>
                 <div class="flex items-center gap-3">
                     <!-- Outlet Switcher Badge -->
@@ -155,113 +143,142 @@
                     @endphp
 
                     <div class="relative" id="outletSwitcherWrapper">
-                        <!-- Badge Trigger Button -->
-                        <button id="outletSwitcherBtn" type="button"
-                            class="flex items-center gap-2 h-[38px] px-3.5 rounded-xl border transition-all focus:outline-none
-                            {{ $selectedOutletId ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm shadow-indigo-300 hover:bg-indigo-700' : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50 shadow-sm' }}">
-                            <i class="hgi-stroke hgi-building-03 text-[15px] shrink-0"></i>
-                            <span class="text-sm font-semibold max-w-[120px] truncate">{{ $currentOutletName }}</span>
-                            @if($selectedOutletId)
-                                <span class="w-1.5 h-1.5 rounded-full bg-white/70 shrink-0"></span>
-                            @endif
-                            <i class="hgi-stroke hgi-arrow-down-01 text-xs shrink-0 transition-transform" id="outletChevron"></i>
-                        </button>
-
-                        <!-- Popover Panel -->
-                        <div id="outletSwitcherPanel"
-                            class="hidden absolute left-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden origin-top-left">
-                            <!-- Panel Header -->
-                            <div class="px-4 py-3 border-b border-gray-100 bg-gray-50/70">
-                                <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">Switch Outlet</p>
+                        @if(Auth::user()->role === 'Super Admin')
+                            <!-- Badge Trigger Button for Super Admin -->
+                            <button id="outletSwitcherBtn" type="button"
+                                class="flex items-center gap-2 h-[38px] px-3.5 rounded-xl border transition-all focus:outline-none
+                                        {{ $selectedOutletId ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm shadow-indigo-300 hover:bg-indigo-700' : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50 shadow-sm' }}">
+                                <i class="hgi-stroke hgi-building-03 text-[15px] shrink-0"></i>
+                                <span class="text-sm font-semibold max-w-[120px] truncate">{{ $currentOutletName }}</span>
+                                @if($selectedOutletId)
+                                    <span class="w-1.5 h-1.5 rounded-full bg-white/70 shrink-0"></span>
+                                @endif
+                                <i class="hgi-stroke hgi-arrow-down-01 text-xs shrink-0 transition-transform"
+                                    id="outletChevron"></i>
+                            </button>
+                        @else
+                            <!-- Static Badge for Non-Super Admin -->
+                            <div
+                                class="flex items-center gap-2 h-[38px] px-3.5 rounded-xl border bg-indigo-50 border-indigo-100 text-indigo-700">
+                                <i class="hgi-stroke hgi-building-03 text-[15px] shrink-0"></i>
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-bold leading-tight max-w-[120px] truncate">
+                                        {{ Auth::user()->outlet ? Auth::user()->outlet->name : 'No Outlet' }}
+                                    </span>
+                                </div>
+                                <span class="w-1.5 h-1.5 rounded-full bg-indigo-300 shrink-0"></span>
+                                <i class="hgi-stroke hgi-lock-01 text-xs shrink-0 opacity-70"></i>
                             </div>
-                            <!-- Outlet List -->
-                            <div class="p-2 max-h-72 overflow-y-auto space-y-0.5">
-                                <!-- All Outlets Option -->
-                                <form method="GET" action="" class="outlet-form">
-                                    @foreach(request()->except('outlet_id') as $key => $value)
-                                        @if(is_array($value))
-                                            @foreach($value as $v)
-                                                <input type="hidden" name="{{ $key }}[]" value="{{ $v }}">
-                                            @endforeach
-                                        @else
-                                            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
-                                        @endif
-                                    @endforeach
-                                    <button type="submit"
-                                        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all
-                                        {{ !$selectedOutletId ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-50' }}">
-                                        <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0
-                                            {{ !$selectedOutletId ? 'bg-indigo-600' : 'bg-gray-100' }}">
-                                            <i class="hgi-stroke hgi-grid-view text-sm {{ !$selectedOutletId ? 'text-white' : 'text-gray-400' }}"></i>
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-semibold truncate">All Outlets</p>
-                                            <p class="text-xs text-gray-400">Show all data</p>
-                                        </div>
-                                        @if(!$selectedOutletId)
-                                            <i class="hgi-stroke hgi-checkmark-circle-01 text-indigo-600 text-base shrink-0"></i>
-                                        @endif
-                                    </button>
-                                </form>
+                        @endif
 
-                                @foreach($outlets as $outlet)
-                                <form method="GET" action="" class="outlet-form">
-                                    @foreach(request()->except('outlet_id') as $key => $value)
-                                        @if(is_array($value))
-                                            @foreach($value as $v)
-                                                <input type="hidden" name="{{ $key }}[]" value="{{ $v }}">
-                                            @endforeach
-                                        @else
-                                            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
-                                        @endif
-                                    @endforeach
-                                    <input type="hidden" name="outlet_id" value="{{ $outlet->id }}">
-                                    <button type="submit"
-                                        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all
-                                        {{ $selectedOutletId == $outlet->id ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-50' }}">
-                                        <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0
-                                            {{ $selectedOutletId == $outlet->id ? 'bg-indigo-600' : 'bg-gray-100' }}">
-                                            <span class="text-xs font-black {{ $selectedOutletId == $outlet->id ? 'text-white' : 'text-gray-500' }}">
-                                                {{ substr($outlet->name, 0, 1) }}
-                                            </span>
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-semibold truncate">{{ $outlet->name }}</p>
-                                            @if($outlet->address)
-                                                <p class="text-xs text-gray-400 truncate">{{ $outlet->address }}</p>
+                        @if(Auth::user()->role === 'Super Admin')
+                            <!-- Popover Panel -->
+                            <div id="outletSwitcherPanel"
+                                class="hidden absolute left-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden origin-top-left">
+                                <!-- Panel Header -->
+                                <div class="px-4 py-3 border-b border-gray-100 bg-gray-50/70">
+                                    <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">Switch Outlet</p>
+                                </div>
+                                <!-- Outlet List -->
+                                <div class="p-2 max-h-72 overflow-y-auto space-y-0.5">
+                                    <!-- All Outlets Option -->
+                                    <form method="GET" action="" class="outlet-form">
+                                        @foreach(request()->except('outlet_id') as $key => $value)
+                                            @if(is_array($value))
+                                                @foreach($value as $v)
+                                                    <input type="hidden" name="{{ $key }}[]" value="{{ $v }}">
+                                                @endforeach
                                             @else
-                                                <p class="text-xs text-gray-400">Outlet</p>
+                                                <input type="hidden" name="{{ $key }}" value="{{ $value }}">
                                             @endif
-                                        </div>
-                                        @if($selectedOutletId == $outlet->id)
-                                            <i class="hgi-stroke hgi-checkmark-circle-01 text-indigo-600 text-base shrink-0"></i>
-                                        @endif
-                                    </button>
-                                </form>
-                                @endforeach
+                                        @endforeach
+                                        <button type="submit"
+                                            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all
+                                                    {{ !$selectedOutletId ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-50' }}">
+                                            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0
+                                                        {{ !$selectedOutletId ? 'bg-indigo-600' : 'bg-gray-100' }}">
+                                                <i
+                                                    class="hgi-stroke hgi-grid-view text-sm {{ !$selectedOutletId ? 'text-white' : 'text-gray-400' }}"></i>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm font-semibold truncate">All Outlets</p>
+                                                <p class="text-xs text-gray-400">Show all data</p>
+                                            </div>
+                                            @if(!$selectedOutletId)
+                                                <i
+                                                    class="hgi-stroke hgi-checkmark-circle-01 text-indigo-600 text-base shrink-0"></i>
+                                            @endif
+                                        </button>
+                                    </form>
+
+                                    @foreach($outlets as $outlet)
+                                        <form method="GET" action="" class="outlet-form">
+                                            @foreach(request()->except('outlet_id') as $key => $value)
+                                                @if(is_array($value))
+                                                    @foreach($value as $v)
+                                                        <input type="hidden" name="{{ $key }}[]" value="{{ $v }}">
+                                                    @endforeach
+                                                @else
+                                                    <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                                                @endif
+                                            @endforeach
+                                            <input type="hidden" name="outlet_id" value="{{ $outlet->id }}">
+                                            <button type="submit"
+                                                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all
+                                                                {{ $selectedOutletId == $outlet->id ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-50' }}">
+                                                <div
+                                                    class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0
+                                                                    {{ $selectedOutletId == $outlet->id ? 'bg-indigo-600' : 'bg-gray-100' }}">
+                                                    <span
+                                                        class="text-xs font-black {{ $selectedOutletId == $outlet->id ? 'text-white' : 'text-gray-500' }}">
+                                                        {{ substr($outlet->name, 0, 1) }}
+                                                    </span>
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-sm font-semibold truncate">{{ $outlet->name }}</p>
+                                                    @if($outlet->address)
+                                                        <p class="text-xs text-gray-400 truncate">{{ $outlet->address }}</p>
+                                                    @else
+                                                        <p class="text-xs text-gray-400">Outlet</p>
+                                                    @endif
+                                                </div>
+                                                @if($selectedOutletId == $outlet->id)
+                                                    <i
+                                                        class="hgi-stroke hgi-checkmark-circle-01 text-indigo-600 text-base shrink-0"></i>
+                                                @endif
+                                            </button>
+                                        </form>
+                                    @endforeach
+                                </div>
                             </div>
-                        </div>
+                        @endif
                     </div>
 
                     <a href="{{ route('pos.home') }}" target="_blank"
                         class="group inline-flex items-center gap-2 text-sm bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 text-white px-4 py-2 rounded-xl font-bold transition-all shadow-md shadow-indigo-300/50 h-[38px] hover:shadow-indigo-400/60 hover:-translate-y-0.5 active:translate-y-0 hover:from-indigo-700 hover:via-violet-700 hover:to-purple-700">
                         <i class="hgi-stroke hgi-computer text-sm shrink-0"></i>
                         <span>e-POS</span>
-                        <i class="hgi-stroke hgi-arrow-up-right-01 text-xs opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform shrink-0"></i>
+                        <i
+                            class="hgi-stroke hgi-arrow-up-right-01 text-xs opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform shrink-0"></i>
                     </a>
 
                     <!-- User Dropdown -->
                     <div class="relative">
                         <button id="adminUserMenuBtn"
                             class="flex items-center gap-2.5 focus:outline-none hover:bg-gray-50 px-3 py-1.5 rounded-xl transition-all border border-transparent hover:border-gray-200 h-[38px] group">
-                            <div class="w-7 h-7 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-lg flex items-center justify-center shadow-sm">
+                            <div
+                                class="w-7 h-7 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-lg flex items-center justify-center shadow-sm">
                                 <span class="text-white font-bold text-xs">{{ substr(Auth::user()->name, 0, 1) }}</span>
                             </div>
                             <div class="text-left hidden md:block">
-                                <p class="text-sm font-semibold text-gray-800 leading-tight">{{ Auth::user()->name }}</p>
-                                <p class="text-[10px] uppercase tracking-wider font-bold text-gray-400">{{ Auth::user()->role ?? 'Admin' }}</p>
+                                <p class="text-sm font-semibold text-gray-800 leading-tight">{{ Auth::user()->name }}
+                                </p>
+                                <p class="text-[10px] uppercase tracking-wider font-bold text-gray-400">
+                                    {{ Auth::user()->role ?? 'Admin' }}
+                                </p>
                             </div>
-                            <i class="hgi-stroke hgi-arrow-down-01 text-gray-400 text-xs ml-0.5 transition-transform group-hover:rotate-180"></i>
+                            <i
+                                class="hgi-stroke hgi-arrow-down-01 text-gray-400 text-xs ml-0.5 transition-transform group-hover:rotate-180"></i>
                         </button>
 
                         <div id="adminUserMenuDropdown"
@@ -291,10 +308,11 @@
             <!-- Content -->
             <div class="flex-1 overflow-y-auto p-6">
                 @if(session('success'))
-                <div class="flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl px-4 py-3 text-sm mb-5">
-                    <i class="hgi-stroke hgi-checkmark-circle-01 text-lg shrink-0"></i>
-                    <span>{{ session('success') }}</span>
-                </div>
+                    <div
+                        class="flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl px-4 py-3 text-sm mb-5">
+                        <i class="hgi-stroke hgi-checkmark-circle-01 text-lg shrink-0"></i>
+                        <span>{{ session('success') }}</span>
+                    </div>
                 @endif
                 @yield('content')
             </div>

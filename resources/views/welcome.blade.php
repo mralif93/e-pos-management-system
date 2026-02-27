@@ -4,56 +4,6 @@
 
 @section('content')
     <div class="bg-secondary-50 dark:bg-secondary-900">
-        <!-- Header -->
-        <header
-            class="sticky top-0 z-50 bg-white/80 dark:bg-secondary-900/80 backdrop-blur-md border-b border-secondary-200 dark:border-secondary-800 shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-20 items-center">
-                    <div class="flex items-center gap-3">
-                        <a href="/" class="flex-shrink-0 flex items-center gap-2">
-                            <div class="bg-gradient-to-br from-primary-600 to-primary-700 p-2 rounded-xl shadow-lg">
-                                <i class="hgi-stroke text-[20px] hgi-store-01 text-white text-3xl"></i>
-                            </div>
-                            <span class="text-2xl font-bold text-secondary-800 dark:text-white">e-POS</span>
-                        </a>
-                    </div>
-                    <nav class="hidden md:flex items-center space-x-8">
-                        <a href="#features"
-                            class="text-secondary-600 hover:text-primary-600 dark:text-secondary-300 dark:hover:text-primary-400 font-medium transition-colors">Features</a>
-                        <a href="#testimonials"
-                            class="text-secondary-600 hover:text-primary-600 dark:text-secondary-300 dark:hover:text-primary-400 font-medium transition-colors">Testimonials</a>
-                        <a href="#pricing"
-                            class="text-secondary-600 hover:text-primary-600 dark:text-secondary-300 dark:hover:text-primary-400 font-medium transition-colors">Pricing</a>
-                    </nav>
-                    <div class="flex items-center space-x-4">
-                        <button id="theme-toggle" type="button"
-                            class="relative w-10 h-10 flex items-center justify-center rounded-full bg-secondary-200 dark:bg-primary-600 text-secondary-500 dark:text-white hover:bg-secondary-300 dark:hover:bg-primary-700 focus:outline-none focus:ring-4 focus:ring-secondary-200 dark:focus:ring-primary-700 transition-colors duration-300">
-                            <i
-                                class="hgi-stroke text-[20px] hgi-sun-01 absolute transition-all duration-300 transform dark:rotate-90 dark:opacity-0 text-yellow-500"></i>
-                            <i
-                                class="hgi-stroke text-[20px] hgi-moon-01 absolute transition-all duration-300 transform rotate-90 opacity-0 dark:rotate-0 dark:opacity-100"></i>
-                        </button>
-
-                        @if (Route::has('login'))
-                            @auth
-                                <a href="{{ url('/dashboard') }}"
-                                    class="text-secondary-600 hover:text-primary-600 dark:text-secondary-300 dark:hover:text-primary-400 font-medium transition-colors">Dashboard</a>
-                            @else
-                                <a href="{{ route('login') }}"
-                                    class="text-secondary-600 hover:text-primary-600 dark:text-secondary-300 dark:hover:text-primary-400 font-medium transition-colors hidden sm:block">Log
-                                    in</a>
-                                @if (Route::has('register'))
-                                    <a href="{{ route('register') }}"
-                                        class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Get
-                                        Started</a>
-                                @endif
-                            @endauth
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </header>
-
         <!-- Hero Section -->
         <main class="flex-grow">
             <section class="relative py-20 sm:py-28 lg:py-32">
@@ -114,7 +64,7 @@
                                 <i class='hgi-stroke hgi-puzzle-01 text-3xl text-white'></i>
                             </div>
                             <div>
-                                <h3 class="text-xl font-bold text-secondary-800 dark:text-white mb-2">Extensible API</h3>
+                                <h3 class="text-md font-bold text-secondary-800 dark:text-white mb-2">Extensible API</h3>
                                 <p class="text-secondary-600 dark:text-secondary-400">Integrate with your favorite tools and
                                     services with our RESTful API.</p>
                             </div>
@@ -125,7 +75,7 @@
                                 <i class="hgi-stroke text-[20px] hgi-computer text-3xl"></i>
                             </div>
                             <div>
-                                <h3 class="text-xl font-bold text-secondary-800 dark:text-white mb-2">Customizable UI</h3>
+                                <h3 class="text-md font-bold text-secondary-800 dark:text-white mb-2">Customizable UI</h3>
                                 <p class="text-secondary-600 dark:text-secondary-400">Build your own UI components or use
                                     our pre-built library.</p>
                             </div>
@@ -136,7 +86,7 @@
                                 <i class='hgi-stroke hgi-database-01 text-3xl text-white'></i>
                             </div>
                             <div>
-                                <h3 class="text-xl font-bold text-secondary-800 dark:text-white mb-2">Real-time Data</h3>
+                                <h3 class="text-md font-bold text-secondary-800 dark:text-white mb-2">Real-time Data</h3>
                                 <p class="text-secondary-600 dark:text-secondary-400">Get real-time insights into your sales
                                     and inventory data.</p>
                             </div>
@@ -210,7 +160,7 @@
                     </div>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
                         <div class="border border-secondary-200 dark:border-secondary-700 rounded-2xl p-8 flex flex-col">
-                            <h3 class="text-2xl font-bold text-secondary-800 dark:text-white mb-4">Starter</h3>
+                            <h3 class="text-md font-bold text-secondary-800 dark:text-white mb-4">Starter</h3>
                             <p class="text-secondary-600 dark:text-secondary-400 mb-6">For small businesses and startups.
                             </p>
                             <p class="text-5xl font-extrabold text-secondary-800 dark:text-white mb-6">$49<span
@@ -234,7 +184,7 @@
                                 <span class="bg-primary-600 text-white px-4 py-1 rounded-full text-sm font-semibold">Most
                                     Popular</span>
                             </div>
-                            <h3 class="text-2xl font-bold text-secondary-800 dark:text-white mb-4">Pro</h3>
+                            <h3 class="text-md font-bold text-secondary-800 dark:text-white mb-4">Pro</h3>
                             <p class="text-secondary-600 dark:text-secondary-400 mb-6">For growing businesses and
                                 enterprises.</p>
                             <p class="text-5xl font-extrabold text-secondary-800 dark:text-white mb-6">$99<span
@@ -255,7 +205,7 @@
                                 Plan</a>
                         </div>
                         <div class="border border-secondary-200 dark:border-secondary-700 rounded-2xl p-8 flex flex-col">
-                            <h3 class="text-2xl font-bold text-secondary-800 dark:text-white mb-4">Enterprise</h3>
+                            <h3 class="text-md font-bold text-secondary-800 dark:text-white mb-4">Enterprise</h3>
                             <p class="text-secondary-600 dark:text-secondary-400 mb-6">For large-scale deployments.</p>
                             <p class="text-5xl font-extrabold text-secondary-800 dark:text-white mb-6">Custom</p>
                             <ul class="space-y-4 text-secondary-600 dark:text-secondary-400 mb-8">

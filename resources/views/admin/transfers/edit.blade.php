@@ -9,7 +9,7 @@
             <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                 <i class="hgi-stroke text-[20px] hgi-edit-02 text-indigo-600"></i>
                 <div>
-                    <h3 class="font-semibold text-gray-800">Edit Transfer</h3>
+                    <h3 class="text-md font-semibold text-gray-800">Edit Transfer</h3>
                     <p class="text-xs text-gray-400">Modify pending inventory transfer details</p>
                 </div>
             </div>
@@ -112,7 +112,7 @@
                         <div class="flex items-center gap-4 py-2 border-b border-gray-100 last:border-0">
                             <input type="checkbox" name="items[][product_id]" value="${product.id}" class="product-checkbox rounded text-indigo-600" ${isChecked}>
                             <div class="flex-1">
-                                <p class="font-medium text-gray-800">${product.name}</p>
+                                <p class="text-sm font-medium text-gray-900">${product.name}</p>
                                 <p class="text-xs text-gray-500">Available: ${product.stock_level ?? 0}</p>
                             </div>
                             <input type="number" name="items[][quantity]" min="1" max="${product.stock_level ?? 9999}" 

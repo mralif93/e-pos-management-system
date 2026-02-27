@@ -68,7 +68,7 @@
             <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                     <i class="hgi-stroke hgi-user-multiple-02 text-[20px] text-indigo-600"></i>
-                    <h3 class="font-semibold text-gray-800">Staff ({{ $outlet->users->count() }})</h3>
+                    <h3 class="text-md font-semibold text-gray-800">Staff ({{ $outlet->users->count() }})</h3>
                 </div>
                 @if($outlet->users->isEmpty())
                     <p class="text-sm text-gray-400 text-center py-6">No staff assigned</p>
@@ -102,7 +102,7 @@
             <div class="bg-white rounded-xl border border-gray-100 shadow-sm">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                     <i class="hgi-stroke hgi-clock-01 text-[20px] text-indigo-600"></i>
-                    <h3 class="font-semibold text-gray-800">Recent Shifts</h3>
+                    <h3 class="text-md font-semibold text-gray-800">Recent Shifts</h3>
                 </div>
                 @if($recentShifts->isEmpty())
                     <p class="px-6 py-10 text-center text-sm text-gray-400">No shifts recorded for this outlet</p>

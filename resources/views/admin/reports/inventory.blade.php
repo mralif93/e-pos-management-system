@@ -8,7 +8,7 @@
     <div class="bg-white rounded-xl border border-gray-100 shadow-sm mb-6">
         <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
             <i class="hgi-stroke text-[20px] hgi-settings-02 text-indigo-600"></i>
-            <h3 class="font-semibold text-gray-800">Search & Filter</h3>
+            <h3 class="text-md font-semibold text-gray-800">Search & Filter</h3>
         </div>
         <form method="GET">
             <div class="p-6">
@@ -117,7 +117,7 @@
             <div class="flex items-center gap-2">
                 <i class="hgi-stroke text-[20px] hgi-warehouse text-indigo-600"></i>
                 <div>
-                    <h3 class="font-semibold text-gray-800">Inventory Records</h3>
+                    <h3 class="text-md font-semibold text-gray-800">Inventory Records</h3>
                     <p class="text-xs text-gray-400">View stock levels by outlet</p>
                 </div>
             </div>

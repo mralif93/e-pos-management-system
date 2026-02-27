@@ -8,7 +8,7 @@
     <div class="bg-white rounded-xl border border-gray-100 shadow-sm mb-6">
         <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
             <i class="hgi-stroke text-[20px] hgi-settings-02 text-indigo-600"></i>
-            <h3 class="font-semibold text-gray-800">Search & Filter</h3>
+            <h3 class="text-md font-semibold text-gray-800">Search & Filter</h3>
         </div>
         <form method="GET">
             <div class="p-6">
@@ -118,10 +118,10 @@
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                                    <i class="hgi-stroke text-[20px] hgi-package text-indigo-600 text-sm"></i>
+                                <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center shrink-0">
+                                    <i class="hgi-stroke text-[16px] hgi-package text-indigo-600"></i>
                                 </div>
-                                <span class="font-medium text-gray-800">{{ $product->name }}</span>
+                                <span class="text-sm font-medium text-gray-900">{{ $product->name }}</span>
                             </div>
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-600">{{ $product->sku }}</td>

@@ -8,7 +8,7 @@
     <div class="bg-white rounded-xl border border-gray-100 shadow-sm mb-6">
         <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
             <i class="hgi-stroke text-[20px] hgi-settings-02 text-indigo-600"></i>
-            <h3 class="font-semibold text-gray-800">Search & Filter</h3>
+            <h3 class="text-md font-semibold text-gray-800">Search & Filter</h3>
         </div>
         <form method="GET">
             <div class="p-6">
@@ -116,11 +116,11 @@
                         <td class="px-6 py-4">
                             <span
                                 class="px-2 py-1 text-xs font-medium rounded-full 
-                                                                                                                                    @if($transfer->status === 'pending') bg-yellow-100 text-yellow-700
-                                                                                                                                    @elseif($transfer->status === 'approved') bg-blue-100 text-blue-700
-                                                                                                                                    @elseif($transfer->status === 'in_transit') bg-purple-100 text-purple-700
-                                                                                                                                    @elseif($transfer->status === 'completed') bg-green-100 text-green-700
-                                                                                                                                    @else bg-red-100 text-red-700 @endif">
+                                @if($transfer->status === 'pending') bg-yellow-100 text-yellow-700
+                                @elseif($transfer->status === 'approved') bg-blue-100 text-blue-700
+                                @elseif($transfer->status === 'in_transit') bg-purple-100 text-purple-700
+                                @elseif($transfer->status === 'completed') bg-green-100 text-green-700
+                                @else bg-red-100 text-red-700 @endif">
                                 {{ ucfirst(str_replace('_', ' ', $transfer->status)) }}
                             </span>
                         </td>
@@ -135,7 +135,7 @@
                                     <button onclick="approveTransfer({{ $transfer->id }})"
                                         class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-green-600 hover:bg-green-200"
                                         title="Approve">
-                                        <i class="hgi-stroke text-[20px] hgi-tick-circle text-sm"></i>
+                                        <i class="hgi-stroke text-[20px] hgi-checkmark-circle-01 text-sm"></i>
                                     </button>
                                     <button onclick="rejectTransfer({{ $transfer->id }})"
                                         class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600 hover:bg-yellow-200"

@@ -35,7 +35,7 @@
                     <i class="hgi-stroke text-[18px] hgi-settings-02 text-indigo-600"></i>
                 </div>
                 <div>
-                    <h3 class="font-semibold text-gray-800">General Settings</h3>
+                    <h3 class="text-md font-semibold text-gray-800">General Settings</h3>
                     <p class="text-xs text-gray-400">Basic application configuration</p>
                 </div>
             </div>
@@ -76,7 +76,7 @@
                     <i class="hgi-stroke text-[18px] hgi-package text-orange-600"></i>
                 </div>
                 <div>
-                    <h3 class="font-semibold text-gray-800">Inventory</h3>
+                    <h3 class="text-md font-semibold text-gray-800">Inventory</h3>
                     <p class="text-xs text-gray-400">Stock management and alert thresholds</p>
                 </div>
             </div>
@@ -110,7 +110,7 @@
                     <i class="hgi-stroke text-[18px] hgi-star text-yellow-600"></i>
                 </div>
                 <div>
-                    <h3 class="font-semibold text-gray-800">Loyalty Points</h3>
+                    <h3 class="text-md font-semibold text-gray-800">Loyalty Points</h3>
                     <p class="text-xs text-gray-400">Customer reward points earning and redemption rules</p>
                 </div>
             </div>
@@ -193,7 +193,7 @@
                     <i class="hgi-stroke text-[18px] hgi-credit-card text-green-600"></i>
                 </div>
                 <div>
-                    <h3 class="font-semibold text-gray-800">Payment Gateway</h3>
+                    <h3 class="text-md font-semibold text-gray-800">Payment Gateway</h3>
                     <p class="text-xs text-gray-400">DuitNow QR integration credentials</p>
                 </div>
             </div>

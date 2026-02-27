@@ -22,7 +22,7 @@
     <div class="bg-white rounded-xl border border-gray-100 shadow-sm mb-6">
         <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
             <i class="hgi-stroke text-[20px] hgi-settings-02 text-indigo-600"></i>
-            <h3 class="font-semibold text-gray-800">Search & Filter</h3>
+            <h3 class="text-md font-semibold text-gray-800">Search & Filter</h3>
         </div>
         <form action="{{ route('admin.outlets.index') }}" method="GET">
             <div class="p-6">
@@ -96,21 +96,28 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider border-b border-gray-100">
-                        <th class="px-6 py-4 font-medium">Code</th>
-                        <th class="px-6 py-4 font-medium">Name</th>
-                        <th class="px-6 py-4 font-medium">Phone</th>
-                        <th class="px-6 py-4 font-medium">Status / POS Access</th>
-                        <th class="px-6 py-4 font-medium text-right">Actions</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Code</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status / POS Access</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     @forelse($outlets as $outlet)
                         <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $outlet->outlet_code }}</td>
                             <td class="px-6 py-4">
-                                <p class="text-sm font-medium text-gray-900">{{ $outlet->name }}</p>
-                                <p class="text-xs text-gray-500 truncate w-48">{{ $outlet->address }}</p>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center shrink-0">
+                                        <i class="hgi-stroke text-[16px] hgi-building-03 text-indigo-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-900">{{ $outlet->name }}</p>
+                                        <p class="text-xs text-gray-500 truncate w-48">{{ $outlet->address }}</p>
+                                    </div>
+                                </div>
                             </td>
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $outlet->outlet_code }}</td>
                             <td class="px-6 py-4 text-sm text-gray-600">{{ $outlet->phone ?? '-' }}</td>
                             <td class="px-6 py-4">
                                 <div class="flex flex-col gap-1">

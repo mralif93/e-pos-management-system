@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\OutletController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Middleware\EnforceOutletRestriction;
 
 Route::get('/', function () {
     return view('welcome');
@@ -46,7 +47,7 @@ Route::get('/home', function () {
 
 Route::middleware(['auth:web,sanctum', 'pos.lock.check'])->group(function () {
     // Admin Routes
-    Route::prefix('admin')->name('admin.')->group(function () {
+    Route::prefix('admin')->name('admin.')->middleware([EnforceOutletRestriction::class])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         // Users

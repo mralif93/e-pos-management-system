@@ -63,7 +63,7 @@
             <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                     <i class="hgi-stroke hgi-star text-[20px] text-yellow-500"></i>
-                    <h3 class="font-semibold text-gray-800">Loyalty</h3>
+                    <h3 class="text-md font-semibold text-gray-800">Loyalty</h3>
                 </div>
                 <div class="p-6 space-y-3">
                     <div class="flex justify-between py-2 border-b border-gray-50">
@@ -97,7 +97,7 @@
             <div class="bg-white rounded-xl border border-gray-100 shadow-sm">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                     <i class="hgi-stroke hgi-shopping-cart-01 text-[20px] text-indigo-600"></i>
-                    <h3 class="font-semibold text-gray-800">Recent Purchases</h3>
+                    <h3 class="text-md font-semibold text-gray-800">Recent Purchases</h3>
                 </div>
                 @if($customer->sales->isEmpty())
                     <p class="px-6 py-8 text-center text-sm text-gray-400">No purchases yet</p>
@@ -137,7 +137,7 @@
             <div class="bg-white rounded-xl border border-gray-100 shadow-sm">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                     <i class="hgi-stroke hgi-star text-[20px] text-yellow-500"></i>
-                    <h3 class="font-semibold text-gray-800">Loyalty Transactions</h3>
+                    <h3 class="text-md font-semibold text-gray-800">Loyalty Transactions</h3>
                 </div>
                 @if($transactions->isEmpty())
                     <p class="px-6 py-8 text-center text-sm text-gray-400">No loyalty transactions yet</p>

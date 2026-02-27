@@ -9,14 +9,14 @@
         <div class="bg-white rounded-xl border border-gray-100 shadow-sm">
             <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                 <i class="hgi-stroke text-[20px] hgi-calendar-01 text-green-600"></i>
-                <h3 class="font-semibold text-gray-800">Open Shifts</h3>
+                <h3 class="text-md font-semibold text-gray-800">Open Shifts</h3>
             </div>
             <div class="p-6">
                 @forelse($openShifts as $shift)
                     <div class="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                                <i class="hgi-stroke text-[20px] hgi-calendar-01 text-green-600 text-sm"></i>
+                                <i class="hgi-stroke text-[18px] hgi-calendar-01 text-green-600"></i>
                             </div>
                             <div>
                                 <p class="text-sm font-medium text-gray-800">{{ $shift->user->name ?? 'N/A' }}</p>
@@ -24,7 +24,7 @@
                             </div>
                         </div>
                         <div class="text-right">
-                            <p class="text-xs text-gray-400">Started: {{ $shift->started_at->format('H:i') }}</p>
+                            <p class="text-xs text-gray-400">Started: {{ $shift->opened_at->format('H:i') }}</p>
                             <form action="{{ route('admin.shifts.close', $shift->id) }}" method="POST" class="mt-1">
                                 @csrf
                                 <button type="submit" class="text-xs text-red-600 hover:text-red-800 font-medium">Close
@@ -40,15 +40,15 @@
 
         <div class="bg-white rounded-xl border border-gray-100 shadow-sm">
             <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
-                <i class="hgi-stroke text-[20px] hgi-tick-circle text-gray-600"></i>
-                <h3 class="font-semibold text-gray-800">Recent Closed Shifts</h3>
+                <i class="hgi-stroke text-[20px] hgi-calendar-lock-01 text-gray-600"></i>
+                <h3 class="text-md font-semibold text-gray-800">Recent Closed Shifts</h3>
             </div>
             <div class="p-6">
                 @forelse($closedShifts as $shift)
                     <div class="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                                <i class="hgi-stroke text-[20px] hgi-tick-circle text-gray-600 text-sm"></i>
+                                <i class="hgi-stroke text-[18px] hgi-calendar-lock-01 text-gray-600"></i>
                             </div>
                             <div>
                                 <p class="text-sm font-medium text-gray-800">{{ $shift->user->name ?? 'N/A' }}</p>
@@ -56,8 +56,8 @@
                             </div>
                         </div>
                         <div class="text-right">
-                            <p class="text-xs text-gray-400">{{ $shift->started_at->format('M d, H:i') }} -
-                                {{ $shift->ended_at->format('H:i') }}
+                            <p class="text-xs text-gray-400">{{ $shift->opened_at->format('M d, H:i') }} -
+                                {{ $shift->closed_at ? $shift->closed_at->format('H:i') : '-' }}
                             </p>
                             <p class="text-xs font-medium text-gray-600">RM {{ number_format($shift->cash_in_hand ?? 0, 2) }}
                             </p>
@@ -74,7 +74,7 @@
     <div class="bg-white rounded-xl border border-gray-100 shadow-sm mb-6">
         <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
             <i class="hgi-stroke text-[20px] hgi-search-01 text-indigo-600"></i>
-            <h3 class="font-semibold text-gray-800">Search & Filter Shifts</h3>
+            <h3 class="text-md font-semibold text-gray-800">Search & Filter Shifts</h3>
         </div>
         <form method="GET">
             <div class="p-6">
@@ -121,7 +121,7 @@
             <div class="flex items-center gap-2">
                 <i class="hgi-stroke text-[20px] hgi-list text-indigo-600"></i>
                 <div>
-                    <h3 class="font-semibold text-gray-800">All Shifts</h3>
+                    <h3 class="text-md font-semibold text-gray-800">All Shifts</h3>
                     <p class="text-xs text-gray-400">View all shift records</p>
                 </div>
             </div>
@@ -162,9 +162,9 @@
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4 text-sm text-gray-800">{{ $shift->user->name ?? 'N/A' }}</td>
                         <td class="px-6 py-4 text-sm text-gray-600">{{ $shift->outlet->name ?? 'N/A' }}</td>
-                        <td class="px-6 py-4 text-sm text-gray-600">{{ $shift->started_at->format('M d, H:i') }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-600">{{ $shift->opened_at->format('M d, H:i') }}</td>
                         <td class="px-6 py-4 text-sm text-gray-600">
-                            {{ $shift->ended_at ? $shift->ended_at->format('M d, H:i') : '-' }}
+                            {{ $shift->closed_at ? $shift->closed_at->format('M d, H:i') : '-' }}
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-800">RM {{ number_format($shift->cash_in_hand ?? 0, 2) }}</td>
                         <td class="px-6 py-4">
@@ -177,11 +177,11 @@
                             <div class="flex items-center justify-end gap-2">
                                 <a href="{{ route('admin.shifts.show', $shift->id) }}" title="View"
                                     class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 hover:bg-blue-200">
-                                    <i class="hgi-stroke text-[20px] hgi-view text-sm"></i>
+                                    <i class="hgi-stroke text-[18px] hgi-view"></i>
                                 </a>
                                 <a href="{{ route('admin.shifts.edit', $shift->id) }}" title="Edit"
                                     class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 hover:bg-indigo-200">
-                                    <i class="hgi-stroke text-[20px] hgi-edit-02 text-sm"></i>
+                                    <i class="hgi-stroke text-[18px] hgi-edit-02"></i>
                                 </a>
                                 <form action="{{ route('admin.shifts.destroy', $shift->id) }}" method="POST" class="inline"
                                     onsubmit="return confirm('Are you sure you want to delete this shift? This action cannot be undone.');">
@@ -190,7 +190,7 @@
                                     <button type="submit"
                                         class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 hover:bg-red-200"
                                         title="Delete">
-                                        <i class="hgi-stroke text-[20px] hgi-delete-01 text-sm"></i>
+                                        <i class="hgi-stroke text-[18px] hgi-delete-01"></i>
                                     </button>
                                 </form>
                             </div>

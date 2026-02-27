@@ -9,7 +9,7 @@
             <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                 <i class="hgi-stroke text-[20px] hgi-grid-view text-indigo-600"></i>
                 <div>
-                    <h3 class="font-semibold text-gray-800">Create Category</h3>
+                    <h3 class="text-md font-semibold text-gray-800">Create Category</h3>
                     <p class="text-xs text-gray-400">Add a new category for products</p>
                 </div>
             </div>

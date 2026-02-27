@@ -55,8 +55,10 @@ self.addEventListener('fetch', (event) => {
                 try {
                     const networkResponse = await fetch(event.request);
                     // Update Cache with new HTML
-                    const cache = await caches.open(CACHE_NAME);
-                    cache.put(event.request, networkResponse.clone());
+                    if (event.request.method === 'GET') {
+                        const cache = await caches.open(CACHE_NAME);
+                        cache.put(event.request, networkResponse.clone());
+                    }
                     return networkResponse;
                 } catch (error) {
                     const cachedResponse = await caches.match(event.request); // Match exact request (e.g. /pos)

@@ -17,6 +17,16 @@ export default {
   ],
   theme: {
     extend: {
+      fontSize: {
+        'xs': ['var(--text-xs)', '1.5'],
+        'sm': ['var(--text-sm)', '1.5'],
+        'base': ['var(--text-base)', '1.5'],
+        'md': ['var(--text-md)', '1.2'],
+        'lg': ['var(--text-lg)', '1.2'],
+        'xl': ['var(--text-xl)', '1.2'],
+        '2xl': ['var(--text-xl)', '1.2'], // Automatically scales down old 2xl titles
+        '3xl': ['calc(var(--text-xl) * 1.25)', '1.2'],
+      },
       fontFamily: {
         sans: ['Inter', ...defaultTheme.fontFamily.sans],
       },

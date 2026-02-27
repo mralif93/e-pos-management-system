@@ -3,19 +3,53 @@
 @tailwind utilities;
 
 /* =========================================
+   GLOBAL RESPONSIVE TYPOGRAPHY
+   ─────────────────────────────────────────
+   The user requested an easily updatable, global
+   responsive font scale. Edit sizes here to
+   instantly update across the entire app.
+   ========================================= */
+@layer base {
+    :root {
+        /* Mobile Sizes (< 768px) */
+        --text-xs: 0.65rem;
+        /* Hints, tiny badges */
+        --text-sm: 0.75rem;
+        /* Standard body, buttons, tables */
+        --text-base: 0.875rem;
+        /* Emphasized body */
+        --text-md: 1rem;
+        /* Page/Section Titles (as requested) */
+        --text-lg: 1.125rem;
+        /* Large Headers */
+        --text-xl: 1.25rem;
+        /* Huge/Hero text */
+    }
+
+    @media (min-width: 768px) {
+        :root {
+            /* Desktop Sizes (scaled up naturally) */
+            --text-xs: 0.7rem;
+            --text-sm: 0.8125rem;
+            --text-base: 0.95rem;
+            --text-md: 1.125rem;
+            /* Titles grow nicely on desktop */
+            --text-lg: 1.25rem;
+            --text-xl: 1.5rem;
+        }
+    }
+}
+
+/* =========================================
    GLOBAL FONT SIZE CONTROL
    ─────────────────────────────────────────
    --html-font-size is the MASTER KNOB.
    Change it once to scale ALL Tailwind
-   text-* classes (rem-based) everywhere:
-   admin panel, POS, guest pages, etc.
-
-   Default browser base = 16px.
-   14–15px → slightly smaller overall.
+   text-* classes (rem-based) everywhere.
    ========================================= */
 :root {
-    --html-font-size: 15px;
-    /* ← change this to rescale the entire app */
+    --html-font-size: 13px;
+    /* ← master rescaling base */
 
     /* =========================================
        GLOBAL BUTTON DESIGN TOKENS

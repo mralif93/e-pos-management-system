@@ -20,6 +20,10 @@ class DatabaseSeeder extends Seeder
             OutletSeeder::class,
             ProductSeeder::class,
             UserSeeder::class,
+            CustomerSeeder::class,
+            ShiftSeeder::class,
+            SaleSeeder::class,
+            InventorySeeder::class,
         ]);
     }
 }
