@@ -177,11 +177,11 @@
                             <div class="flex items-center justify-end gap-2">
                                 <a href="{{ route('admin.shifts.show', $shift->id) }}" title="View"
                                     class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 hover:bg-blue-200">
-                                    <i class="hgi-stroke text-[18px] hgi-view"></i>
+                                    <i class="hgi-stroke text-[20px] hgi-view text-sm"></i>
                                 </a>
                                 <a href="{{ route('admin.shifts.edit', $shift->id) }}" title="Edit"
                                     class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 hover:bg-indigo-200">
-                                    <i class="hgi-stroke text-[18px] hgi-edit-02"></i>
+                                    <i class="hgi-stroke text-[20px] hgi-edit-02 text-sm"></i>
                                 </a>
                                 <form action="{{ route('admin.shifts.destroy', $shift->id) }}" method="POST" class="inline"
                                     onsubmit="return confirm('Are you sure you want to delete this shift? This action cannot be undone.');">
@@ -190,7 +190,7 @@
                                     <button type="submit"
                                         class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 hover:bg-red-200"
                                         title="Delete">
-                                        <i class="hgi-stroke text-[18px] hgi-delete-01"></i>
+                                        <i class="hgi-stroke text-[20px] hgi-delete-01 text-sm"></i>
                                     </button>
                                 </form>
                             </div>
