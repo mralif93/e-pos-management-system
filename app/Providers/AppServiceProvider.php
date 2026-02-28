@@ -25,7 +25,11 @@ class AppServiceProvider extends ServiceProvider
         Paginator::defaultView('vendor.pagination.tailwind');
 
         Gate::define('access-pos', function (User $user) {
-            return in_array($user->role, ['Cashier', 'Manager', 'Admin', 'Super Admin']);
+            return in_array($user->role, ['Cashier', 'Manager']);
+        });
+
+        Gate::define('access-admin', function (User $user) {
+            return in_array($user->role, ['Admin', 'Super Admin']);
         });
     }
 }

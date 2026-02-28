@@ -99,6 +99,8 @@
     </div>
 
     @push('scripts')
+        <!-- Alpine.js -->
+        <script defer src="{{ asset('assets/js/alpine.min.js') }}"></script>
         <script>
             document.addEventListener('alpine:init', () => {
                 Alpine.data('lockScreen', () => ({

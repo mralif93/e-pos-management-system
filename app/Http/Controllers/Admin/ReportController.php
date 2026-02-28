@@ -15,7 +15,7 @@ class ReportController extends Controller
 {
     public function sales(Request $request)
     {
-        $query = Sale::with(['customer', 'user', 'outlet']);
+        $query = Sale::with(['customer', 'user', 'outlet', 'saleItems']);
 
         if ($request->outlet_id) {
             $query->where('outlet_id', $request->outlet_id);
@@ -35,15 +35,15 @@ class ReportController extends Controller
 
         $perPage = $request->per_page ?? 10;
         $sales = $query->orderBy('created_at', 'desc')->paginate($perPage);
-        
+
         $totalSales = $query->sum('total_amount');
         $totalTax = $query->sum('tax_amount');
         $totalDiscount = $query->sum('discount_amount');
         $transactions = $query->count();
-        
+
         $salesIds = $sales->pluck('id');
-        $itemsSold = $salesIds->isNotEmpty() 
-            ? \DB::table('sale_items')->whereIn('sale_id', $salesIds)->sum('quantity') 
+        $itemsSold = $salesIds->isNotEmpty()
+            ? \DB::table('sale_items')->whereIn('sale_id', $salesIds)->sum('quantity')
             : 0;
 
         $outlets = Outlet::where('is_active', true)->get();
@@ -67,12 +67,12 @@ class ReportController extends Controller
 
         $perPage = $request->per_page ?? 10;
         $inventory = $query->orderBy('stock_level', 'asc')->paginate($perPage);
-        
+
         $totalProducts = \App\Models\Product::count();
         $totalStock = ProductOutletPrice::sum('stock_level');
         $lowStockCount = ProductOutletPrice::whereRaw('stock_level <= (SELECT low_stock_threshold FROM products WHERE products.id = product_outlet_prices.product_id AND products.low_stock_threshold > 0)')->count();
         $outOfStockCount = ProductOutletPrice::where('stock_level', '<=', 0)->count();
-        
+
         $outlets = Outlet::where('is_active', true)->get();
 
         return view('admin.reports.inventory', compact('inventory', 'outlets', 'totalProducts', 'totalStock', 'lowStockCount', 'outOfStockCount'));
@@ -82,15 +82,15 @@ class ReportController extends Controller
     {
         $startDate = $request->from ? Carbon::parse($request->from) : Carbon::now()->startOfMonth();
         $endDate = $request->to ? Carbon::parse($request->to) : Carbon::now();
-        
+
         $outlets = Outlet::where('is_active', true)->get();
-        
+
         $outletStats = [];
         foreach ($outlets as $outlet) {
             $sales = Sale::where('outlet_id', $outlet->id)
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->where('status', '!=', 'void');
-            
+
             $outletStats[$outlet->id] = [
                 'total_sales' => $sales->sum('total_amount'),
                 'transactions' => $sales->count(),
@@ -106,7 +106,7 @@ class ReportController extends Controller
 
         return view('admin.reports.outlets', compact('outlets', 'outletStats', 'startDate', 'endDate'));
     }
-    
+
     public function outletPerformance(Request $request)
     {
         $startDate = $request->date_from ? Carbon::parse($request->date_from) : Carbon::now()->startOfMonth();
@@ -128,7 +128,7 @@ class ReportController extends Controller
         $reportService = new CrossOutletReportService();
         $outlets = Outlet::where('is_active', true)->get();
 
-        $products = $outletId 
+        $products = $outletId
             ? $reportService->getTopProductsByOutlet($outletId, $startDate, $endDate, 50)
             : collect([]);
 

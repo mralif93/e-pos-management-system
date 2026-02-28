@@ -22,32 +22,38 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Auth routes
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+Route::middleware('guest')->group(function () {
+    // Auth routes
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
-// Password Reset routes
-Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
-Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
-Route::get('/reset-password/{token}', [AuthController::class, 'showResetPasswordForm'])->name('password.reset');
-Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
+    // Password Reset routes
+    Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
+    Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
+    Route::get('/reset-password/{token}', [AuthController::class, 'showResetPasswordForm'])->name('password.reset');
+    Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 
-// POS Login routes (alias)
-Route::get('/pos/login', [AuthController::class, 'showLoginForm'])->name('pos.login');
-Route::post('/pos/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+    // POS Login routes (alias)
+    Route::get('/pos/login', [AuthController::class, 'showLoginForm'])->name('pos.login');
+    Route::post('/pos/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+});
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::post('/pos/logout', [AuthController::class, 'logout'])->name('pos.logout');
 
-// Home redirect
+// Home redirect based on role
 Route::get('/home', function () {
+    $user = auth()->user();
+    if ($user && in_array($user->role, ['Cashier', 'Manager'])) {
+        return redirect('/pos');
+    }
     return redirect('/admin/dashboard');
-});
+})->middleware('auth');
 
 
-Route::middleware(['auth:web,sanctum', 'pos.lock.check'])->group(function () {
+Route::middleware(['auth:web,sanctum'])->group(function () {
     // Admin Routes
-    Route::prefix('admin')->name('admin.')->middleware([EnforceOutletRestriction::class])->group(function () {
+    Route::prefix('admin')->name('admin.')->middleware(['can:access-admin', EnforceOutletRestriction::class])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         // Users
@@ -123,38 +129,40 @@ Route::middleware(['auth:web,sanctum', 'pos.lock.check'])->group(function () {
     });
 
     // POS Routes
-    Route::get('/pos', [PosController::class, 'index'])->name('pos.home')->middleware('can:access-pos');
-    Route::get('/pos/checkout', [PosController::class, 'checkout'])->name('pos.checkout')->middleware('can:access-pos');
-    Route::get('/pos/lock', [PosController::class, 'lock'])->name('pos.lock')->middleware('can:access-pos');
-    Route::post('/pos/verify-pin', [PosController::class, 'verifyPinEndpoint'])->name('pos.verify-pin')->middleware('can:access-pos');
-    Route::get('/pos/sales/{id}/receipt', [PosController::class, 'generateReceiptPdf'])->name('pos.sales.receipt')->middleware('can:access-pos');
+    Route::middleware(['pos.lock.check'])->group(function () {
+        Route::get('/pos', [PosController::class, 'index'])->name('pos.home')->middleware('can:access-pos');
+        Route::get('/pos/checkout', [PosController::class, 'checkout'])->name('pos.checkout')->middleware('can:access-pos');
+        Route::get('/pos/lock', [PosController::class, 'lock'])->name('pos.lock')->middleware('can:access-pos');
+        Route::post('/pos/verify-pin', [PosController::class, 'verifyPinEndpoint'])->name('pos.verify-pin')->middleware('can:access-pos');
+        Route::get('/pos/sales/{id}/receipt', [PosController::class, 'generateReceiptPdf'])->name('pos.sales.receipt')->middleware('can:access-pos');
 
-    Route::get('/pos/customer/points', [PosController::class, 'getCustomerPoints'])->name('pos.customer.points')->middleware('can:access-pos');
-    Route::post('/pos/points/calculate', [PosController::class, 'calculatePointsRedemption'])->name('pos.points.calculate')->middleware('can:access-pos');
+        Route::get('/pos/customer/points', [PosController::class, 'getCustomerPoints'])->name('pos.customer.points')->middleware('can:access-pos');
+        Route::post('/pos/points/calculate', [PosController::class, 'calculatePointsRedemption'])->name('pos.points.calculate')->middleware('can:access-pos');
 
-    Route::post('/pos/offline/save', [PosController::class, 'saveOfflineDraft'])->name('pos.offline.save')->middleware('can:access-pos');
-    Route::post('/pos/offline/sync', [PosController::class, 'syncOfflineDrafts'])->name('pos.offline.sync')->middleware('can:access-pos');
-    Route::get('/pos/offline/drafts', [PosController::class, 'getOfflineDrafts'])->name('pos.offline.drafts')->middleware('can:access-pos');
-    Route::get('/pos/offline/check', [PosController::class, 'checkPendingOfflineSales'])->name('pos.offline.check')->middleware('can:access-pos');
+        Route::post('/pos/offline/save', [PosController::class, 'saveOfflineDraft'])->name('pos.offline.save')->middleware('can:access-pos');
+        Route::post('/pos/offline/sync', [PosController::class, 'syncOfflineDrafts'])->name('pos.offline.sync')->middleware('can:access-pos');
+        Route::get('/pos/offline/drafts', [PosController::class, 'getOfflineDrafts'])->name('pos.offline.drafts')->middleware('can:access-pos');
+        Route::get('/pos/offline/check', [PosController::class, 'checkPendingOfflineSales'])->name('pos.offline.check')->middleware('can:access-pos');
 
-    Route::post('/pos/shift/open', [PosController::class, 'openShift'])->name('pos.shift.open')->middleware('can:access-pos');
-    Route::post('/pos/shift/{id}/close', [PosController::class, 'closeShift'])->name('pos.shift.close')->middleware('can:access-pos');
-    Route::get('/pos/shift/current', [PosController::class, 'getCurrentShift'])->name('pos.shift.current')->middleware('can:access-pos');
-    Route::get('/pos/shift/history', [PosController::class, 'getShiftHistory'])->name('pos.shift.history')->middleware('can:access-pos');
+        Route::post('/pos/shift/open', [PosController::class, 'openShift'])->name('pos.shift.open')->middleware('can:access-pos');
+        Route::post('/pos/shift/{id}/close', [PosController::class, 'closeShift'])->name('pos.shift.close')->middleware('can:access-pos');
+        Route::get('/pos/shift/current', [PosController::class, 'getCurrentShift'])->name('pos.shift.current')->middleware('can:access-pos');
+        Route::get('/pos/shift/history', [PosController::class, 'getShiftHistory'])->name('pos.shift.history')->middleware('can:access-pos');
 
-    Route::post('/pos/payment/duitnow-qr', [PosController::class, 'generateDuitNowQR'])->name('pos.payment.duitnow-qr')->middleware('can:access-pos');
-    Route::post('/pos/payment/duitnow-static', [PosController::class, 'generateStaticDuitNowQR'])->name('pos.payment.duitnow-static')->middleware('can:access-pos');
-    Route::post('/pos/payment/duitnow-verify', [PosController::class, 'verifyDuitNowPayment'])->name('pos.payment.duitnow-verify')->middleware('can:access-pos');
+        Route::post('/pos/payment/duitnow-qr', [PosController::class, 'generateDuitNowQR'])->name('pos.payment.duitnow-qr')->middleware('can:access-pos');
+        Route::post('/pos/payment/duitnow-static', [PosController::class, 'generateStaticDuitNowQR'])->name('pos.payment.duitnow-static')->middleware('can:access-pos');
+        Route::post('/pos/payment/duitnow-verify', [PosController::class, 'verifyDuitNowPayment'])->name('pos.payment.duitnow-verify')->middleware('can:access-pos');
 
-    Route::get('/pos/company/search', [PosController::class, 'searchCompany'])->name('pos.company.search')->middleware('can:access-pos');
-    Route::get('/pos/company/details', [PosController::class, 'getCompanyDetails'])->name('pos.company.details')->middleware('can:access-pos');
-    Route::get('/pos/company/officers', [PosController::class, 'getCompanyOfficers'])->name('pos.company.officers')->middleware('can:access-pos');
+        Route::get('/pos/company/search', [PosController::class, 'searchCompany'])->name('pos.company.search')->middleware('can:access-pos');
+        Route::get('/pos/company/details', [PosController::class, 'getCompanyDetails'])->name('pos.company.details')->middleware('can:access-pos');
+        Route::get('/pos/company/officers', [PosController::class, 'getCompanyOfficers'])->name('pos.company.officers')->middleware('can:access-pos');
 
-    Route::post('/pos/transfer', [PosController::class, 'createTransfer'])->name('pos.transfer.create')->middleware('can:access-pos');
-    Route::get('/pos/transfer/pending', [PosController::class, 'getPendingTransfers'])->name('pos.transfer.pending')->middleware('can:access-pos');
-    Route::post('/pos/transfer/{id}/approve', [PosController::class, 'approveTransfer'])->name('pos.transfer.approve')->middleware('can:access-pos');
-    Route::post('/pos/transfer/{id}/reject', [PosController::class, 'rejectTransfer'])->name('pos.transfer.reject')->middleware('can:access-pos');
-    Route::post('/pos/transfer/{id}/transit', [PosController::class, 'markInTransit'])->name('pos.transfer.transit')->middleware('can:access-pos');
-    Route::post('/pos/transfer/{id}/receive', [PosController::class, 'receiveTransfer'])->name('pos.transfer.receive')->middleware('can:access-pos');
-    Route::get('/pos/transfer/history', [PosController::class, 'getTransferHistory'])->name('pos.transfer.history')->middleware('can:access-pos');
+        Route::post('/pos/transfer', [PosController::class, 'createTransfer'])->name('pos.transfer.create')->middleware('can:access-pos');
+        Route::get('/pos/transfer/pending', [PosController::class, 'getPendingTransfers'])->name('pos.transfer.pending')->middleware('can:access-pos');
+        Route::post('/pos/transfer/{id}/approve', [PosController::class, 'approveTransfer'])->name('pos.transfer.approve')->middleware('can:access-pos');
+        Route::post('/pos/transfer/{id}/reject', [PosController::class, 'rejectTransfer'])->name('pos.transfer.reject')->middleware('can:access-pos');
+        Route::post('/pos/transfer/{id}/transit', [PosController::class, 'markInTransit'])->name('pos.transfer.transit')->middleware('can:access-pos');
+        Route::post('/pos/transfer/{id}/receive', [PosController::class, 'receiveTransfer'])->name('pos.transfer.receive')->middleware('can:access-pos');
+        Route::get('/pos/transfer/history', [PosController::class, 'getTransferHistory'])->name('pos.transfer.history')->middleware('can:access-pos');
+    });
 });

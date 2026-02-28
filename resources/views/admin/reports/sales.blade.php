@@ -150,7 +150,7 @@
                         <td class="px-6 py-4 text-sm text-gray-600">{{ $sale->created_at->format('M d, Y H:i') }}</td>
                         <td class="px-6 py-4 text-sm text-gray-600">{{ $sale->customer->name ?? 'Walk-in' }}</td>
                         <td class="px-6 py-4 text-sm text-gray-600">{{ $sale->outlet->name ?? 'N/A' }}</td>
-                        <td class="px-6 py-4 text-sm text-gray-600">{{ $sale->items->count() }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-600">{{ $sale->saleItems->count() }}</td>
                         <td class="px-6 py-4 text-sm font-medium text-gray-800">RM {{ number_format($sale->total_amount, 2) }}
                         </td>
                         <td class="px-6 py-4">

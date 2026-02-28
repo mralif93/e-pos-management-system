@@ -43,11 +43,15 @@ class AuthController extends Controller
                 return back()->with('error_popup', 'POS Access is temporarily disabled for this outlet. Please contact your administrator.');
             }
 
-            if ($user->role === 'Cashier') {
-                return redirect()->intended('/pos');
+            if (in_array($user->role, ['Admin', 'Super Admin'])) {
+                return redirect('/admin/dashboard');
             }
 
-            return redirect()->intended('/admin/dashboard');
+            if (in_array($user->role, ['Cashier', 'Manager'])) {
+                return redirect('/pos');
+            }
+
+            return redirect('/');
         }
 
         throw ValidationException::withMessages([
