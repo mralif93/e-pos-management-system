@@ -31,15 +31,31 @@ class PosController extends Controller
 
     public function verifyPinEndpoint(Request $request)
     {
-        $request->validate(['pin' => 'required|string']);
+        $request->validate(['pin' => 'required|string|size:4']);
         $user = auth()->user();
+
+        \Log::info('Verify Pin Endpoint Hit', [
+            'expected_pin' => $user ? $user->pin : null,
+            'provided_pin' => $request->pin,
+            'user_id' => $user ? $user->id : null
+        ]);
 
         // If user has a specific PIN, check it. 
         // If not, check if any manager PIN matches (optional, but for now strict user PIN or manager override PIN?)
         // Let's assume the user MUST have a PIN set to unlock their own session, OR use a manager PIN.
         // Simple implementation: Check against Auth user's PIN.
 
-        if ((string) $user->pin === (string) $request->pin) {
+        if ($user && (string) $user->pin === (string) $request->pin) {
+            session(['pos_locked' => false]);
+            return response()->json(['success' => true]);
+        }
+
+        // Check if a Manager or Admin PIN is provided as an override
+        $manager = User::where('pin', $request->pin)
+            ->whereIn('role', ['Manager', 'Admin', 'Super Admin'])
+            ->first();
+
+        if ($manager) {
             session(['pos_locked' => false]);
             return response()->json(['success' => true]);
         }
@@ -130,7 +146,7 @@ class PosController extends Controller
 
     public function verifyPin(Request $request)
     {
-        $request->validate(['pin' => 'required|string']);
+        $request->validate(['pin' => 'required|string|size:4']);
 
         $manager = User::where('pin', $request->pin)
             ->whereIn('role', ['Super Admin', 'Admin', 'Manager'])
@@ -193,7 +209,7 @@ class PosController extends Controller
             $product = Product::find($item['product_id']);
             $outletPrice = $product->prices()->where('outlet_id', $userOutletId)->first();
             $availableStock = $outletPrice ? $outletPrice->stock_level : $product->stock_level;
-            
+
             if ($availableStock !== null && $availableStock < $item['quantity']) {
                 $stockErrors[] = "Insufficient stock for {$product->name}. Available: {$availableStock}";
             }
@@ -247,13 +263,13 @@ class PosController extends Controller
             if ($request->customer_id) {
                 $loyaltyService = new LoyaltyService();
                 $pointsResult = $loyaltyService->processSalePoints($sale, $pointsToRedeem);
-                
+
                 $sale->update([
                     'points_earned' => $pointsResult['points_earned'],
                     'points_redeemed' => $pointsResult['points_redeemed'],
                     'discount_from_points' => $pointsResult['discount_from_points'],
                 ]);
-                
+
                 $sale->refresh();
             }
 
@@ -295,7 +311,7 @@ class PosController extends Controller
     public function voidSale(Request $request, $id)
     {
         $request->validate([
-            'pin' => 'required|string',
+            'pin' => 'required|string|size:4',
         ]);
 
         $manager = User::where('pin', $request->pin)
@@ -379,14 +395,14 @@ class PosController extends Controller
     public function getOutlets()
     {
         $outlets = Outlet::where('is_active', true)->get(['id', 'name', 'outlet_code', 'address', 'phone']);
-        
+
         return response()->json(['outlets' => $outlets]);
     }
 
     public function getCustomerPoints(Request $request)
     {
         $customerId = $request->customer_id;
-        
+
         if (!$customerId) {
             return response()->json(['message' => 'Customer ID required'], 400);
         }
@@ -521,10 +537,34 @@ class PosController extends Controller
     public function checkPendingOfflineSales()
     {
         $offlineService = new OfflineSaleService();
-        
+
         return response()->json([
             'has_pending' => $offlineService->getPendingCount() > 0,
             'pending_count' => $offlineService->getPendingCount(),
+        ]);
+    }
+
+    public function getLowStockAlerts(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user->outlet_id) {
+            return response()->json(['alerts' => []]);
+        }
+
+        $lowStockProducts = \App\Models\ProductOutletPrice::with('product')
+            ->where('outlet_id', $user->outlet_id)
+            ->whereRaw('stock_level <= (SELECT low_stock_threshold FROM products WHERE products.id = product_outlet_prices.product_id AND products.low_stock_threshold > 0)')
+            ->get();
+
+        return response()->json([
+            'alerts' => $lowStockProducts->map(function ($item) {
+                return [
+                    'id' => $item->product_id,
+                    'name' => $item->product->name ?? 'Unknown',
+                    'stock_level' => $item->stock_level,
+                    'threshold' => $item->product->low_stock_threshold ?? 0,
+                ];
+            })
         ]);
     }
 
@@ -566,20 +606,20 @@ class PosController extends Controller
         ];
 
         $shift = $shiftService->closeShift($shift, $data);
-        
+
         return response()->json(['message' => 'Shift closed successfully', 'shift' => $shift]);
     }
 
     public function getCurrentShift()
     {
         $user = auth()->user();
-        
+
         if (!$user->outlet_id) {
             return response()->json(['message' => 'User has no outlet assigned', 'shift' => null], 400);
         }
-        
+
         $shiftService = new ShiftService();
-        
+
         $shift = $shiftService->getCurrentShift($user->outlet_id, $user->id);
 
         if (!$shift) {
@@ -598,7 +638,7 @@ class PosController extends Controller
     {
         $user = auth()->user();
         $shiftService = new ShiftService();
-        
+
         $startDate = $request->filled('start_date') ? Carbon::parse($request->start_date) : null;
         $endDate = $request->filled('end_date') ? Carbon::parse($request->end_date) : null;
 
@@ -693,7 +733,7 @@ class PosController extends Controller
             ], 503);
         }
 
-        $results = $ssmService->searchByCompanyName($request->query);
+        $results = $ssmService->searchByCompanyName($request->input('query'));
 
         return response()->json($results);
     }
@@ -780,11 +820,11 @@ class PosController extends Controller
     public function getPendingTransfers(Request $request)
     {
         $user = auth()->user();
-        
+
         if (!$user->outlet_id) {
             return response()->json(['message' => 'User has no outlet assigned', 'transfers' => []], 400);
         }
-        
+
         $type = $request->get('type', 'incoming');
 
         $query = InventoryTransfer::with(['fromOutlet', 'toOutlet', 'items.product', 'requestedBy']);
@@ -879,7 +919,7 @@ class PosController extends Controller
             $transferItem = InventoryTransferItem::where('inventory_transfer_id', $transfer->id)
                 ->where('product_id', $item['product_id'])
                 ->first();
-            
+
             if ($transferItem) {
                 $transferItem->update(['quantity_received' => $item['quantity_received']]);
             }
@@ -893,7 +933,7 @@ class PosController extends Controller
     public function getTransferHistory(Request $request)
     {
         $user = auth()->user();
-        
+
         $transfers = InventoryTransfer::where('from_outlet_id', $user->outlet_id)
             ->orWhere('to_outlet_id', $user->outlet_id)
             ->with(['fromOutlet', 'toOutlet', 'items.product', 'requestedBy', 'approvedBy', 'receivedBy'])

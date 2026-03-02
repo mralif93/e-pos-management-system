@@ -64,11 +64,11 @@
                             <select name="role" required
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white"
                                 {{ $user->id === auth()->id() ? 'disabled' : '' }}>
-                                <option value="cashier" {{ old('role', $user->role) == 'cashier' ? 'selected' : '' }}>Cashier
+                                <option value="Cashier" {{ old('role', $user->role) == 'Cashier' ? 'selected' : '' }}>Cashier
                                     (POS Only)</option>
-                                <option value="manager" {{ old('role', $user->role) == 'manager' ? 'selected' : '' }}>Manager
+                                <option value="Manager" {{ old('role', $user->role) == 'Manager' ? 'selected' : '' }}>Manager
                                     (Branch Admin)</option>
-                                <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Admin (Full
+                                <option value="Admin" {{ old('role', $user->role) == 'Admin' ? 'selected' : '' }}>Admin (Full
                                     System)</option>
                             </select>
                             @if($user->id === auth()->id())
@@ -118,8 +118,8 @@
                         </div>
 
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">POS PIN (6 Digits)</label>
-                            <input type="text" name="pin" value="{{ old('pin', $user->pin) }}" maxlength="6" pattern="\d{6}"
+                            <label class="block text-sm font-medium text-gray-700 mb-1">POS PIN (4 Digits)</label>
+                            <input type="text" name="pin" value="{{ old('pin', $user->pin) }}" maxlength="4" pattern="\d{4}"
                                 placeholder="------"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 tracking-widest text-center">
                             <p class="text-xs text-gray-500 mt-1">Leave blank if POS access is not required.</p>

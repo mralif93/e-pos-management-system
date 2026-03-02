@@ -144,6 +144,8 @@ Route::middleware(['auth:web,sanctum'])->group(function () {
         Route::get('/pos/offline/drafts', [PosController::class, 'getOfflineDrafts'])->name('pos.offline.drafts')->middleware('can:access-pos');
         Route::get('/pos/offline/check', [PosController::class, 'checkPendingOfflineSales'])->name('pos.offline.check')->middleware('can:access-pos');
 
+        Route::get('/pos/inventory/low-stock', [PosController::class, 'getLowStockAlerts'])->name('pos.inventory.low-stock')->middleware('can:access-pos');
+
         Route::post('/pos/shift/open', [PosController::class, 'openShift'])->name('pos.shift.open')->middleware('can:access-pos');
         Route::post('/pos/shift/{id}/close', [PosController::class, 'closeShift'])->name('pos.shift.close')->middleware('can:access-pos');
         Route::get('/pos/shift/current', [PosController::class, 'getCurrentShift'])->name('pos.shift.current')->middleware('can:access-pos');

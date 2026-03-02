@@ -57,9 +57,9 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">System Role <span class="text-red-500">*</span></label>
                             <select name="role" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white">
-                                <option value="cashier" {{ old('role') == 'cashier' ? 'selected' : '' }}>Cashier (POS Only)</option>
-                                <option value="manager" {{ old('role') == 'manager' ? 'selected' : '' }}>Manager (Branch Admin)</option>
-                                <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin (Full System)</option>
+                                <option value="Cashier" {{ old('role') == 'Cashier' ? 'selected' : '' }}>Cashier (POS Only)</option>
+                                <option value="Manager" {{ old('role') == 'Manager' ? 'selected' : '' }}>Manager (Branch Admin)</option>
+                                <option value="Admin" {{ old('role') == 'Admin' ? 'selected' : '' }}>Admin (Full System)</option>
                             </select>
                         </div>
                         
@@ -98,8 +98,8 @@
                         </div>
                         
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">POS PIN (6 Digits)</label>
-                            <input type="text" name="pin" value="{{ old('pin') }}" maxlength="6" pattern="\d{6}" placeholder="------"
+                            <label class="block text-sm font-medium text-gray-700 mb-1">POS PIN (4 Digits)</label>
+                            <input type="text" name="pin" value="{{ old('pin') }}" maxlength="4" pattern="\d{4}" placeholder="----"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 tracking-widest text-center">
                             <p class="text-xs text-gray-500 mt-1">Leave blank if POS access is not required.</p>
                         </div>

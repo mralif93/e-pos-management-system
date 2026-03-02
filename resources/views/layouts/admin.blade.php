@@ -147,7 +147,7 @@
                             <!-- Badge Trigger Button for Super Admin -->
                             <button id="outletSwitcherBtn" type="button"
                                 class="flex items-center gap-2 h-[38px] px-3.5 rounded-xl border transition-all focus:outline-none
-                                        {{ $selectedOutletId ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm shadow-indigo-300 hover:bg-indigo-700' : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50 shadow-sm' }}">
+                                            {{ $selectedOutletId ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm shadow-indigo-300 hover:bg-indigo-700' : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50 shadow-sm' }}">
                                 <i class="hgi-stroke hgi-building-03 text-[15px] shrink-0"></i>
                                 <span class="text-sm font-semibold max-w-[120px] truncate">{{ $currentOutletName }}</span>
                                 @if($selectedOutletId)
@@ -194,9 +194,9 @@
                                         @endforeach
                                         <button type="submit"
                                             class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all
-                                                    {{ !$selectedOutletId ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-50' }}">
+                                                        {{ !$selectedOutletId ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-50' }}">
                                             <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0
-                                                        {{ !$selectedOutletId ? 'bg-indigo-600' : 'bg-gray-100' }}">
+                                                            {{ !$selectedOutletId ? 'bg-indigo-600' : 'bg-gray-100' }}">
                                                 <i
                                                     class="hgi-stroke hgi-grid-view text-sm {{ !$selectedOutletId ? 'text-white' : 'text-gray-400' }}"></i>
                                             </div>
@@ -225,10 +225,10 @@
                                             <input type="hidden" name="outlet_id" value="{{ $outlet->id }}">
                                             <button type="submit"
                                                 class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all
-                                                                {{ $selectedOutletId == $outlet->id ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-50' }}">
+                                                                        {{ $selectedOutletId == $outlet->id ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-50' }}">
                                                 <div
                                                     class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0
-                                                                    {{ $selectedOutletId == $outlet->id ? 'bg-indigo-600' : 'bg-gray-100' }}">
+                                                                            {{ $selectedOutletId == $outlet->id ? 'bg-indigo-600' : 'bg-gray-100' }}">
                                                     <span
                                                         class="text-xs font-black {{ $selectedOutletId == $outlet->id ? 'text-white' : 'text-gray-500' }}">
                                                         {{ substr($outlet->name, 0, 1) }}
@@ -312,6 +312,13 @@
                         class="flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl px-4 py-3 text-sm mb-5">
                         <i class="hgi-stroke hgi-checkmark-circle-01 text-lg shrink-0"></i>
                         <span>{{ session('success') }}</span>
+                    </div>
+                @endif
+                @if(session('error'))
+                    <div
+                        class="flex items-center gap-3 bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm mb-5">
+                        <i class="hgi-stroke hgi-alert-01 text-lg shrink-0"></i>
+                        <span>{{ session('error') }}</span>
                     </div>
                 @endif
                 @yield('content')

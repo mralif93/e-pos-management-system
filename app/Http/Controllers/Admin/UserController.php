@@ -59,10 +59,10 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|string|in:admin,manager,cashier',
+            'role' => 'required|string|in:Admin,Manager,Cashier,Super Admin',
             'outlet_id' => 'nullable|exists:outlets,id',
             'staff_id' => 'required|string|max:50|unique:users',
-            'pin' => 'nullable|string|size:6',
+            'pin' => 'nullable|string|size:4',
             'is_active' => 'boolean',
             'theme_color' => 'nullable|string|max:20',
         ]);
@@ -94,7 +94,7 @@ class UserController extends Controller
                 Rule::unique('users')->ignore($user->id)
             ],
             'password' => 'nullable|string|min:8|confirmed',
-            'role' => 'required|string|in:admin,manager,cashier',
+            'role' => 'required|string|in:Admin,Manager,Cashier,Super Admin',
             'outlet_id' => 'nullable|exists:outlets,id',
             'staff_id' => [
                 'required',
@@ -102,7 +102,7 @@ class UserController extends Controller
                 'max:50',
                 Rule::unique('users')->ignore($user->id)
             ],
-            'pin' => 'nullable|string|size:6',
+            'pin' => 'nullable|string|size:4',
             'is_active' => 'boolean',
             'theme_color' => 'nullable|string|max:20',
         ]);

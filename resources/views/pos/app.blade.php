@@ -561,228 +561,406 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Loyalty Points Redemption Modal -->
-            <div id="points-redemption-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
-                aria-modal="true">
-                <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"
-                    onclick="posApp.closePointsRedemptionModal()"></div>
-                <div class="fixed inset-0 z-10 overflow-y-auto">
-                    <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-                        <div
-                            class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-slate-100">
-                            <div class="bg-white px-6 py-5 border-b border-slate-100 flex justify-between items-center">
-                                <h3 class="text-lg font-bold text-slate-900">Redeem Loyalty Points</h3>
-                                <button onclick="posApp.closePointsRedemptionModal()"
-                                    class="text-slate-400 hover:text-slate-600">
-                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </div>
-                            <div class="p-6">
-                                <div class="bg-slate-50 rounded-lg p-4 mb-4">
-                                    <div class="flex justify-between items-center mb-2">
-                                        <span class="text-xs text-slate-500">Available Points</span>
-                                        <span id="available-points"
-                                            class="text-lg font-black text-{{ $theme }}-600">0</span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-xs text-slate-500">Tier</span>
-                                        <span id="redemption-tier" class="text-xs font-bold text-amber-600">Bronze</span>
-                                    </div>
+        <!-- Loyalty Points Redemption Modal -->
+        <div id="points-redemption-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
+            aria-modal="true">
+            <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"
+                onclick="posApp.closePointsRedemptionModal()"></div>
+            <div class="fixed inset-0 z-10 overflow-y-auto">
+                <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                    <div
+                        class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-slate-100">
+                        <div class="bg-white px-6 py-5 border-b border-slate-100 flex justify-between items-center">
+                            <h3 class="text-lg font-bold text-slate-900">Redeem Loyalty Points</h3>
+                            <button onclick="posApp.closePointsRedemptionModal()"
+                                class="text-slate-400 hover:text-slate-600">
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="p-6">
+                            <div class="bg-slate-50 rounded-lg p-4 mb-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs text-slate-500">Available Points</span>
+                                    <span id="available-points" class="text-lg font-black text-{{ $theme }}-600">0</span>
                                 </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs text-slate-500">Tier</span>
+                                    <span id="redemption-tier" class="text-xs font-bold text-amber-600">Bronze</span>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-[10px] font-medium text-slate-700 mb-1">Points to
+                                    Redeem</label>
+                                <input type="number" id="points-to-redeem"
+                                    class="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500"
+                                    placeholder="Enter points" min="0">
+                                <p class="text-[10px] text-slate-500 mt-1">Max redeemable: <span
+                                        id="max-redeemable-points">0</span> points</p>
+                            </div>
+                            <div class="bg-green-50 rounded-lg p-3 mb-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs text-green-700 font-medium">Discount Value</span>
+                                    <span id="points-discount-display"
+                                        class="text-lg font-black text-green-600">RM0.00</span>
+                                </div>
+                            </div>
+                            <button onclick="posApp.applyPointsRedemption()"
+                                class="w-full pos-btn-responsive bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white shadow-md transition-all">
+                                Apply Discount
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shift Management Modal -->
+        <div id="shift-modal"
+            class="fixed inset-0 z-50 bg-slate-50 transform transition-transform duration-300 translate-y-full flex flex-col hidden">
+            <!-- Header -->
+            <div
+                class="bg-white px-6 py-4 border-b border-slate-200 shadow-sm flex items-center justify-between flex-shrink-0">
+                <div class="flex items-center gap-4">
+                    <button onclick="posApp.closeShiftModal()"
+                        class="p-2 -ml-2 hover:bg-slate-100 rounded-full transition-colors text-slate-500 hover:text-slate-800">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                    </button>
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">Shift Management</h2>
+                        <p class="text-xs text-slate-500">Manage your shifts</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="flex-grow overflow-auto p-6">
+                <div class="w-full mx-auto bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <!-- Tabs -->
+                    <div class="flex border-b border-slate-200 px-6 pt-2 bg-slate-50">
+                        <button onclick="posApp.switchShiftTab('current')" id="shift-tab-current"
+                            class="flex-1 py-3 text-xs font-bold text-{{ $theme }}-600 border-b-2 border-{{ $theme }}-600">Current
+                            Shift</button>
+                        <button onclick="posApp.switchShiftTab('history')" id="shift-tab-history"
+                            class="flex-1 py-3 text-xs font-bold text-slate-500 hover:text-slate-700">History</button>
+                    </div>
+                    <div id="shift-tab-content-current" class="p-6 w-full">
+                        <!-- Open Shift Form -->
+                        <div id="shift-open-form" class="w-full mt-2 mb-6">
+                            <div class="text-center mb-6">
+                                <div
+                                    class="w-12 h-12 bg-{{ $theme }}-50 text-{{ $theme }}-600 rounded-full flex items-center justify-center mx-auto mb-3 border border-{{ $theme }}-100 shadow-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-bold text-slate-800">Start New Shift</h3>
+                                <p class="text-xs text-slate-500 mt-1">Enter the opening cash amount in the drawer to begin
+                                    your shift.</p>
+                            </div>
+
+                            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-5 max-w-sm mx-auto">
                                 <div class="mb-4">
-                                    <label class="block text-[10px] font-medium text-slate-700 mb-1">Points to
-                                        Redeem</label>
-                                    <input type="number" id="points-to-redeem"
-                                        class="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500"
-                                        placeholder="Enter points" min="0">
-                                    <p class="text-[10px] text-slate-500 mt-1">Max redeemable: <span
-                                            id="max-redeemable-points">0</span> points</p>
-                                </div>
-                                <div class="bg-green-50 rounded-lg p-3 mb-4">
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-xs text-green-700 font-medium">Discount Value</span>
-                                        <span id="points-discount-display"
-                                            class="text-lg font-black text-green-600">RM0.00</span>
-                                    </div>
-                                </div>
-                                <button onclick="posApp.applyPointsRedemption()"
-                                    class="w-full pos-btn-responsive bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white shadow-md transition-all">
-                                    Apply Discount
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Shift Management Modal -->
-            <div id="shift-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
-                aria-modal="true">
-                <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"
-                    onclick="posApp.closeShiftModal()"></div>
-                <div class="fixed inset-0 z-10 overflow-y-auto">
-                    <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-                        <div
-                            class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-slate-100">
-                            <div class="bg-white px-6 py-5 border-b border-slate-100 flex justify-between items-center">
-                                <h3 class="text-lg font-bold text-slate-900">Shift Management</h3>
-                                <button onclick="posApp.closeShiftModal()" class="text-slate-400 hover:text-slate-600">
-                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </div>
-                            <div class="p-6">
-                                <!-- Open Shift Form -->
-                                <div id="shift-open-form">
-                                    <div class="mb-4">
-                                        <label class="block text-[10px] font-medium text-slate-700 mb-1">Opening Cash
-                                            Amount</label>
+                                    <label
+                                        class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wide">Opening
+                                        Cash Amount</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span
+                                                class="text-slate-500 font-medium text-sm">{{ $outletSettings['currency_symbol'] ?? '$' }}</span>
+                                        </div>
                                         <input type="number" id="opening-cash"
-                                            class="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500"
+                                            class="block w-full pl-8 pr-3 py-2 text-base font-bold text-slate-900 border border-slate-200 rounded-lg focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500 transition-all placeholder:text-slate-300 placeholder:font-normal shadow-sm"
                                             placeholder="0.00" step="0.01">
                                     </div>
-                                    <button onclick="posApp.openShift()"
-                                        class="w-full pos-btn-responsive bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white shadow-md transition-all">
-                                        Open Shift
-                                    </button>
                                 </div>
-                                <!-- Current Shift Info -->
-                                <div id="shift-current-info" class="hidden">
-                                    <div class="bg-{{ $theme }}-50 rounded-lg p-4 mb-4">
-                                        <div class="flex items-center gap-2 mb-2">
-                                            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                                            <span class="text-xs font-bold text-{{ $theme }}-700">Shift Active</span>
-                                        </div>
-                                        <p class="text-xs text-slate-500">Shift #<span id="current-shift-number">-</span>
-                                        </p>
-                                        <p class="text-xs text-slate-500">Opened at: <span id="current-shift-time">-</span>
-                                        </p>
-                                        <p class="text-xs text-slate-500">Opening Cash: <span
-                                                id="current-shift-opening">-</span></p>
+                                <button onclick="posApp.openShift()"
+                                    class="w-full py-2.5 bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white rounded-lg font-bold shadow-sm transition-all flex items-center justify-center gap-2 text-sm">
+                                    <span>Open Shift</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L6.414 9H17a1 1 0 110 2H6.414l4.293 4.293a1 1 0 01-1.414 1.414l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 0z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Current Shift Info -->
+                        <div id="shift-current-info" class="hidden mt-2 mb-6 w-full">
+                            <!-- Active Shift Summary Row -->
+                            <div
+                                class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-5 flex flex-col md:flex-row items-center justify-between gap-4">
+                                <!-- Active Shift & ID -->
+                                <div class="flex items-center gap-3 flex-1">
+                                    <div
+                                        class="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center border border-green-100 relative shadow-sm">
+                                        <span
+                                            class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_6px_rgba(34,197,94,0.6)] border border-white"></span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                        </svg>
                                     </div>
-                                    <div class="mb-4">
-                                        <label class="block text-[10px] font-medium text-slate-700 mb-1">Closing Cash
-                                            Amount</label>
+                                    <div>
+                                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">
+                                            Active Shift</p>
+                                        <h3 class="text-lg font-bold text-slate-800 tracking-tight">#<span
+                                                id="current-shift-number">-</span></h3>
+                                    </div>
+                                </div>
+
+                                <!-- Divider -->
+                                <div class="hidden md:block w-px h-8 bg-slate-200"></div>
+
+                                <!-- Opened At -->
+                                <div class="flex items-center gap-3 flex-1 justify-center">
+                                    <div
+                                        class="w-8 h-8 bg-slate-50 rounded-full flex items-center justify-center text-slate-500 border border-slate-200 shadow-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">
+                                            Opened At</p>
+                                        <p class="text-sm font-bold text-slate-700" id="current-shift-time">-</p>
+                                    </div>
+                                </div>
+
+                                <!-- Divider -->
+                                <div class="hidden md:block w-px h-8 bg-slate-200"></div>
+
+                                <!-- Opening Cash -->
+                                <div class="flex items-center gap-3 flex-1 justify-end">
+                                    <div class="text-right">
+                                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">
+                                            Opening Cash</p>
+                                        <p class="text-lg font-bold text-slate-800" id="current-shift-opening">-</p>
+                                    </div>
+                                    <div
+                                        class="w-8 h-8 bg-{{ $theme }}-50 rounded-full flex items-center justify-center border border-{{ $theme }}-100 text-{{ $theme }}-600 shadow-sm">
+                                        <span
+                                            class="font-bold text-sm">{{ $outletSettings['currency_symbol'] ?? '$' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Close Shift Form -->
+                            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-5 max-w-md mx-auto">
+                                <div class="text-center mb-4">
+                                    <h4 class="text-base font-bold text-slate-800">Close Current Shift</h4>
+                                    <p class="text-xs text-slate-500 mt-1">Enter the exact amount of cash currently in
+                                        the
+                                        drawer to close the shift.</p>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label
+                                        class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wide text-center">Actual
+                                        Cash in Drawer</label>
+                                    <div class="relative w-full mx-auto max-w-xs">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span
+                                                class="text-slate-500 font-medium text-sm">{{ $outletSettings['currency_symbol'] ?? '$' }}</span>
+                                        </div>
                                         <input type="number" id="closing-cash"
-                                            class="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500"
+                                            class="block w-full pl-8 pr-3 py-2 text-center text-base font-bold text-slate-900 border border-slate-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all placeholder:text-slate-300 placeholder:font-normal shadow-sm"
                                             placeholder="0.00" step="0.01">
                                     </div>
-                                    <button onclick="posApp.closeShift()"
-                                        class="w-full pos-btn-responsive bg-red-600 hover:bg-red-700 text-white shadow-md transition-all">
-                                        Close Shift
-                                    </button>
                                 </div>
+
+                                <button onclick="posApp.closeShift()"
+                                    class="w-full max-w-xs mx-auto py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold shadow-sm transition-all flex items-center justify-center gap-2 text-sm block">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    <span>Close Shift</span>
+                                </button>
                             </div>
                         </div>
+                    </div>
+                    <div id="shift-tab-content-history" class="hidden">
+                        <table class="w-full text-left border-collapse">
+                            <thead
+                                class="bg-slate-50 text-[10px] uppercase tracking-wider text-slate-500 font-semibold border-b border-slate-200">
+                                <tr>
+                                    <th class="px-6 py-4">Shift #</th>
+                                    <th class="px-6 py-4 hidden sm:table-cell">Opened At</th>
+                                    <th class="px-6 py-4">Status</th>
+                                    <th class="px-6 py-4 text-right">Closing Cash</th>
+                                </tr>
+                            </thead>
+                            <tbody id="shift-history-list" class="divide-y divide-slate-100">
+                                <tr>
+                                    <td colspan="4" class="px-6 py-8 text-center text-slate-400 text-sm">No past shifts</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <!-- Inventory Transfer Modal -->
-            <div id="transfer-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
-                aria-modal="true">
-                <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"
-                    onclick="posApp.closeTransferModal()"></div>
-                <div class="fixed inset-0 z-10 overflow-y-auto">
-                    <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-                        <div
-                            class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-100 max-h-[80vh] flex flex-col">
-                            <div
-                                class="bg-white px-6 py-5 border-b border-slate-100 flex justify-between items-center flex-shrink-0">
-                                <h3 class="text-lg font-bold text-slate-900">Inventory Transfer</h3>
-                                <button onclick="posApp.closeTransferModal()" class="text-slate-400 hover:text-slate-600">
-                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </div>
-                            <div class="p-6 overflow-y-auto flex-1">
-                                <!-- Tabs -->
-                                <div class="flex border-b border-slate-200 mb-4">
-                                    <button onclick="posApp.switchTransferTab('new')" id="transfer-tab-new"
-                                        class="flex-1 py-2 text-xs font-bold text-{{ $theme }}-600 border-b-2 border-{{ $theme }}-600">New
-                                        Transfer</button>
-                                    <button onclick="posApp.switchTransferTab('pending')" id="transfer-tab-pending"
-                                        class="flex-1 py-2 text-xs font-bold text-slate-500 hover:text-slate-700">Pending</button>
-                                </div>
-                                <!-- New Transfer Form -->
-                                <div id="transfer-form-new">
-                                    <div class="mb-4">
-                                        <label class="block text-[10px] font-medium text-slate-700 mb-1">To Outlet</label>
-                                        <select id="transfer-outlet"
-                                            class="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500">
-                                            <option value="">Select Outlet</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label class="block text-[10px] font-medium text-slate-700 mb-1">Select
-                                            Products</label>
-                                        <div id="transfer-products"
-                                            class="max-h-40 overflow-y-auto border border-slate-200 rounded-lg p-2 space-y-2">
-                                            <p class="text-xs text-slate-400 text-center py-2">Loading products...</p>
-                                        </div>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label class="block text-[10px] font-medium text-slate-700 mb-1">Notes
-                                            (Optional)</label>
-                                        <textarea id="transfer-notes"
-                                            class="block w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500"
-                                            rows="2" placeholder="Transfer notes..."></textarea>
-                                    </div>
-                                    <button onclick="posApp.createTransfer()"
-                                        class="w-full pos-btn-responsive bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white shadow-md transition-all">
-                                        Request Transfer
-                                    </button>
-                                </div>
-                                <!-- Pending Transfers List -->
-                                <div id="transfer-list-pending" class="hidden space-y-3">
-                                    <div id="pending-transfers-list">
-                                        <p class="text-xs text-slate-400 text-center py-4">No pending transfers</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Inventory Transfer Modal -->
+    <div id="transfer-modal"
+        class="fixed inset-0 z-50 bg-slate-50 transform transition-transform duration-300 translate-y-full flex flex-col hidden">
+        <!-- Header -->
+        <div class="bg-white px-6 py-4 border-b border-slate-200 shadow-sm flex items-center justify-between flex-shrink-0">
+            <div class="flex items-center gap-4">
+                <button onclick="posApp.closeTransferModal()"
+                    class="p-2 -ml-2 hover:bg-slate-100 rounded-full transition-colors text-slate-500 hover:text-slate-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                </button>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Inventory Transfer</h2>
+                    <p class="text-xs text-slate-500">Manage product transfers</p>
                 </div>
             </div>
+        </div>
 
-            <!-- Low Stock Alerts Modal -->
-            <div id="lowstock-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
-                aria-modal="true">
-                <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"
-                    onclick="posApp.closeLowStockModal()"></div>
-                <div class="fixed inset-0 z-10 overflow-y-auto">
-                    <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-                        <div
-                            class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-100 max-h-[80vh] flex flex-col">
-                            <div
-                                class="bg-white px-6 py-5 border-b border-slate-100 flex justify-between items-center flex-shrink-0">
-                                <div class="flex items-center gap-2">
-                                    <span class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
-                                    <h3 class="text-lg font-bold text-slate-900">Low Stock Alerts</h3>
-                                </div>
-                                <button onclick="posApp.closeLowStockModal()" class="text-slate-400 hover:text-slate-600">
-                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </div>
-                            <div class="p-6 overflow-y-auto flex-1">
-                                <div id="lowstock-alerts-list" class="space-y-3">
-                                    <p class="text-xs text-slate-400 text-center py-4">No low stock alerts</p>
-                                </div>
+        <!-- Content -->
+        <div class="flex-grow overflow-auto bg-white">
+            <div class="w-full h-full mx-auto bg-white overflow-hidden">
+                <!-- Tabs -->
+                <div class="flex border-b border-slate-200 px-6 pt-2 bg-slate-50">
+                    <button onclick="posApp.switchTransferTab('new')" id="transfer-tab-new"
+                        class="flex-1 py-3 text-xs font-bold text-{{ $theme }}-600 border-b-2 border-{{ $theme }}-600">New
+                        Transfer</button>
+                    <button onclick="posApp.switchTransferTab('pending')" id="transfer-tab-pending"
+                        class="flex-1 py-3 text-xs font-bold text-slate-500 hover:text-slate-700">Pending</button>
+                </div>
+                <div id="transfer-form-new" class="p-6 md:p-8 w-full max-w-3xl mx-auto space-y-6">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wide">To
+                            Outlet</label>
+                        <select id="transfer-outlet" onchange="posApp.onTransferOutletChange()"
+                            class="block w-full pos-input-responsive focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500 transition-all text-slate-900 border border-slate-200">
+                            <option value="">Select Outlet</option>
+                        </select>
+                    </div>
+
+                    <div id="transfer-products-container" class="hidden">
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wide">Search
+                            Product</label>
+                        <div class="relative mb-3">
+                            <input type="text" id="transfer-product-search"
+                                class="block w-full pos-input-responsive focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500 transition-all text-slate-900 border border-slate-200"
+                                placeholder="Type to search products..." autocomplete="off">
+                            <input type="hidden" id="transfer-product-id">
+                            <div id="transfer-product-results"
+                                class="absolute z-10 w-full bg-white border border-slate-200 rounded-b-xl shadow-lg mt-1 max-h-60 overflow-y-auto hidden">
                             </div>
                         </div>
+                        <label
+                            class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wide">Quantity</label>
+                        <input type="number" id="transfer-qty" min="1" value="1"
+                            class="block w-full pos-input-responsive focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500 transition-all text-slate-900 border border-slate-200">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wide">Notes
+                            (Optional)</label>
+                        <textarea id="transfer-notes"
+                            class="block w-full pos-input-responsive focus:ring-2 focus:ring-{{ $theme }}-500 focus:border-{{ $theme }}-500 transition-all resize-none text-slate-900 border border-slate-200"
+                            rows="3" placeholder="Transfer notes..."></textarea>
+                    </div>
+
+                    <div class="pt-2">
+                        <button onclick="posApp.createTransfer()"
+                            class="w-full pos-btn-responsive bg-{{ $theme }}-600 hover:bg-{{ $theme }}-700 text-white shadow-md transition-all flex items-center justify-center gap-2">
+                            Request Transfer
+                        </button>
                     </div>
                 </div>
+                <!-- Pending Transfers List -->
+                <div id="transfer-list-pending" class="hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead
+                            class="bg-slate-50 text-[10px] uppercase tracking-wider text-slate-500 font-semibold border-b border-slate-200">
+                            <tr>
+                                <th class="px-6 py-4">Transfer #</th>
+                                <th class="px-6 py-4">From Outlet</th>
+                                <th class="px-6 py-4 hidden sm:table-cell">Items</th>
+                                <th class="px-6 py-4">Status</th>
+                                <th class="px-6 py-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pending-transfers-list" class="divide-y divide-slate-100">
+                            <tr>
+                                <td colspan="5" class="px-6 py-8 text-center text-slate-400 text-sm">No pending transfers
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Low Stock Alerts Modal -->
+    <div id="lowstock-modal"
+        class="fixed inset-0 z-50 bg-slate-50 transform transition-transform duration-300 translate-y-full flex flex-col hidden">
+        <!-- Header -->
+        <div class="bg-white px-6 py-4 border-b border-slate-200 shadow-sm flex items-center justify-between flex-shrink-0">
+            <div class="flex items-center gap-4">
+                <button onclick="posApp.closeLowStockModal()"
+                    class="p-2 -ml-2 hover:bg-slate-100 rounded-full transition-colors text-slate-500 hover:text-slate-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                </button>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Low Stock Alerts</h2>
+                    <p class="text-xs text-slate-500">View low stock items</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="flex-grow overflow-auto p-6">
+            <div class="w-full mx-auto bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead
+                        class="bg-slate-50 text-[10px] uppercase tracking-wider text-slate-500 font-semibold border-b border-slate-200">
+                        <tr>
+                            <th class="px-6 py-4">Product Name</th>
+                            <th class="px-6 py-4 hidden sm:table-cell">Threshold</th>
+                            <th class="px-6 py-4 text-right">Stock Level</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lowstock-alerts-list" class="divide-y divide-slate-100">
+                        <tr>
+                            <td colspan="3" class="px-6 py-8 text-center text-slate-400 text-sm">No low stock alerts</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -889,6 +1067,12 @@
 
                     this.fetchCategories();
                     this.fetchProducts();
+                    // Fetch low stock alerts initially
+                    this.checkLowStockAlerts();
+                    // Initialize transfer search click-out
+                    if (typeof this.initTransferSearch === 'function') {
+                        this.initTransferSearch();
+                    }
                     this.setupEventListeners();
                     this.updateDateTime();
                     setInterval(() => this.updateDateTime(), 1000);
@@ -973,29 +1157,29 @@
                             const checked = false;
 
                             optionsHtml += `
-                                                                                                                                                                                        <label class="flex items-center justify-between p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
-                                                                                                                                                                                            <div class="flex items-center">
-                                                                                                                                                                                                <input type="${inputType}" name="${inputName}" value="${item.id}"
-                                                                                                                                                                                                    data-modifier-id="${mod.id}"
-                                                                                                                                                                                                    data-item-price="${item.price}"
-                                                                                                                                                                                                    data-item-name="${item.name}"
-                                                                                                                                                                                                    class="w-4 h-4 text-{{ $theme }}-600 border-gray-300 focus:ring-{{ $theme }}-500"
-                                                                                                                                                                                                    onchange="posApp.handleModifierChange(this, '${mod.type}')">
-                                                                                                                                                                                                <span class="ml-3 font-medium text-slate-700">${item.name}</span>
-                                                                                                                                                                                            </div>
-                                                                                                                                                                                            <span class="text-[10px] text-slate-500">+${this.formatPrice(item.price)}</span>
-                                                                                                                                                                                        </label>
-                                                                                                                                                                                    `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <label class="flex items-center justify-between p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="flex items-center">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <input type="${inputType}" name="${inputName}" value="${item.id}"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        data-modifier-id="${mod.id}"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        data-item-price="${item.price}"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        data-item-name="${item.name}"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        class="w-4 h-4 text-{{ $theme }}-600 border-gray-300 focus:ring-{{ $theme }}-500"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        onchange="posApp.handleModifierChange(this, '${mod.type}')">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <span class="ml-3 font-medium text-slate-700">${item.name}</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                <span class="text-[10px] text-slate-500">+${this.formatPrice(item.price)}</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            </label>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        `;
                         });
 
                         const html = `
-                                                                                                                                                                                    <div class="mb-4">
-                                                                                                                                                                                        <h4 class="font-bold text-slate-800 mb-2">${mod.name} <span class="text-[10px] font-normal text-slate-500">(${mod.type === 'multiple' ? 'Choose multiple' : 'Choose one'})</span></h4>
-                                                                                                                                                                                        <div class="space-y-2">
-                                                                                                                                                                                            ${optionsHtml}
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="mb-4">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <h4 class="font-bold text-slate-800 mb-2">${mod.name} <span class="text-[10px] font-normal text-slate-500">(${mod.type === 'multiple' ? 'Choose multiple' : 'Choose one'})</span></h4>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="space-y-2">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                ${optionsHtml}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    `;
                         container.innerHTML += html;
                     });
 
@@ -1269,6 +1453,9 @@
                 async openShiftModal() {
                     const modal = document.getElementById('shift-modal');
                     modal.classList.remove('hidden');
+                    setTimeout(() => {
+                        modal.classList.remove('translate-y-full');
+                    }, 10);
 
                     // Check current shift
                     try {
@@ -1301,7 +1488,11 @@
                 },
 
                 closeShiftModal() {
-                    document.getElementById('shift-modal').classList.add('hidden');
+                    const modal = document.getElementById('shift-modal');
+                    modal.classList.add('translate-y-full');
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                    }, 300);
                 },
 
                 async openShift() {
@@ -1347,7 +1538,7 @@
                         if (response.ok) {
                             Swal.fire({ icon: 'success', title: 'Shift Closed', timer: 1500, showConfirmButton: false });
                             this.currentShift = null;
-                            this.closeShiftModal();
+                            this.openShiftModal(); // Refresh
                         } else {
                             const data = await response.json();
                             Swal.fire({ icon: 'error', title: 'Error', text: data.message || 'Failed to close shift' });
@@ -1356,14 +1547,79 @@
                         Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to close shift' });
                     }
                 },
+
+                switchShiftTab(tab) {
+                    const tabCurrent = document.getElementById('shift-tab-current');
+                    const tabHistory = document.getElementById('shift-tab-history');
+                    const contentCurrent = document.getElementById('shift-tab-content-current');
+                    const contentHistory = document.getElementById('shift-tab-content-history');
+
+                    if (tab === 'current') {
+                        tabCurrent.classList.remove('text-slate-500', 'hover:text-slate-700');
+                        tabCurrent.classList.add('text-{{ $theme }}-600', 'border-b-2', 'border-{{ $theme }}-600');
+                        tabHistory.classList.remove('text-{{ $theme }}-600', 'border-b-2', 'border-{{ $theme }}-600');
+                        tabHistory.classList.add('text-slate-500', 'hover:text-slate-700');
+                        contentCurrent.classList.remove('hidden');
+                        contentHistory.classList.add('hidden');
+                    } else {
+                        tabHistory.classList.remove('text-slate-500', 'hover:text-slate-700');
+                        tabHistory.classList.add('text-{{ $theme }}-600', 'border-b-2', 'border-{{ $theme }}-600');
+                        tabCurrent.classList.remove('text-{{ $theme }}-600', 'border-b-2', 'border-{{ $theme }}-600');
+                        tabCurrent.classList.add('text-slate-500', 'hover:text-slate-700');
+                        contentCurrent.classList.add('hidden');
+                        contentHistory.classList.remove('hidden');
+                        this.loadShiftHistory();
+                    }
+                },
+
+                async loadShiftHistory() {
+                    const container = document.getElementById('shift-history-list');
+                    container.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-slate-400 text-sm">Loading history...</td></tr>';
+                    try {
+                        const response = await fetch('{{ route('pos.shift.history') }}', {
+                            headers: { 'Authorization': 'Bearer ' + this.apiToken, 'Accept': 'application/json' }
+                        });
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.history && data.history.length > 0) {
+                                container.innerHTML = data.history.map(s => `
+                                                                                                                                                                                                <tr class="hover:bg-slate-50 transition-colors">
+                                                                                                                                                                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                                                                                                                                                                        <div class="text-sm font-bold text-slate-800">#${s.shift_number}</div>
+                                                                                                                                                                                                    </td>
+                                                                                                                                                                                                    <td class="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
+                                                                                                                                                                                                        <div class="text-[10px] text-slate-500">${new Date(s.opened_at).toLocaleString()}</div>
+                                                                                                                                                                                                    </td>
+                                                                                                                                                                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                                                                                                                                                                        <span class="inline-flex px-2 py-1 leading-5 text-[10px] font-semibold rounded-full ${s.status === 'closed' ? 'bg-slate-100 text-slate-600' : 'bg-green-100 text-green-600'}">
+                                                                                                                                                                                                            ${s.status.toUpperCase()}
+                                                                                                                                                                                                        </span>
+                                                                                                                                                                                                    </td>
+                                                                                                                                                                                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-slate-800">
+                                                                                                                                                                                                        ${this.formatPrice(s.closing_cash || 0)}
+                                                                                                                                                                                                    </td>
+                                                                                                                                                                                                </tr>
+                                                                                                                                                                                            `).join('');
+                            } else {
+                                container.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-slate-400 text-sm">No past shifts found</td></tr>';
+                            }
+                        }
+                    } catch (e) {
+                        container.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-red-500 text-sm">Failed to load history</td></tr>';
+                    }
+                },
                 // --- End Shift Management Functions ---
 
                 // --- Inventory Transfer Functions ---
                 transferOutlets: [],
+                transferSearchTimeout: null,
 
                 async openTransferModal() {
                     const modal = document.getElementById('transfer-modal');
                     modal.classList.remove('hidden');
+                    setTimeout(() => {
+                        modal.classList.remove('translate-y-full');
+                    }, 10);
 
                     // Load outlets
                     try {
@@ -1385,8 +1641,12 @@
                                 select.innerHTML += `<option value="${outlet.id}">${outlet.name}</option>`;
                             });
 
-                            // Load products for transfer
-                            this.loadTransferProducts();
+                            // Hide products container initially
+                            document.getElementById('transfer-products-container').classList.add('hidden');
+                            document.getElementById('transfer-product-search').value = '';
+                            document.getElementById('transfer-product-id').value = '';
+                            document.getElementById('transfer-product-results').classList.add('hidden');
+                            document.getElementById('transfer-qty').value = 1;
                         }
                     } catch (e) {
                         console.error('Error loading outlets:', e);
@@ -1396,9 +1656,36 @@
                     this.loadPendingTransfers();
                 },
 
-                async loadTransferProducts() {
+                onTransferOutletChange() {
+                    const val = document.getElementById('transfer-outlet').value;
+                    const container = document.getElementById('transfer-products-container');
+                    const searchInput = document.getElementById('transfer-product-search');
+
+                    if (val) {
+                        container.classList.remove('hidden');
+                        if (searchInput && !searchInput.dataset.listening) {
+                            searchInput.dataset.listening = true;
+                            searchInput.addEventListener('input', (e) => {
+                                clearTimeout(this.transferSearchTimeout);
+                                const query = e.target.value;
+                                if (query.length < 2) {
+                                    document.getElementById('transfer-product-results').classList.add('hidden');
+                                    document.getElementById('transfer-product-id').value = '';
+                                    return;
+                                }
+                                this.transferSearchTimeout = setTimeout(() => {
+                                    this.loadTransferProductsAutocomplete(query);
+                                }, 300);
+                            });
+                        }
+                    } else {
+                        container.classList.add('hidden');
+                    }
+                },
+
+                async loadTransferProductsAutocomplete(query) {
                     try {
-                        const response = await fetch('{{ route('api.pos.products') }}?all=true', {
+                        const response = await fetch(`{{ route('api.pos.products') }}?query=${encodeURIComponent(query)}`, {
                             headers: {
                                 'Authorization': 'Bearer ' + this.apiToken,
                                 'Accept': 'application/json'
@@ -1407,29 +1694,55 @@
 
                         if (response.ok) {
                             const data = await response.json();
-                            const container = document.getElementById('transfer-products');
+                            const resultsContainer = document.getElementById('transfer-product-results');
+                            const products = Array.isArray(data) ? data : (data.products || []);
 
-                            if (data.products && data.products.length > 0) {
-                                container.innerHTML = data.products.slice(0, 10).map(p => `
-                                            <div class="flex items-center justify-between p-2 border border-slate-200 rounded-lg">
-                                                <div class="flex items-center gap-2">
-                                                    <input type="checkbox" class="transfer-product-checkbox w-4 h-4 text-{{ $theme }}-600" value="${p.id}" data-quantity="1">
-                                                    <span class="text-xs font-medium">${p.name}</span>
-                                                </div>
-                                                <input type="number" class="transfer-product-qty w-16 px-2 py-1 text-xs border border-slate-200 rounded" placeholder="Qty" min="1" value="1" data-product-id="${p.id}">
-                                            </div>
-                                        `).join('');
+                            if (products.length > 0) {
+                                resultsContainer.innerHTML = products.map(p => `
+                                                            <div class="px-4 py-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-0" 
+                                                                 onclick="posApp.selectTransferProduct(${p.id}, '${p.name.replace(/'/g, "\\'")}')">
+                                                                <div class="font-bold text-sm text-slate-800">${p.name}</div>
+                                                                <div class="text-xs text-slate-500">Stock: ${p.stock_level}</div>
+                                                            </div>
+                                                        `).join('');
+                                resultsContainer.classList.remove('hidden');
                             } else {
-                                container.innerHTML = '<p class="text-xs text-slate-400 text-center py-2">No products available</p>';
+                                resultsContainer.innerHTML = '<div class="px-4 py-3 text-sm text-slate-500 text-center">No products found</div>';
+                                resultsContainer.classList.remove('hidden');
                             }
                         }
                     } catch (e) {
-                        console.error('Error loading products:', e);
+                        console.error('Error searching products:', e);
                     }
                 },
 
+                selectTransferProduct(id, name) {
+                    const searchInput = document.getElementById('transfer-product-search');
+                    const idInput = document.getElementById('transfer-product-id');
+                    const resultsContainer = document.getElementById('transfer-product-results');
+
+                    searchInput.value = name;
+                    idInput.value = id;
+                    resultsContainer.classList.add('hidden');
+                },
+
                 closeTransferModal() {
-                    document.getElementById('transfer-modal').classList.add('hidden');
+                    const modal = document.getElementById('transfer-modal');
+                    modal.classList.add('translate-y-full');
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                    }, 300);
+                },
+
+                // This function runs on posApp.init()
+                initTransferSearch() {
+                    document.addEventListener('click', (e) => {
+                        const searchContainer = document.getElementById('transfer-products-container');
+                        const resultsContainer = document.getElementById('transfer-product-results');
+                        if (searchContainer && resultsContainer && !searchContainer.contains(e.target)) {
+                            resultsContainer.classList.add('hidden');
+                        }
+                    });
                 },
 
                 switchTransferTab(tab) {
@@ -1461,23 +1774,29 @@
 
                             if (data.transfers && data.transfers.length > 0) {
                                 container.innerHTML = data.transfers.map(t => `
-                                            <div class="bg-slate-50 rounded-lg p-3">
-                                                <div class="flex justify-between items-start">
-                                                    <div>
-                                                        <p class="text-xs font-bold">${t.transfer_number}</p>
-                                                        <p class="text-[10px] text-slate-500">From: ${t.from_outlet?.name || 'N/A'}</p>
-                                                        <p class="text-[10px] text-slate-500">${t.items?.length || 0} items</p>
-                                                    </div>
-                                                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-[10px] font-bold rounded">${t.status}</span>
-                                                </div>
-                                                <div class="flex gap-2 mt-2">
-                                                    <button onclick="posApp.approveTransfer(${t.id})" class="flex-1 py-1 bg-green-600 text-white text-[10px] font-bold rounded">Approve</button>
-                                                    <button onclick="posApp.rejectTransfer(${t.id})" class="flex-1 py-1 bg-red-600 text-white text-[10px] font-bold rounded">Reject</button>
-                                                </div>
-                                            </div>
-                                        `).join('');
+                                                                                                                                                                                                <tr class="hover:bg-slate-50 transition-colors">
+                                                                                                                                                                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                                                                                                                                                                        <div class="text-sm font-bold text-slate-800">${t.transfer_number}</div>
+                                                                                                                                                                                                    </td>
+                                                                                                                                                                                                    <td class="px-6 py-4">
+                                                                                                                                                                                                        <div class="text-xs text-slate-600">${t.from_outlet?.name || 'N/A'}</div>
+                                                                                                                                                                                                    </td>
+                                                                                                                                                                                                    <td class="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
+                                                                                                                                                                                                        <div class="text-xs text-slate-600">${t.items?.length || 0} items</div>
+                                                                                                                                                                                                    </td>
+                                                                                                                                                                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                                                                                                                                                                        <span class="inline-flex px-2 py-1 leading-5 text-[10px] font-semibold rounded-full bg-yellow-100 text-yellow-700">
+                                                                                                                                                                                                            ${t.status.toUpperCase()}
+                                                                                                                                                                                                        </span>
+                                                                                                                                                                                                    </td>
+                                                                                                                                                                                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                                                                                                                                                                        <button onclick="posApp.approveTransfer(${t.id})" class="text-green-600 hover:text-green-900 mr-3 text-xs font-bold">Approve</button>
+                                                                                                                                                                                                        <button onclick="posApp.rejectTransfer(${t.id})" class="text-red-600 hover:text-red-900 text-xs font-bold">Reject</button>
+                                                                                                                                                                                                    </td>
+                                                                                                                                                                                                </tr>
+                                                                                                                                                                                            `).join('');
                             } else {
-                                container.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">No pending transfers</p>';
+                                container.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-400 text-sm">No pending transfers found</td></tr>';
                             }
                         }
                     } catch (e) {
@@ -1492,20 +1811,19 @@
                         return;
                     }
 
-                    // Get selected products from the transfer form
-                    const productCheckboxes = document.querySelectorAll('.transfer-product-checkbox:checked');
-                    const items = Array.from(productCheckboxes).map(cb => {
-                        const qtyInput = document.querySelector(`.transfer-product-qty[data-product-id="${cb.value}"]`);
-                        return {
-                            product_id: parseInt(cb.value),
-                            quantity: parseInt(qtyInput?.value) || 1
-                        };
-                    });
+                    // Get selected product from the transfer form
+                    const productId = document.getElementById('transfer-product-id').value;
+                    const qty = document.getElementById('transfer-qty').value;
 
-                    if (items.length === 0) {
-                        Swal.fire({ icon: 'error', title: 'Error', text: 'Please select at least one product to transfer' });
+                    if (!productId) {
+                        Swal.fire({ icon: 'error', title: 'Error', text: 'Please select a product to transfer' });
                         return;
                     }
+
+                    const items = [{
+                        product_id: parseInt(productId),
+                        quantity: parseInt(qty) || 1
+                    }];
 
                     try {
                         const response = await fetch('{{ route('pos.transfer.create') }}', {
@@ -1585,34 +1903,86 @@
                 // --- End Inventory Transfer Functions ---
 
                 // --- Low Stock Alerts Functions ---
+                lowStockData: [],
+
+                async checkLowStockAlerts() {
+                    try {
+                        const response = await fetch('{{ route('pos.inventory.low-stock') }}', {
+                            headers: {
+                                'Authorization': 'Bearer ' + this.apiToken,
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            this.lowStockData = data.alerts || [];
+                            const count = this.lowStockData.length;
+
+                            const badges = [document.getElementById('lowstock-badge'), document.getElementById('lowstock-badge-mobile')];
+
+                            badges.forEach(badge => {
+                                if (badge) {
+                                    if (count > 0) {
+                                        badge.innerText = count;
+                                        badge.classList.remove('hidden');
+                                    } else {
+                                        badge.classList.add('hidden');
+                                    }
+                                }
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Error checking low stock:', e);
+                    }
+                },
+
                 async openLowStockModal() {
                     const modal = document.getElementById('lowstock-modal');
                     modal.classList.remove('hidden');
+                    setTimeout(() => {
+                        modal.classList.remove('translate-y-full');
+                    }, 10);
 
-                    // Load alerts (would need backend endpoint)
-                    // For now show placeholder
                     const container = document.getElementById('lowstock-alerts-list');
-                    container.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">Loading alerts...</p>';
+                    container.innerHTML = '<tr><td colspan="3" class="px-6 py-8 text-center text-slate-400 text-sm">Loading alerts...</td></tr>';
 
-                    // Try to fetch from API if available
-                    try {
-                        // Placeholder - would need endpoint
+                    // Always fetch latest on modal open
+                    await this.checkLowStockAlerts();
+
+                    if (this.lowStockData && this.lowStockData.length > 0) {
+                        container.innerHTML = this.lowStockData.map(alert => `
+                                                                                                                                                                                        <tr class="hover:bg-red-50 transition-colors">
+                                                                                                                                                                                            <td class="px-6 py-4">
+                                                                                                                                                                                                <div class="text-sm font-bold text-slate-800">${this.escapeHtml(alert.name)}</div>
+                                                                                                                                                                                            </td>
+                                                                                                                                                                                            <td class="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
+                                                                                                                                                                                                <div class="text-xs text-slate-600 font-semibold">${alert.threshold}</div>
+                                                                                                                                                                                            </td>
+                                                                                                                                                                                            <td class="px-6 py-4 whitespace-nowrap text-right">
+                                                                                                                                                                                                <span class="px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full">${alert.stock_level} Left</span>
+                                                                                                                                                                                            </td>
+                                                                                                                                                                                        </tr>
+                                                                                                                                                                                    `).join('');
+                    } else {
                         container.innerHTML = `
-                                    <div class="bg-red-50 border border-red-100 rounded-lg p-4 text-center">
-                                        <svg class="w-8 h-8 text-red-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                        </svg>
-                                        <p class="text-sm font-bold text-red-700">No Low Stock Alerts</p>
-                                        <p class="text-xs text-red-500">All products are well stocked</p>
-                                    </div>
-                                `;
-                    } catch (e) {
-                        console.error('Error loading low stock:', e);
+                                                                                                                                                                                        <tr><td colspan="3" class="px-6 py-8 text-center">
+                                                                                                                                                                                            <svg class="w-8 h-8 text-green-500 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                                                                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                                                                                                                                                            </svg>
+                                                                                                                                                                                            <p class="text-sm font-bold text-green-800">No Low Stock Alerts</p>
+                                                                                                                                                                                            <p class="text-xs text-green-600">All products are well-stocked</p>
+                                                                                                                                                                                        </td></tr>
+                                                                                                                                                                                    `;
                     }
                 },
 
                 closeLowStockModal() {
-                    document.getElementById('lowstock-modal').classList.add('hidden');
+                    const modal = document.getElementById('lowstock-modal');
+                    modal.classList.add('translate-y-full');
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                    }, 300);
                 },
                 // --- End Low Stock Alerts Functions ---
 
@@ -1636,12 +2006,12 @@
 
                     const renderTabs = (categories) => {
                         tabsContainer.innerHTML = `
-                                                                                                                                                                                    <button onclick="posApp.filterCategory('all')" 
-                                                                                                                                                                                        class="category-tab pos-btn-responsive !py-1 sm:!py-1.5 bg-{{ $theme }}-600 text-white shadow-md transform scale-105"
-                                                                                                                                                                                        data-category="all">
-                                                                                                                                                                                        All Items
-                                                                                                                                                                                    </button>
-                                                                                                                                                                                `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        <button onclick="posApp.filterCategory('all')" 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            class="category-tab pos-btn-responsive !py-1 sm:!py-1.5 bg-{{ $theme }}-600 text-white shadow-md transform scale-105"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            data-category="all">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            All Items
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        </button>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    `;
                         categories.forEach(cat => {
                             const btn = document.createElement('button');
                             btn.className = `category-tab pos-btn-responsive !py-1 sm:!py-1.5 bg-white text-slate-500 hover:bg-slate-50 border border-slate-200`;
@@ -1698,11 +2068,11 @@
                     if (!productList) return;
 
                     productList.innerHTML = `
-                                                                                                                                                                                <div class="col-span-full flex flex-col items-center justify-center h-64 text-slate-400">
-                                                                                                                                                                                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-current mb-2"></div>
-                                                                                                                                                                                    <p>Loading products...</p>
-                                                                                                                                                                                </div>
-                                                                                                                                                                            `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="col-span-full flex flex-col items-center justify-center h-64 text-slate-400">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-current mb-2"></div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        <p>Loading products...</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                `;
 
                     // Handle filter by category if selecting specific category
                     let url = '{{ route('api.pos.products') }}';
@@ -1782,11 +2152,11 @@
 
                     if (this.products.length === 0) {
                         productList.innerHTML = `
-                                                                                                                                                                                    <div class="col-span-full flex flex-col items-center justify-center text-slate-400 py-20">
-                                                                                                                                                                                        <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                                                                                                                                                                                        <p class="text-lg font-medium">No products found</p>
-                                                                                                                                                                                        <p class="text-[10px]">Try searching for something else</p>
-                                                                                                                                                                                    </div>`;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="col-span-full flex flex-col items-center justify-center text-slate-400 py-20">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <p class="text-lg font-medium">No products found</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <p class="text-[10px]">Try searching for something else</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>`;
                         return;
                     }
 
@@ -1807,33 +2177,33 @@
                         }
 
                         html += `
-                                                                                                                                                                                    <div class="group bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-lg hover:border-{{ $theme }}-200 transition-all duration-300 cursor-pointer flex flex-col transform hover:-translate-y-1"
-                                                                                                                                                                                        data-product-id="${product.id}"
-                                                                                                                                                                                        data-product-name="${safeName}"
-                                                                                                                                                                                        data-product-price="${product.price}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="group bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-lg hover:border-{{ $theme }}-200 transition-all duration-300 cursor-pointer flex flex-col transform hover:-translate-y-1"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            data-product-id="${product.id}"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            data-product-name="${safeName}"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            data-product-price="${product.price}">
 
-                                                                                                                                                                                    <!-- Image Area -->
-                                                                                                                                                                                    <div class="h-40 w-full bg-slate-100 relative overflow-hidden flex items-center justify-center flex-shrink-0 rounded-t-xl">
-                                                                                                                                                                                        ${imageHtml}
-                                                                                                                                                                                        <div class="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        <!-- Image Area -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="h-40 w-full bg-slate-100 relative overflow-hidden flex items-center justify-center flex-shrink-0 rounded-t-xl">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            ${imageHtml}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
 
-                                                                                                                                                                                    <!-- Content -->
-                                                                                                                                                                                    <div class="p-3 flex flex-col flex-grow">
-                                                                                                                                                                                        <h3 class="font-bold text-slate-800 text-xs sm:text-sm leading-tight mb-1 group-hover:text-{{ $theme }}-600 transition-colors line-clamp-2" title="${safeName}">${safeName}</h3>
-                                                                                                                                                                                        <p class="text-[10px] text-slate-500 line-clamp-2 mb-3 leading-relaxed">${safeDesc}</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        <!-- Content -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="p-3 flex flex-col flex-grow">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <h3 class="font-bold text-slate-800 text-xs sm:text-sm leading-tight mb-1 group-hover:text-{{ $theme }}-600 transition-colors line-clamp-2" title="${safeName}">${safeName}</h3>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <p class="text-[10px] text-slate-500 line-clamp-2 mb-3 leading-relaxed">${safeDesc}</p>
 
-                                                                                                                                                                                        <div class="mt-auto pt-2 flex items-center justify-between border-t border-dashed border-slate-100">
-                                                                                                                                                                                            <span class="font-extrabold text-slate-900 text-sm">${safePrice}</span>
-                                                                                                                                                                                            <button class="add-to-cart-btn bg-{{ $theme }}-50 text-{{ $theme }}-700 hover:bg-{{ $theme }}-600 hover:text-white p-1.5 rounded-lg transition-all duration-200 shadow-sm border border-{{ $theme }}-100 group-hover:shadow-{{ $theme }}-100/50">
-                                                                                                                                                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                                                                                                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
-                                                                                                                                                                                                </svg>
-                                                                                                                                                                                            </button>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                </div>
-                                                                                                                                                                            `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="mt-auto pt-2 flex items-center justify-between border-t border-dashed border-slate-100">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                <span class="font-extrabold text-slate-900 text-sm">${safePrice}</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                <button class="add-to-cart-btn bg-{{ $theme }}-50 text-{{ $theme }}-700 hover:bg-{{ $theme }}-600 hover:text-white p-1.5 rounded-lg transition-all duration-200 shadow-sm border border-{{ $theme }}-100 group-hover:shadow-{{ $theme }}-100/50">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </svg>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                </button>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                `;
                     });
                     productList.innerHTML = html;
                     this.setupAddToCartButtons();
@@ -1922,20 +2292,20 @@
 
                     // Header - Clean & Minimalist
                     let invoiceHtml = `
-                                                                                                                                                                                <div class="text-left w-full">
-                                                                                                                                                                                    <div class="flex justify-between items-end mb-3 pb-2 border-b border-dashed border-slate-200">
-                                                                                                                                                                                        <div>
-                                                                                                                                                                                            <h3 class="text-slate-900 font-bold text-xl md:text-2xl">Order Summary</h3>
-                                                                                                                                                                                            <p class="text-slate-500 text-[9px] md:text-[10px]">Order #${Math.floor(1000 + Math.random() * 9000)} • ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                        <div class="text-right">
-                                                                                                                                                                                        <span class="block text-2xl md:text-3xl font-bold text-{{ $theme }}-600">${this.cart.reduce((acc, item) => acc + item.quantity, 0)}</span>
-                                                                                                                                                                                        <span class="text-[9px] md:text-[10px] text-slate-400 font-medium uppercase tracking-wider">Items</span>
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="text-left w-full">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="flex justify-between items-end mb-3 pb-2 border-b border-dashed border-slate-200">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                <h3 class="text-slate-900 font-bold text-xl md:text-2xl">Order Summary</h3>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                <p class="text-slate-500 text-[9px] md:text-[10px]">Order #${Math.floor(1000 + Math.random() * 9000)} • ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="text-right">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <span class="block text-2xl md:text-3xl font-bold text-{{ $theme }}-600">${this.cart.reduce((acc, item) => acc + item.quantity, 0)}</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <span class="text-[9px] md:text-[10px] text-slate-400 font-medium uppercase tracking-wider">Items</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
 
-                                                                                                                                                                                <div class="max-h-[250px] md:max-h-[300px] overflow-y-auto overflow-x-hidden custom-scrollbar mb-4 md:mb-5 space-y-1.5 md:space-y-2">
-                                                                                                                                                                            `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="max-h-[250px] md:max-h-[300px] overflow-y-auto overflow-x-hidden custom-scrollbar mb-4 md:mb-5 space-y-1.5 md:space-y-2">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                `;
 
                     this.cart.forEach(item => {
                         const itemTotal = (item.unitPrice || item.price) * item.quantity; // Use unitPrice which includes modifier costs
@@ -1952,51 +2322,51 @@
                         }
 
                         invoiceHtml += `
-                                                                                                                                                                                    <div class="p-1.5 md:p-2 mb-1.5 bg-slate-50 border border-slate-100 rounded-xl flex flex-col group transition-all duration-300 hover:shadow-sm hover:border-{{ $theme }}-200">
-                                                                                                                                                                                        <div class="flex justify-between items-start">
-                                                                                                                                                                                            <div class="flex-grow">
-                                                                                                                                                                                                <h4 class="font-bold text-slate-800 text-[9px] md:text-[10px] leading-tight">${item.quantity}× ${item.name}</h4>
-                                                                                                                                                                                                <div class="text-[9px] md:text-[10px] text-slate-400 font-medium">@ ${this.formatPrice(item.unitPrice || item.price)}</div>
-                                                                                                                                                                                                ${modifiersHtml}
-                                                                                                                                                                                            </div>
-                                                                                                                                                                                            <div class="text-right">
-                                                                                                                                                                                                <span class="font-extrabold text-slate-800 text-[9px] md:text-[10px]">${this.formatPrice((item.unitPrice || item.price) * item.quantity)}</span>
-                                                                                                                                                                                            </div>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="p-1.5 md:p-2 mb-1.5 bg-slate-50 border border-slate-100 rounded-xl flex flex-col group transition-all duration-300 hover:shadow-sm hover:border-{{ $theme }}-200">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="flex justify-between items-start">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="flex-grow">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <h4 class="font-bold text-slate-800 text-[9px] md:text-[10px] leading-tight">${item.quantity}× ${item.name}</h4>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="text-[9px] md:text-[10px] text-slate-400 font-medium">@ ${this.formatPrice(item.unitPrice || item.price)}</div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ${modifiersHtml}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="text-right">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <span class="font-extrabold text-slate-800 text-[9px] md:text-[10px]">${this.formatPrice((item.unitPrice || item.price) * item.quantity)}</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    `;
                     });
 
                     const taxAmount = subtotal * (this.taxRate / 100);
                     const total = subtotal + taxAmount;
 
                     invoiceHtml += `
-                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
 
-                                                                                                                                                                                <!-- Footer -->
-                                                                                                                                                                                <div class="pt-2"> 
-                                                                                                                                                                                    <div class="space-y-1 md:space-y-1.5 mb-2 px-1">
-                                                                                                                                                                                        <div class="flex justify-between text-xs md:text-sm text-slate-500">
-                                                                                                                                                                                            <span>Subtotal</span>
-                                                                                                                                                                                            <span class="font-semibold text-slate-700">${this.formatPrice(subtotal)}</span>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                        <div class="flex justify-between text-xs md:text-sm text-slate-500">
-                                                                                                                                                                                            <span>Service Tax (${this.taxRate}%)</span>
-                                                                                                                                                                                            <span class="font-semibold text-slate-700">${this.formatPrice(taxAmount)}</span>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    <!-- Footer -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="pt-2"> 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="space-y-1 md:space-y-1.5 mb-2 px-1">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="flex justify-between text-xs md:text-sm text-slate-500">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                <span>Subtotal</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                <span class="font-semibold text-slate-700">${this.formatPrice(subtotal)}</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="flex justify-between text-xs md:text-sm text-slate-500">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                <span>Service Tax (${this.taxRate}%)</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                <span class="font-semibold text-slate-700">${this.formatPrice(taxAmount)}</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
 
-                                                                                                                                                                                    <!-- Total Amount (Styled like Header) -->
-                                                                                                                                                                                    <div class="flex justify-between items-center mt-3 pt-3 border-t border-b border-dashed border-slate-200 pb-3 mb-3">
-                                                                                                                                                                                        <div>
-                                                                                                                                                                                            <h3 class="text-slate-900 font-bold text-xl md:text-2xl">Total Amount</h3>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                        <div class="text-right">
-                                                                                                                                                                                            <span class="block text-2xl md:text-3xl font-black text-{{ $theme }}-600">${this.formatPrice(total)}</span>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                </div>
-                                                                                                                                                                            `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        <!-- Total Amount (Styled like Header) -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="flex justify-between items-center mt-3 pt-3 border-t border-b border-dashed border-slate-200 pb-3 mb-3">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                <h3 class="text-slate-900 font-bold text-xl md:text-2xl">Total Amount</h3>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="text-right">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                <span class="block text-2xl md:text-3xl font-black text-{{ $theme }}-600">${this.formatPrice(total)}</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                `;
 
                     Swal.fire({
                         html: invoiceHtml,
@@ -2140,11 +2510,11 @@
 
                     if (this.cart.length === 0) {
                         cartItemsContainer.innerHTML = `
-                                                                                                                                                                                    <div class="h-full flex flex-col items-center justify-center text-slate-400 p-8 text-center opacity-60">
-                                                                                                                                                                                        <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                                                                                                                                                                                        <p class="text-[10px]">Your cart is currently empty.</p>
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="h-full flex flex-col items-center justify-center text-slate-400 p-8 text-center opacity-60">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <p class="text-[10px]">Your cart is currently empty.</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    `;
 
                         // Reset totals
                         document.getElementById('cart-subtotal').innerText = this.formatPrice(0);
@@ -2169,34 +2539,34 @@
                         }
 
                         const cartItem = `
-                                                                                                                                                                                    <div class="group flex items-center justify-between pos-card-padding mb-2 bg-white rounded-xl border border-slate-100 shadow-sm hover:border-{{ $theme }}-200 transition-all animate-fade-in" style="animation-duration: 0.3s">
-                                                                                                                                                                                        <div class="flex-grow min-w-0">
-                                                                                                                                                                                            <div class="flex justify-between items-start">
-                                                                                                                                                                                                <div>
-                                                                                                                                                                                                    <p class="font-bold text-slate-800 pos-text-responsive-base truncate" title="${item.name}">${item.name}</p>
-                                                                                                                                                                                                    ${modifiersHtml}
-                                                                                                                                                                                                </div>
-                                                                                                                                                                                                <span class="font-bold text-slate-900 pos-text-responsive-lg">${this.formatPrice(itemTotal)}</span>
-                                                                                                                                                                                            </div>
-                                                                                                                                                                                            <div class="flex items-center justify-between mt-2">
-                                                                                                                                                                                                <div class="flex items-center bg-slate-100 rounded-lg p-0.5">
-                                                                                                                                                                                                    <button data-cart-item-id="${item.cartItemId}" class="remove-from-cart-btn pos-btn-icon-responsive text-slate-500 hover:bg-white hover:text-red-500 hover:shadow-sm">
-                                                                                                                                                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                                                                                                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-                                                                                                                                                                                                        </svg>
-                                                                                                                                                                                                    </button>
-                                                                                                                                                                                                    <span class="font-mono font-bold text-slate-700 pos-text-responsive-base w-6 text-center select-none">${item.quantity}</span>
-                                                                                                                                                                                                    <button onclick="posApp.addItemToCart({cartItemId: '${item.cartItemId}'})" class="pos-btn-icon-responsive text-slate-500 hover:bg-white hover:text-green-600 hover:shadow-sm">
-                                                                                                                                                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                                                                                                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                                                                                                                                                                                                        </svg>
-                                                                                                                                                                                                    </button>
-                                                                                                                                                                                                </div>
-                                                                                                                                                                                                <span class="pos-text-responsive-sm text-slate-400 font-medium">@ ${this.formatPrice(item.unitPrice || item.price)}/ea</span>
-                                                                                                                                                                                            </div>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="group flex items-center justify-between pos-card-padding mb-2 bg-white rounded-xl border border-slate-100 shadow-sm hover:border-{{ $theme }}-200 transition-all animate-fade-in" style="animation-duration: 0.3s">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="flex-grow min-w-0">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="flex justify-between items-start">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <p class="font-bold text-slate-800 pos-text-responsive-base truncate" title="${item.name}">${item.name}</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ${modifiersHtml}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <span class="font-bold text-slate-900 pos-text-responsive-lg">${this.formatPrice(itemTotal)}</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="flex items-center justify-between mt-2">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="flex items-center bg-slate-100 rounded-lg p-0.5">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <button data-cart-item-id="${item.cartItemId}" class="remove-from-cart-btn pos-btn-icon-responsive text-slate-500 hover:bg-white hover:text-red-500 hover:shadow-sm">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </svg>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </button>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <span class="font-mono font-bold text-slate-700 pos-text-responsive-base w-6 text-center select-none">${item.quantity}</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <button onclick="posApp.addItemToCart({cartItemId: '${item.cartItemId}'})" class="pos-btn-icon-responsive text-slate-500 hover:bg-white hover:text-green-600 hover:shadow-sm">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </svg>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </button>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <span class="pos-text-responsive-sm text-slate-400 font-medium">@ ${this.formatPrice(item.unitPrice || item.price)}/ea</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    `;
                         cartItemsContainer.innerHTML += cartItem;
                     });
 
@@ -2367,26 +2737,26 @@
                         const statusClass = statusColors[sale.status] || 'bg-slate-100 text-slate-700';
 
                         const row = `
-                                                                                                                                <tr onclick="posApp.viewOrder(${sale.id})" class="hover:bg-slate-50 transition-colors group cursor-pointer">
-                                                                                                                                    <td class="px-6 py-4 whitespace-nowrap text-[10px] font-medium text-slate-900">#${sale.id}</td>
-                                                                                                                                    <td class="px-6 py-4 whitespace-nowrap text-[10px] text-slate-500">${date}</td>
-                                                                                                                                    <td class="px-6 py-4 whitespace-nowrap text-[10px] font-bold text-slate-800">${this.formatPrice(sale.total_amount)}</td>
-                                                                                                                                    <td class="px-6 py-4 whitespace-nowrap">
-                                                                                                                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${statusClass} capitalize">
-                                                                                                                                            ${sale.status}
-                                                                                                                                        </span>
-                                                                                                                                    </td>
-                                                                                                                                    <td class="px-6 py-4 whitespace-nowrap text-right text-[10px] font-medium">
-                                                                                                                                        ${sale.status !== 'void' ? `
-                                                                                                                                            <button onclick="event.stopPropagation(); posApp.voidSale(${sale.id})" class="text-slate-400 hover:text-red-600 transition-colors" title="Void Transaction">
-                                                                                                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                                                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                                                                                                                </svg>
-                                                                                                                                            </button>
-                                                                                                                                        ` : ''}
-                                                                                                                                    </td>
-                                                                                                                                </tr>
-                                                                                                                            `;
+                                                                                                                                                                                                                                                                                                                                                                                                    <tr onclick="posApp.viewOrder(${sale.id})" class="hover:bg-slate-50 transition-colors group cursor-pointer">
+                                                                                                                                                                                                                                                                                                                                                                                                        <td class="px-6 py-4 whitespace-nowrap text-[10px] font-medium text-slate-900">#${sale.id}</td>
+                                                                                                                                                                                                                                                                                                                                                                                                        <td class="px-6 py-4 whitespace-nowrap text-[10px] text-slate-500">${date}</td>
+                                                                                                                                                                                                                                                                                                                                                                                                        <td class="px-6 py-4 whitespace-nowrap text-[10px] font-bold text-slate-800">${this.formatPrice(sale.total_amount)}</td>
+                                                                                                                                                                                                                                                                                                                                                                                                        <td class="px-6 py-4 whitespace-nowrap">
+                                                                                                                                                                                                                                                                                                                                                                                                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${statusClass} capitalize">
+                                                                                                                                                                                                                                                                                                                                                                                                                ${sale.status}
+                                                                                                                                                                                                                                                                                                                                                                                                            </span>
+                                                                                                                                                                                                                                                                                                                                                                                                        </td>
+                                                                                                                                                                                                                                                                                                                                                                                                        <td class="px-6 py-4 whitespace-nowrap text-right text-[10px] font-medium">
+                                                                                                                                                                                                                                                                                                                                                                                                            ${sale.status !== 'void' ? `
+                                                                                                                                                                                                                                                                                                                                                                                                                <button onclick="event.stopPropagation(); posApp.voidSale(${sale.id})" class="text-slate-400 hover:text-red-600 transition-colors" title="Void Transaction">
+                                                                                                                                                                                                                                                                                                                                                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                                                                                                                                                                                                                                                                                                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                                                                                                                                                                                                                                                                                                                                                                    </svg>
+                                                                                                                                                                                                                                                                                                                                                                                                                </button>
+                                                                                                                                                                                                                                                                                                                                                                                                            ` : ''}
+                                                                                                                                                                                                                                                                                                                                                                                                        </td>
+                                                                                                                                                                                                                                                                                                                                                                                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                `;
                         tbody.innerHTML += row;
                     });
 
@@ -2408,42 +2778,42 @@
                     let itemsHtml = '';
                     if (items.length > 0) {
                         itemsHtml = `
-                                                                                                                <div class="max-h-[300px] overflow-y-auto custom-scrollbar border border-slate-100 rounded-xl mb-4">
-                                                                                                                    <table class="w-full text-left border-collapse">
-                                                                                                                        <thead class="bg-slate-50 sticky top-0 z-10">
-                                                                                                                            <tr>
-                                                                                                                                <th class="py-3 px-4 text-[10px] uppercase tracking-wider font-bold text-slate-500">Item</th>
-                                                                                                                                <th class="py-3 px-4 text-[10px] uppercase tracking-wider font-bold text-slate-500 text-center">Qty</th>
-                                                                                                                                <th class="py-3 px-4 text-[10px] uppercase tracking-wider font-bold text-slate-500 text-right">Price</th>
-                                                                                                                            </tr>
-                                                                                                                        </thead>
-                                                                                                                        <tbody class="divide-y divide-slate-100">
-                                                                                                                            ${items.map(item => `
-                                                                                                                                <tr class="group hover:bg-slate-50 transition-colors">
-                                                                                                                                    <td class="py-3 px-4">
-                                                                                                                                        <div class="font-semibold text-sm text-slate-800">${(item.product ? item.product.name : item.product_name) || 'Unknown Item'}</div>
-                                                                                                                                        ${item.variants ? `<div class="text-xs text-slate-500 mt-0.5">${item.variants}</div>` : ''}
-                                                                                                                                    </td>
-                                                                                                                                    <td class="py-3 px-4 text-center">
-                                                                                                                                        <span class="inline-flex items-center justify-center bg-slate-100 text-slate-600 text-xs font-bold rounded-md h-6 w-8">
-                                                                                                                                            ${item.quantity}
-                                                                                                                                        </span>
-                                                                                                                                    </td>
-                                                                                                                                    <td class="py-3 px-4 text-right font-bold text-slate-700">
-                                                                                                                                        ${this.formatPrice(item.total_price || (item.price * item.quantity))}
-                                                                                                                                    </td>
-                                                                                                                                </tr>
-                                                                                                                            `).join('')}
-                                                                                                                        </tbody>
-                                                                                                                    </table>
-                                                                                                                </div>
-                                                                                                            `;
+                                                                                                                                                                                                                                                                                                                                                                                    <div class="max-h-[300px] overflow-y-auto custom-scrollbar border border-slate-100 rounded-xl mb-4">
+                                                                                                                                                                                                                                                                                                                                                                                        <table class="w-full text-left border-collapse">
+                                                                                                                                                                                                                                                                                                                                                                                            <thead class="bg-slate-50 sticky top-0 z-10">
+                                                                                                                                                                                                                                                                                                                                                                                                <tr>
+                                                                                                                                                                                                                                                                                                                                                                                                    <th class="py-3 px-4 text-[10px] uppercase tracking-wider font-bold text-slate-500">Item</th>
+                                                                                                                                                                                                                                                                                                                                                                                                    <th class="py-3 px-4 text-[10px] uppercase tracking-wider font-bold text-slate-500 text-center">Qty</th>
+                                                                                                                                                                                                                                                                                                                                                                                                    <th class="py-3 px-4 text-[10px] uppercase tracking-wider font-bold text-slate-500 text-right">Price</th>
+                                                                                                                                                                                                                                                                                                                                                                                                </tr>
+                                                                                                                                                                                                                                                                                                                                                                                            </thead>
+                                                                                                                                                                                                                                                                                                                                                                                            <tbody class="divide-y divide-slate-100">
+                                                                                                                                                                                                                                                                                                                                                                                                ${items.map(item => `
+                                                                                                                                                                                                                                                                                                                                                                                                    <tr class="group hover:bg-slate-50 transition-colors">
+                                                                                                                                                                                                                                                                                                                                                                                                        <td class="py-3 px-4">
+                                                                                                                                                                                                                                                                                                                                                                                                            <div class="font-semibold text-sm text-slate-800">${(item.product ? item.product.name : item.product_name) || 'Unknown Item'}</div>
+                                                                                                                                                                                                                                                                                                                                                                                                            ${item.variants ? `<div class="text-xs text-slate-500 mt-0.5">${item.variants}</div>` : ''}
+                                                                                                                                                                                                                                                                                                                                                                                                        </td>
+                                                                                                                                                                                                                                                                                                                                                                                                        <td class="py-3 px-4 text-center">
+                                                                                                                                                                                                                                                                                                                                                                                                            <span class="inline-flex items-center justify-center bg-slate-100 text-slate-600 text-xs font-bold rounded-md h-6 w-8">
+                                                                                                                                                                                                                                                                                                                                                                                                                ${item.quantity}
+                                                                                                                                                                                                                                                                                                                                                                                                            </span>
+                                                                                                                                                                                                                                                                                                                                                                                                        </td>
+                                                                                                                                                                                                                                                                                                                                                                                                        <td class="py-3 px-4 text-right font-bold text-slate-700">
+                                                                                                                                                                                                                                                                                                                                                                                                            ${this.formatPrice(item.total_price || (item.price * item.quantity))}
+                                                                                                                                                                                                                                                                                                                                                                                                        </td>
+                                                                                                                                                                                                                                                                                                                                                                                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                `).join('')}
+                                                                                                                                                                                                                                                                                                                                                                                            </tbody>
+                                                                                                                                                                                                                                                                                                                                                                                        </table>
+                                                                                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                                                `;
                     } else {
                         itemsHtml = `
-                                                                                                                <div class="py-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200 mb-4">
-                                                                                                                    <p class="text-xs text-slate-400">No items found for this order.</p>
-                                                                                                                </div>
-                                                                                                            `;
+                                                                                                                                                                                                                                                                                                                                                                                    <div class="py-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200 mb-4">
+                                                                                                                                                                                                                                                                                                                                                                                        <p class="text-xs text-slate-400">No items found for this order.</p>
+                                                                                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                                                `;
                     }
 
                     // Calculate Subtotal & Tax if needed (simplified for now based on total)
@@ -2456,68 +2826,68 @@
 
                     Swal.fire({
                         html: `
-                                                                        <div class="text-left font-inter">
-                                                                            <!-- Header -->
-                                                                            <div class="flex justify-between items-start mb-6 pb-4 border-b border-slate-100">
-                                                                                <div>
-                                                                                    <div class="flex items-center gap-3">
-                                                                                        <h2 class="text-xl font-black text-slate-800">Order #${sale.id}</h2>
-                                                                                        <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border ${statusClass}">
-                                                                                            ${sale.status}
-                                                                                        </span>
-                                                                                    </div>
-                                                                                    <p class="text-xs text-slate-500 font-medium mt-1 flex items-center gap-1">
-                                                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                                                                        ${date}
-                                                                                    </p>
-                                                                                </div>
-                                                                                <button onclick="Swal.close()" class="text-slate-400 hover:text-slate-600 transition-colors">
-                                                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                                                </button>
-                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                            <div class="text-left font-inter">
+                                                                                                                                                                                                                                                                                                                                                <!-- Header -->
+                                                                                                                                                                                                                                                                                                                                                <div class="flex justify-between items-start mb-6 pb-4 border-b border-slate-100">
+                                                                                                                                                                                                                                                                                                                                                    <div>
+                                                                                                                                                                                                                                                                                                                                                        <div class="flex items-center gap-3">
+                                                                                                                                                                                                                                                                                                                                                            <h2 class="text-xl font-black text-slate-800">Order #${sale.id}</h2>
+                                                                                                                                                                                                                                                                                                                                                            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border ${statusClass}">
+                                                                                                                                                                                                                                                                                                                                                                ${sale.status}
+                                                                                                                                                                                                                                                                                                                                                            </span>
+                                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                                        <p class="text-xs text-slate-500 font-medium mt-1 flex items-center gap-1">
+                                                                                                                                                                                                                                                                                                                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                                                                                                                                                                                                                                                                                                                                            ${date}
+                                                                                                                                                                                                                                                                                                                                                        </p>
+                                                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                    <button onclick="Swal.close()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                                                                                                                                                                                                                                                                                                                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                                                                                                                                                                                                                                                                                                                    </button>
+                                                                                                                                                                                                                                                                                                                                                </div>
 
-                                                                            <!-- Items List -->
-                                                                            ${itemsHtml}
+                                                                                                                                                                                                                                                                                                                                                <!-- Items List -->
+                                                                                                                                                                                                                                                                                                                                                ${itemsHtml}
 
-                                                                            <!-- Summary -->
-                                                                            <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 space-y-3">
-                                                                                <div class="flex justify-between items-center text-xs text-slate-500">
-                                                                                    <span>Payment Method</span>
-                                                                                    <div class="flex items-center gap-2">
-                                                                                        <span class="font-bold text-slate-700 capitalize">${sale.payment_method || 'Cash'}</span>
-                                                                                    </div>
-                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                <!-- Summary -->
+                                                                                                                                                                                                                                                                                                                                                <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 space-y-3">
+                                                                                                                                                                                                                                                                                                                                                    <div class="flex justify-between items-center text-xs text-slate-500">
+                                                                                                                                                                                                                                                                                                                                                        <span>Payment Method</span>
+                                                                                                                                                                                                                                                                                                                                                        <div class="flex items-center gap-2">
+                                                                                                                                                                                                                                                                                                                                                            <span class="font-bold text-slate-700 capitalize">${sale.payment_method || 'Cash'}</span>
+                                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                                    </div>
 
-                                                                                ${sale.tax_amount > 0 ? `
-                                                                                    <div class="flex justify-between items-center text-xs text-slate-500">
-                                                                                        <span>Tax</span>
-                                                                                        <span class="font-medium text-slate-700">${this.formatPrice(sale.tax_amount)}</span>
-                                                                                    </div>
-                                                                                ` : ''}
+                                                                                                                                                                                                                                                                                                                                                    ${sale.tax_amount > 0 ? `
+                                                                                                                                                                                                                                                                                                                                                        <div class="flex justify-between items-center text-xs text-slate-500">
+                                                                                                                                                                                                                                                                                                                                                            <span>Tax</span>
+                                                                                                                                                                                                                                                                                                                                                            <span class="font-medium text-slate-700">${this.formatPrice(sale.tax_amount)}</span>
+                                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                                    ` : ''}
 
-                                                                                ${sale.discount_amount > 0 ? `
-                                                                                    <div class="flex justify-between items-center text-xs text-emerald-600 font-medium">
-                                                                                        <span>Discount</span>
-                                                                                        <span>-${this.formatPrice(sale.discount_amount)}</span>
-                                                                                    </div>
-                                                                                ` : ''}
+                                                                                                                                                                                                                                                                                                                                                    ${sale.discount_amount > 0 ? `
+                                                                                                                                                                                                                                                                                                                                                        <div class="flex justify-between items-center text-xs text-emerald-600 font-medium">
+                                                                                                                                                                                                                                                                                                                                                            <span>Discount</span>
+                                                                                                                                                                                                                                                                                                                                                            <span>-${this.formatPrice(sale.discount_amount)}</span>
+                                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                                    ` : ''}
 
-                                                                                <div class="flex justify-between items-center pt-3 border-t border-slate-200">
-                                                                                    <span class="text-base font-bold text-slate-800">Total Amount</span>
-                                                                                    <span class="text-2xl font-black text-{{ $theme }}-600">${this.formatPrice(sale.total_amount)}</span>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    `,
+                                                                                                                                                                                                                                                                                                                                                    <div class="flex justify-between items-center pt-3 border-t border-slate-200">
+                                                                                                                                                                                                                                                                                                                                                        <span class="text-base font-bold text-slate-800">Total Amount</span>
+                                                                                                                                                                                                                                                                                                                                                        <span class="text-2xl font-black text-{{ $theme }}-600">${this.formatPrice(sale.total_amount)}</span>
+                                                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                        `,
                         width: '450px',
                         showCloseButton: false,
                         showConfirmButton: true,
                         confirmButtonText: `
-                                                                        <div class="flex items-center justify-center gap-2">
-                                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2-4h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6a2 2 0 012-2zm9-2V4a2 2 0 00-2-2h-5l-5 5v3m9-3h-2M9 13H5a2 2 0 00-2 2v4a2 2 0 002 2h4a2 2 0 002-2v-4a2 2 0 00-2-2z"></path></svg>
-                                                                            <span>Print Receipt</span>
-                                                                        </div>
-                                                                    `,
+                                                                                                                                                                                                                                                                                                                                            <div class="flex items-center justify-center gap-2">
+                                                                                                                                                                                                                                                                                                                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2-4h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6a2 2 0 012-2zm9-2V4a2 2 0 00-2-2h-5l-5 5v3m9-3h-2M9 13H5a2 2 0 00-2 2v4a2 2 0 002 2h4a2 2 0 002-2v-4a2 2 0 00-2-2z"></path></svg>
+                                                                                                                                                                                                                                                                                                                                                <span>Print Receipt</span>
+                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                        `,
                         showCancelButton: false,
                         padding: '1.5rem',
                         customClass: {
@@ -2670,12 +3040,12 @@
                                 const el = document.createElement('div');
                                 el.className = 'p-3 hover:bg-slate-50 rounded-lg cursor-pointer border border-transparent hover:border-slate-100 transition-colors flex justify-between items-center group';
                                 el.innerHTML = `
-                                                                                                                                                                                                                                                                                                                                                                                                            <div>
-                                                                                                                                                                                                                                                                                                                                                                                                                <p class="font-bold text-slate-800">${customer.name}</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                <p class="text-[10px] text-slate-500">${customer.phone || 'No Phone'}</p>
-                                                                                                                                                                                                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                                                                                                                                                                                                            <button class="text-{{ $theme }}-600 font-bold text-[10px] bg-{{ $theme }}-50 px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Select</button>
-                                                                                                                                                                                                                                                                                                                                                                                                        `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <p class="font-bold text-slate-800">${customer.name}</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <p class="text-[10px] text-slate-500">${customer.phone || 'No Phone'}</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <button class="text-{{ $theme }}-600 font-bold text-[10px] bg-{{ $theme }}-50 px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Select</button>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            `;
                                 el.onclick = () => this.selectCustomer(customer);
                                 container.appendChild(el);
                             });

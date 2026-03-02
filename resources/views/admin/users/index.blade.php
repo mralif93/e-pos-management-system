@@ -5,18 +5,7 @@
 
 @section('content')
 
-    @if(session('success'))
-        <div class="bg-green-50 text-green-600 p-4 rounded-lg mb-6 text-sm flex items-center gap-2">
-            <i class="hgi-stroke text-[20px] hgi-tick-circle text-green-500 text-sm"></i>
-            {{ session('success') }}
-        </div>
-    @endif
-    @if(session('error'))
-        <div class="bg-red-50 text-red-600 p-4 rounded-lg mb-6 text-sm flex items-center gap-2">
-            <i class="hgi-stroke text-[20px] hgi-alert-01 text-red-500 text-sm"></i>
-            {{ session('error') }}
-        </div>
-    @endif
+
 
     <!-- Filter Card -->
     <div class="bg-white rounded-xl border border-gray-100 shadow-sm mb-6">
@@ -43,9 +32,9 @@
                             <select name="role"
                                 class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-sm bg-white transition-all cursor-pointer hover:bg-gray-50">
                                 <option value="">All Roles</option>
-                                <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>Admin</option>
-                                <option value="manager" {{ request('role') == 'manager' ? 'selected' : '' }}>Manager</option>
-                                <option value="cashier" {{ request('role') == 'cashier' ? 'selected' : '' }}>Cashier</option>
+                                <option value="Admin" {{ request('role') == 'Admin' ? 'selected' : '' }}>Admin</option>
+                                <option value="Manager" {{ request('role') == 'Manager' ? 'selected' : '' }}>Manager</option>
+                                <option value="Cashier" {{ request('role') == 'Cashier' ? 'selected' : '' }}>Cashier</option>
                                 <option value="viewer" {{ request('role') == 'viewer' ? 'selected' : '' }}>Viewer</option>
                             </select>
                         </div>
@@ -144,8 +133,8 @@
                             <td class="px-6 py-4 text-sm text-gray-600">{{ $user->staff_id }}</td>
                             <td class="px-6 py-4">
                                 <span
-                                    class="px-2 py-1 text-xs font-medium rounded-full {{ $user->role === 'admin' ? 'bg-purple-100 text-purple-700' : ($user->role === 'manager' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700') }}">
-                                    {{ ucfirst($user->role) }}
+                                    class="px-2 py-1 text-xs font-medium rounded-full {{ $user->role === 'Admin' || $user->role === 'Super Admin' ? 'bg-purple-100 text-purple-700' : ($user->role === 'Manager' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700') }}">
+                                    {{ $user->role }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-600">{{ $user->outlet->name ?? 'All Outlets' }}</td>
